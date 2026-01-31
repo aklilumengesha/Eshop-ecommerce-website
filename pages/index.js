@@ -42,7 +42,7 @@ export default function Home({ featuredProducts, products }) {
             {featuredProducts.map((product) => (
               <div key={product._id} className="relative">
                 <Link href={`/product/${product.slug}`} passHref>
-                  <div className="relative w-full h-[calc(100vh-56px)] overflow-hidden">
+                  <div className="relative w-full h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden">
                     <Image
                       src={product.banner}
                       alt={product.name}
