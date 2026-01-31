@@ -30,21 +30,21 @@ const postHandler = async (req, res) => {
   await db.connect();
   
   const newProduct = new Product({
-    name: "Sample Product",
-    slug: "sample-product-" + Math.random(),
-    image: "/images/sample.jpg",
-    price: 0,
-    category: "Sample Category",
-    brand: "Sample Brand",
-    countInStock: 0,
-    description: "Sample description",
+    name: req.body.name || "Sample Product",
+    slug: req.body.slug || "sample-product-" + Math.random(),
+    image: req.body.image || "/images/sample.jpg",
+    price: req.body.price || 0,
+    category: req.body.category || "Sample Category",
+    brand: req.body.brand || "Sample Brand",
+    countInStock: req.body.countInStock || 0,
+    description: req.body.description || "Sample description",
     rating: 0,
     ratings: [],
     totalRatings: 0,
     numReviews: 0,
     reviews: [],
-    isFeatured: false,
-    banner: "",
+    isFeatured: req.body.isFeatured || false,
+    banner: req.body.banner || "",
   });
 
   const product = await newProduct.save();

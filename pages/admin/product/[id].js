@@ -35,11 +35,12 @@ function reducer(state, action) {
 export default function AdminProductEdit() {
   const { query } = useRouter();
   const productId = query.id;
+  const isNewProduct = productId === "new";
   const router = useRouter();
 
   const [{ loading, error, loadingUpdate, loadingUpload }, dispatch] =
     useReducer(reducer, {
-      loading: true,
+      loading: !isNewProduct,
       error: "",
     });
 
@@ -71,8 +72,10 @@ export default function AdminProductEdit() {
       }
     };
 
-    fetchData();
-  }, [productId, setValue]);
+    if (!isNewProduct) {
+      fetchData();
+    }
+  }, [productId, setValue, isNewProduct]);
 
   const uploadHandler = async (e, imageField = "image") => {
     const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`;
@@ -114,20 +117,40 @@ export default function AdminProductEdit() {
   }) => {
     try {
       dispatch({ type: "UPDATE_REQUEST" });
-      await axios.put(`/api/admin/products/${productId}`, {
-        name,
-        slug,
-        price,
-        category,
-        image,
-        brand,
-        countInStock,
-        description,
-        isFeatured,
-        banner,
-      });
+      
+      if (isNewProduct) {
+        // Create new product
+        await axios.post(`/api/admin/products`, {
+          name,
+          slug,
+          price,
+          category,
+          image,
+          brand,
+          countInStock,
+          description,
+          isFeatured,
+          banner,
+        });
+        toast.success("Product created successfully");
+      } else {
+        // Update existing product
+        await axios.put(`/api/admin/products/${productId}`, {
+          name,
+          slug,
+          price,
+          category,
+          image,
+          brand,
+          countInStock,
+          description,
+          isFeatured,
+          banner,
+        });
+        toast.success("Product updated successfully");
+      }
+      
       dispatch({ type: "UPDATE_SUCCESS" });
-      toast.success("Product updated successfully");
       router.push("/admin/products");
     } catch (err) {
       dispatch({ type: "UPDATE_FAIL", payload: getError(err) });
@@ -136,7 +159,7 @@ export default function AdminProductEdit() {
   };
 
   return (
-    <Layout title={`Edit Product ${productId}`}>
+    <Layout title={isNewProduct ? "Create Product" : `Edit Product ${productId}`}>
       <div className="grid md:grid-cols-4 md:gap-5">
         <div>
           <ul className="space-y-2">
@@ -180,7 +203,9 @@ export default function AdminProductEdit() {
               className="mx-auto max-w-screen-md"
               onSubmit={handleSubmit(submitHandler)}
             >
-              <h1 className="mb-4 text-3xl font-bold">{`Edit Product ${productId}`}</h1>
+              <h1 className="mb-4 text-3xl font-bold">
+                {isNewProduct ? "Create Product" : `Edit Product ${productId}`}
+              </h1>
               
               <div className="mb-4">
                 <label htmlFor="name">Name</label>
@@ -353,7 +378,7 @@ export default function AdminProductEdit() {
 
               <div className="mb-4 flex justify-between">
                 <button disabled={loadingUpdate} className="primary-button">
-                  {loadingUpdate ? "Loading..." : "Update"}
+                  {loadingUpdate ? "Loading..." : isNewProduct ? "Create" : "Update"}
                 </button>
                 <Link href="/admin/products">
                   <button type="button" className="default-button">

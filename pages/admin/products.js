@@ -14,12 +14,6 @@ function reducer(state, action) {
       return { ...state, loading: false, products: action.payload, error: "" };
     case "FETCH_FAIL":
       return { ...state, loading: false, error: action.payload };
-    case "CREATE_REQUEST":
-      return { ...state, loadingCreate: true };
-    case "CREATE_SUCCESS":
-      return { ...state, loadingCreate: false };
-    case "CREATE_FAIL":
-      return { ...state, loadingCreate: false };
     case "DELETE_REQUEST":
       return { ...state, loadingDelete: true };
     case "DELETE_SUCCESS":
@@ -36,7 +30,7 @@ function reducer(state, action) {
 export default function AdminProducts() {
   const router = useRouter();
   const [
-    { loading, error, products, loadingCreate, loadingDelete, successDelete },
+    { loading, error, products, loadingDelete, successDelete },
     dispatch,
   ] = useReducer(reducer, {
     loading: true,
@@ -63,20 +57,8 @@ export default function AdminProducts() {
     }
   }, [successDelete]);
 
-  const createHandler = async () => {
-    if (!window.confirm("Are you sure you want to create a new product?")) {
-      return;
-    }
-    try {
-      dispatch({ type: "CREATE_REQUEST" });
-      const { data } = await axios.post(`/api/admin/products`);
-      dispatch({ type: "CREATE_SUCCESS" });
-      toast.success("Product created successfully");
-      router.push(`/admin/product/${data.product._id}`);
-    } catch (error) {
-      dispatch({ type: "CREATE_FAIL" });
-      toast.error(getError(error));
-    }
+  const createHandler = () => {
+    router.push(`/admin/product/new`);
   };
 
   const deleteHandler = async (productId) => {
@@ -132,11 +114,10 @@ export default function AdminProducts() {
             <h1 className="text-3xl font-bold">Products Management</h1>
             {loadingDelete && <div>Deleting...</div>}
             <button
-              disabled={loadingCreate}
               onClick={createHandler}
               className="primary-button"
             >
-              {loadingCreate ? "Loading..." : "Create Product"}
+              Create Product
             </button>
           </div>
 
