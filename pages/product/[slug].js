@@ -1,0 +1,175 @@
+import Layout from "@/components/Layout";
+import Product from "@/models/Product";
+import db from "@/utils/db";
+import { getError } from "@/utils/error";
+import { Store } from "@/utils/Store";
+import axios from "axios";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import React, { useContext } from "react";
+import ReactStars from "react-rating-stars-component";
+import { toast } from "react-toastify";
+
+export default function ProductDetail(props) {
+  const { product } = props;
+  const { state, dispatch } = useContext(Store);
+  const router = useRouter();
+
+  if (!product) {
+    return (
+      <Layout title="Product Not Found">
+        <div className="flex flex-col items-center justify-center min-h-screen">
+          <h1 className="text-2xl font-bold mb-4">Product Not Found</h1>
+          <Link href="/">
+            <button className="primary-button">Go to Homepage</button>
+          </Link>
+        </div>
+      </Layout>
+    );
+  }
+
+  const addToCartHandler = async () => {
+    const existItem = state.cart.cartItems.find(
+      (item) => item.slug === product.slug
+    );
+    const quantity = existItem ? existItem.quantity + 1 : 1;
+
+    const { data } = await axios.get(`/api/products/${product._id}`);
+
+    if (data.countInStock < quantity) {
+      toast.error("Sorry. Product is out of stock");
+      return;
+    }
+
+    dispatch({
+      type: "CART_ADD_ITEM",
+      payload: { ...product, quantity: quantity },
+    });
+
+    router.push("/cart");
+  };
+
+  const ratingChanged = async (productId, count) => {
+    try {
+      await axios.put(`/api/products/${productId}`, {
+        rating: count,
+      });
+      toast.success(
+        "Thank you for rating! Your feedback helps other shoppers."
+      );
+      router.reload();
+    } catch (error) {
+      toast.error(getError(error));
+    }
+  };
+
+  return (
+    <Layout title={product.name}>
+      <div className="py-2">
+        <Link href="/">
+          <span className="text-blue-600 hover:text-blue-800">← Back to products</span>
+        </Link>
+      </div>
+      <div className="grid md:grid-cols-4 md:gap-3 my-4">
+        <div className="md:col-span-2">
+          <Image
+            src={product.image}
+            alt={product.name}
+            width={640}
+            height={640}
+            className="rounded-lg shadow-lg"
+          />
+        </div>
+        <div>
+          <ul className="space-y-3">
+            <li>
+              <h1 className="text-2xl font-bold">{product.name}</h1>
+            </li>
+            <li className="text-gray-600">
+              <span className="font-semibold">Category:</span> {product.category}
+            </li>
+            <li className="text-gray-600">
+              <span className="font-semibold">Brand:</span> {product.brand}
+            </li>
+            <li className="flex items-center space-x-2">
+              <ReactStars
+                count={5}
+                size={26}
+                activeColor="#ffd700"
+                value={product.rating}
+                edit={false}
+              />
+              <span className="text-gray-600">
+                ({product.totalRatings} {product.totalRatings === 1 ? 'rating' : 'ratings'})
+              </span>
+            </li>
+            <li className="text-gray-700">
+              <span className="font-semibold">Description:</span>
+              <p className="mt-1">{product.description}</p>
+            </li>
+            <li className="pt-4">
+              <div className="border-t pt-4">
+                <p className="font-semibold mb-2">Rate this product:</p>
+                <ReactStars
+                  count={5}
+                  onChange={(count) => {
+                    ratingChanged(product._id, count);
+                  }}
+                  size={32}
+                  activeColor="#ffd700"
+                  edit={true}
+                />
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <div className="card p-5">
+            <div className="mb-2 flex justify-between">
+              <div className="font-semibold">Price</div>
+              <div className="text-2xl font-bold text-blue-600">${product.price}</div>
+            </div>
+            <div className="mb-2 flex justify-between">
+              <div className="font-semibold">Status</div>
+              <div>
+                {product.countInStock > 0 ? (
+                  <span className="text-green-600 font-semibold">In Stock</span>
+                ) : (
+                  <span className="text-red-600 font-semibold">Unavailable</span>
+                )}
+              </div>
+            </div>
+            {product.countInStock > 0 && (
+              <div className="mb-2 text-sm text-gray-600">
+                {product.countInStock} {product.countInStock === 1 ? 'item' : 'items'} available
+              </div>
+            )}
+            <button
+              className="primary-button w-full"
+              onClick={addToCartHandler}
+              disabled={product.countInStock === 0}
+            >
+              {product.countInStock === 0 ? 'Out of Stock' : 'Add to Cart'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Layout>
+  );
+}
+
+export async function getServerSideProps(context) {
+  const { params } = context;
+  const { slug } = params;
+  
+  await db.connect();
+  const product = await Product.findOne({ slug: slug }).lean();
+  await db.disconnect();
+  
+  return {
+    props: {
+      product: product ? db.convertDocToObj(product) : null,
+    },
+  };
+}
