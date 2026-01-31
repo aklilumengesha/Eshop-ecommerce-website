@@ -1,38 +1,82 @@
-import Head from "next/head";
+import Layout from "@/components/Layout";
+import ProductItem from "@/components/ProductItem";
+import Product from "@/models/Product";
+import db from "@/utils/db";
+import { Store } from "@/utils/Store";
+import axios from "axios";
+import Link from "next/link";
+import { useContext } from "react";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { Carousel } from "react-responsive-carousel";
+import { toast } from "react-toastify";
 
-export default function Home() {
+export default function Home({ featuredProducts, products }) {
+  const { state, dispatch } = useContext(Store);
+  const { cart } = state;
+
+  const addToCartHandler = async (product) => {
+    const existItem = cart.cartItems.find((item) => item.slug === product.slug);
+    const quantity = existItem ? existItem.quantity + 1 : 1;
+
+    const { data } = await axios.get(`/api/products/${product._id}`);
+
+    if (data.countInStock < quantity) {
+      toast.error("Sorry. Product is out of stock");
+      return;
+    }
+
+    dispatch({
+      type: "CART_ADD_ITEM",
+      payload: { ...product, quantity: quantity },
+    });
+
+    toast.success("Product added to the cart");
+  };
+
   return (
-    <>
-      <Head>
-        <title>eShop - Modern E-commerce Platform</title>
-        <meta name="description" content="eShop - Your one-stop online shopping destination" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <div className="flex min-h-screen flex-col items-center justify-center">
-        <main className="flex flex-col items-center justify-center px-4 text-center">
-          <h1 className="text-6xl font-bold text-blue-600 mb-4">
-            Welcome to eShop
-          </h1>
-          <p className="text-xl text-gray-600 mb-8">
-            Your modern e-commerce platform is being built...
-          </p>
-          <div className="flex gap-4">
-            <div className="card p-6">
-              <h2 className="text-2xl font-semibold mb-2">🛍️ Shop</h2>
-              <p className="text-gray-600">Browse our products</p>
-            </div>
-            <div className="card p-6">
-              <h2 className="text-2xl font-semibold mb-2">🛒 Cart</h2>
-              <p className="text-gray-600">Manage your items</p>
-            </div>
-            <div className="card p-6">
-              <h2 className="text-2xl font-semibold mb-2">💳 Checkout</h2>
-              <p className="text-gray-600">Secure payments</p>
-            </div>
-          </div>
-        </main>
+    <Layout title="Home">
+      {featuredProducts.length > 0 && (
+        <div className="mb-8">
+          <Carousel showThumbs={false} autoPlay infiniteLoop>
+            {featuredProducts.map((product) => (
+              <div key={product._id}>
+                <Link href={`/product/${product.slug}`} passHref>
+                  <div className="flex">
+                    <img src={product.banner} alt={product.name} />
+                  </div>
+                </Link>
+              </div>
+            ))}
+          </Carousel>
+        </div>
+      )}
+      
+      <h1 className="text-3xl font-bold my-4">Latest Products</h1>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
+        {products.map((product) => (
+          <ProductItem
+            product={product}
+            key={product.slug}
+            addToCartHandler={addToCartHandler}
+          />
+        ))}
       </div>
-    </>
+    </Layout>
   );
+}
+
+export async function getServerSideProps() {
+  await db.connect();
+  const products = await Product.find().lean();
+  const featuredProducts = products.filter(
+    (product) => product.isFeatured === true
+  );
+  await db.disconnect();
+  
+  return {
+    props: {
+      featuredProducts: featuredProducts.map(db.convertDocToObj),
+      products: products.map(db.convertDocToObj),
+    },
+  };
 }
