@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { StoreProvider } from "@/utils/Store";
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 
 export default function App({
   Component,
@@ -12,14 +13,16 @@ export default function App({
   return (
     <SessionProvider session={session}>
       <StoreProvider>
-        <ToastContainer position="top-right" limit={1} />
-        {Component.auth ? (
-          <Auth adminOnly={Component.auth.adminOnly}>
+        <PayPalScriptProvider deferLoading={true}>
+          <ToastContainer position="top-right" limit={1} />
+          {Component.auth ? (
+            <Auth adminOnly={Component.auth.adminOnly}>
+              <Component {...pageProps} />
+            </Auth>
+          ) : (
             <Component {...pageProps} />
-          </Auth>
-        ) : (
-          <Component {...pageProps} />
-        )}
+          )}
+        </PayPalScriptProvider>
       </StoreProvider>
     </SessionProvider>
   );
