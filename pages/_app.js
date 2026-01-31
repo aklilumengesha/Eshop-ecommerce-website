@@ -3,6 +3,7 @@ import { SessionProvider, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { StoreProvider } from "@/utils/Store";
 
 export default function App({
   Component,
@@ -10,14 +11,16 @@ export default function App({
 }) {
   return (
     <SessionProvider session={session}>
-      <ToastContainer position="top-right" limit={1} />
-      {Component.auth ? (
-        <Auth adminOnly={Component.auth.adminOnly}>
+      <StoreProvider>
+        <ToastContainer position="top-right" limit={1} />
+        {Component.auth ? (
+          <Auth adminOnly={Component.auth.adminOnly}>
+            <Component {...pageProps} />
+          </Auth>
+        ) : (
           <Component {...pageProps} />
-        </Auth>
-      ) : (
-        <Component {...pageProps} />
-      )}
+        )}
+      </StoreProvider>
     </SessionProvider>
   );
 }
