@@ -5,6 +5,7 @@ import db from "@/utils/db";
 import { Store } from "@/utils/Store";
 import axios from "axios";
 import Link from "next/link";
+import Image from "next/image";
 import { useContext } from "react";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
@@ -39,10 +40,24 @@ export default function Home({ featuredProducts, products }) {
         <div className="mb-8">
           <Carousel showThumbs={false} autoPlay infiniteLoop>
             {featuredProducts.map((product) => (
-              <div key={product._id}>
+              <div key={product._id} className="relative">
                 <Link href={`/product/${product.slug}`} passHref>
-                  <div className="flex">
-                    <img src={product.banner} alt={product.name} />
+                  <div className="relative w-full h-64 md:h-96 lg:h-[500px] overflow-hidden rounded-lg">
+                    <Image
+                      src={product.banner}
+                      alt={product.name}
+                      fill
+                      className="object-cover object-center"
+                      priority
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+                      <h2 className="text-white text-2xl md:text-3xl font-bold mb-2">
+                        {product.name}
+                      </h2>
+                      <p className="text-white text-lg md:text-xl font-semibold">
+                        ${product.price}
+                      </p>
+                    </div>
                   </div>
                 </Link>
               </div>
