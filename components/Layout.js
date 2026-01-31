@@ -67,7 +67,7 @@ function Layout({ title, children }) {
 
       <div className="flex min-h-screen flex-col justify-between">
         <header>
-          <nav className="flex h-14 justify-between shadow-md items-center px-4">
+          <nav className="flex h-14 justify-between shadow-md items-center px-16">
             <div className="flex items-center space-x-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
