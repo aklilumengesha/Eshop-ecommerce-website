@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import React, { useContext } from "react";
 import ReactStars from "react-rating-stars-component";
 import { toast } from "react-toastify";
+import ReviewsSection from "@/components/ReviewsSection";
 
 export default function ProductDetail(props) {
   const { product } = props;
@@ -193,6 +194,9 @@ export default function ProductDetail(props) {
           </div>
         </div>
       </div>
+
+      {/* Reviews Section */}
+      <ReviewsSection productId={product._id} />
     </Layout>
   );
 }
