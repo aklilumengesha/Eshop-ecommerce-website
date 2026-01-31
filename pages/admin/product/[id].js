@@ -78,6 +78,12 @@ export default function AdminProductEdit() {
   }, [productId, setValue, isNewProduct]);
 
   const uploadHandler = async (e, imageField = "image") => {
+    // Check if Cloudinary is configured
+    if (!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME) {
+      toast.error("Cloudinary is not configured. Please enter image URL directly in the text field above.");
+      return;
+    }
+
     const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`;
     try {
       dispatch({ type: "UPLOAD_REQUEST" });
@@ -266,22 +272,26 @@ export default function AdminProductEdit() {
               </div>
 
               <div className="mb-4">
-                <label htmlFor="image">Image</label>
+                <label htmlFor="image">Image URL</label>
                 <input
                   type="text"
                   className="w-full"
                   id="image"
+                  placeholder="Enter image URL (e.g., https://images.unsplash.com/...)"
                   {...register("image", {
-                    required: "Please enter image",
+                    required: "Please enter image URL",
                   })}
                 />
                 {errors.image && (
                   <div className="text-red-500">{errors.image.message}</div>
                 )}
+                <p className="text-sm text-gray-600 mt-1">
+                  You can use image URLs from Unsplash, Imgur, or any other image hosting service
+                </p>
               </div>
 
               <div className="mb-4">
-                <label htmlFor="imageFile">Upload Image</label>
+                <label htmlFor="imageFile">Upload Image (Cloudinary)</label>
                 <input
                   type="file"
                   className="w-full"
@@ -289,6 +299,11 @@ export default function AdminProductEdit() {
                   onChange={uploadHandler}
                 />
                 {loadingUpload && <div>Uploading...</div>}
+                {!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME && (
+                  <p className="text-sm text-amber-600 mt-1">
+                    ⚠️ Cloudinary not configured. Please enter image URL directly above.
+                  </p>
+                )}
               </div>
 
               <div className="mb-4">
@@ -368,23 +383,29 @@ export default function AdminProductEdit() {
               </div>
 
               <div className="mb-4">
-                <label htmlFor="banner">Banner Image (for featured products)</label>
+                <label htmlFor="banner">Banner Image URL (for featured products)</label>
                 <input
                   type="text"
                   className="w-full"
                   id="banner"
+                  placeholder="Enter banner image URL (optional)"
                   {...register("banner")}
                 />
               </div>
 
               <div className="mb-4">
-                <label htmlFor="bannerFile">Upload Banner</label>
+                <label htmlFor="bannerFile">Upload Banner (Cloudinary)</label>
                 <input
                   type="file"
                   className="w-full"
                   id="bannerFile"
                   onChange={(e) => uploadHandler(e, "banner")}
                 />
+                {!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME && (
+                  <p className="text-sm text-amber-600 mt-1">
+                    ⚠️ Cloudinary not configured. Please enter banner URL directly above.
+                  </p>
+                )}
               </div>
 
               <div className="mb-4 flex justify-between">
