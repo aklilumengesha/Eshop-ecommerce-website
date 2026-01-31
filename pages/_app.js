@@ -1,5 +1,47 @@
 import "@/styles/globals.css";
+import { SessionProvider, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-export default function App({ Component, pageProps }) {
-  return <Component {...pageProps} />;
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}) {
+  return (
+    <SessionProvider session={session}>
+      <ToastContainer position="top-right" limit={1} />
+      {Component.auth ? (
+        <Auth adminOnly={Component.auth.adminOnly}>
+          <Component {...pageProps} />
+        </Auth>
+      ) : (
+        <Component {...pageProps} />
+      )}
+    </SessionProvider>
+  );
+}
+
+function Auth({ children, adminOnly }) {
+  const router = useRouter();
+  const { status, data: session } = useSession({
+    required: true,
+    onUnauthenticated() {
+      router.push("/unauthorized?message=Login required");
+    },
+  });
+
+  if (status === "loading") {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="spinner"></div>
+      </div>
+    );
+  }
+
+  if (adminOnly && !session.user.isAdmin) {
+    router.push("/unauthorized?message=Admin access required");
+  }
+
+  return children;
 }
