@@ -13,9 +13,10 @@ function Layout({ title, children }) {
   const router = useRouter();
   const { status, data: session } = useSession();
   const { state, dispatch } = useContext(Store);
-  const { cart, currency } = state;
+  const { cart, currency, wishlist } = state;
 
   const [cartItemsCount, setCartItemsCount] = useState(0);
+  const [wishlistItemsCount, setWishlistItemsCount] = useState(0);
   const [toggle, setToggle] = useState(false);
   const [query, setQuery] = useState("");
   const [exchangeRates, setExchangeRates] = useState(null);
@@ -24,6 +25,10 @@ function Layout({ title, children }) {
   useEffect(() => {
     setCartItemsCount(cart.cartItems.reduce((a, c) => a + c.quantity, 0));
   }, [cart.cartItems]);
+
+  useEffect(() => {
+    setWishlistItemsCount(wishlist.wishlistItems.length);
+  }, [wishlist.wishlistItems]);
 
   // Fetch exchange rates on mount
   useEffect(() => {
@@ -214,6 +219,12 @@ function Layout({ title, children }) {
                     </Menu.Item>
 
                     <Menu.Item>
+                      <DropdownLink href="/wishlist">
+                        Wishlist ({wishlistItemsCount})
+                      </DropdownLink>
+                    </Menu.Item>
+
+                    <Menu.Item>
                       <DropdownLink href="/order-history">
                         Order History
                       </DropdownLink>
@@ -239,6 +250,8 @@ function Layout({ title, children }) {
                   <span className="p-2">Login</span>
                 </Link>
               )}
+
+              {/* Cart */}
               <Link href="/cart">
                 <div className="flex items-center gap-2 relative">
                   <div className="relative">
@@ -376,6 +389,12 @@ function Layout({ title, children }) {
                   <Menu.Items className="absolute w-40 p-2 bg-white shadow-lg rounded-t-lg rounded-b-lg">
                     <Menu.Item>
                       <DropdownLink href="/profile">Profile</DropdownLink>
+                    </Menu.Item>
+
+                    <Menu.Item>
+                      <DropdownLink href="/wishlist">
+                        Wishlist ({wishlistItemsCount})
+                      </DropdownLink>
                     </Menu.Item>
 
                     <Menu.Item>

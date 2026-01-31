@@ -29,6 +29,10 @@ export default function ProductDetail(props) {
     );
   }
 
+  const isInWishlist = state.wishlist.wishlistItems.some(
+    (item) => item.slug === product.slug
+  );
+
   const addToCartHandler = async () => {
     const existItem = state.cart.cartItems.find(
       (item) => item.slug === product.slug
@@ -61,6 +65,16 @@ export default function ProductDetail(props) {
       router.reload();
     } catch (error) {
       toast.error(getError(error));
+    }
+  };
+
+  const toggleWishlistHandler = () => {
+    if (isInWishlist) {
+      dispatch({ type: "WISHLIST_REMOVE_ITEM", payload: product });
+      toast.success("Removed from wishlist");
+    } else {
+      dispatch({ type: "WISHLIST_ADD_ITEM", payload: product });
+      toast.success("Added to wishlist");
     }
   };
 
@@ -151,6 +165,30 @@ export default function ProductDetail(props) {
               disabled={product.countInStock === 0}
             >
               {product.countInStock === 0 ? 'Out of Stock' : 'Add to Cart'}
+            </button>
+            <button
+              className={`w-full mt-2 py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
+                isInWishlist
+                  ? 'bg-red-100 text-red-600 hover:bg-red-200'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+              onClick={toggleWishlistHandler}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill={isInWishlist ? "currentColor" : "none"}
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+                />
+              </svg>
+              {isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
             </button>
           </div>
         </div>

@@ -8,6 +8,9 @@ const initialState = {
   cart: Cookies.get("cart")
     ? JSON.parse(Cookies.get("cart"))
     : { cartItems: [], shippingAddress: {}, paymentMethod: "" },
+  wishlist: Cookies.get("wishlist")
+    ? JSON.parse(Cookies.get("wishlist"))
+    : { wishlistItems: [] },
   currency: getDefaultCurrency(),
 };
 
@@ -78,6 +81,37 @@ function reducer(state, action) {
       return {
         ...state,
         currency: action.payload,
+      };
+    }
+
+    case "WISHLIST_ADD_ITEM": {
+      const newItem = action.payload;
+      const existItem = state.wishlist.wishlistItems.find(
+        (item) => item.slug === newItem.slug
+      );
+      
+      if (existItem) {
+        return state; // Item already in wishlist
+      }
+      
+      const wishlistItems = [...state.wishlist.wishlistItems, newItem];
+      Cookies.set("wishlist", JSON.stringify({ wishlistItems }));
+      return { ...state, wishlist: { wishlistItems } };
+    }
+
+    case "WISHLIST_REMOVE_ITEM": {
+      const wishlistItems = state.wishlist.wishlistItems.filter(
+        (item) => item.slug !== action.payload.slug
+      );
+      Cookies.set("wishlist", JSON.stringify({ wishlistItems }));
+      return { ...state, wishlist: { wishlistItems } };
+    }
+
+    case "WISHLIST_CLEAR": {
+      Cookies.remove("wishlist");
+      return {
+        ...state,
+        wishlist: { wishlistItems: [] },
       };
     }
 
