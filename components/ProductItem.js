@@ -1,9 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useContext } from "react";
 import ReactStars from "react-rating-stars-component";
+import { Store } from "@/utils/Store";
+import { formatPrice } from "@/utils/currency";
 
 export default function ProductItem({ product, addToCartHandler }) {
+  const { state } = useContext(Store);
+  const { currency } = state;
+
   // Truncate product name to first 4 words
   const truncateName = (name, wordLimit = 4) => {
     const words = name.split(' ');
@@ -46,7 +51,7 @@ export default function ProductItem({ product, addToCartHandler }) {
             ({product.numReviews})
           </span>
         </div>
-        <p className="text-xl font-bold text-blue-600">${product.price}</p>
+        <p className="text-xl font-bold text-blue-600">{formatPrice(product.price, currency)}</p>
         <button
           className="primary-button mt-3"
           type="button"

@@ -1,5 +1,6 @@
 import Cookies from "js-cookie";
 import { createContext, useReducer } from "react";
+import { getDefaultCurrency } from "./currency";
 
 export const Store = createContext();
 
@@ -7,6 +8,7 @@ const initialState = {
   cart: Cookies.get("cart")
     ? JSON.parse(Cookies.get("cart"))
     : { cartItems: [], shippingAddress: {}, paymentMethod: "" },
+  currency: getDefaultCurrency(),
 };
 
 function reducer(state, action) {
@@ -69,6 +71,13 @@ function reducer(state, action) {
           ...state.cart,
           paymentMethod: action.payload,
         },
+      };
+    }
+
+    case "SET_CURRENCY": {
+      return {
+        ...state,
+        currency: action.payload,
       };
     }
 
