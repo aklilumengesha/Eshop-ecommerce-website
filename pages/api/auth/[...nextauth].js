@@ -13,7 +13,7 @@ export const authOptions = {
       if (user?._id) {
         token._id = user._id;
       }
-      if (user?.isAdmin) {
+      if (user?.isAdmin !== undefined) {
         token.isAdmin = user.isAdmin;
       }
       return token;
@@ -22,7 +22,7 @@ export const authOptions = {
       if (token?._id) {
         session.user._id = token._id;
       }
-      if (token?.isAdmin) {
+      if (token?.isAdmin !== undefined) {
         session.user.isAdmin = token.isAdmin;
       }
       return session;

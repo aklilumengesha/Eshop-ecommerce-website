@@ -11,8 +11,22 @@ cloudinary.v2.config({
 const handler = async (req, res) => {
   const session = await getServerSession(req, res, authOptions);
   
-  if (!session || !session.user.isAdmin) {
-    return res.status(401).send("Admin sign in required");
+  console.log("Cloudinary Sign - Session:", JSON.stringify(session, null, 2));
+  
+  if (!session) {
+    return res.status(401).json({ 
+      error: "Authentication required - please login",
+      hasSession: false 
+    });
+  }
+  
+  if (!session.user.isAdmin) {
+    return res.status(401).json({ 
+      error: "Admin access required - please ensure your account has admin privileges",
+      hasSession: true,
+      isAdmin: session.user.isAdmin,
+      userEmail: session.user.email
+    });
   }
 
   const timestamp = Math.round(new Date().getTime() / 1000);
