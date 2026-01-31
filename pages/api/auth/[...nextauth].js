@@ -2,6 +2,8 @@ import User from "@/models/User";
 import db from "@/utils/db";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import GitHubProvider from "next-auth/providers/github";
 import bcryptjs from "bcryptjs";
 
 export const authOptions = {
@@ -41,8 +43,44 @@ export const authOptions = {
       
       return session;
     },
+    async signIn({ user, account, profile }) {
+      // For OAuth providers (Google, GitHub)
+      if (account.provider === "google" || account.provider === "github") {
+        await db.connect();
+        
+        // Check if user exists
+        let dbUser = await User.findOne({ email: user.email });
+        
+        if (!dbUser) {
+          // Create new user for OAuth
+          dbUser = await User.create({
+            name: user.name,
+            email: user.email,
+            password: bcryptjs.hashSync(Math.random().toString(36), 12), // Random password for OAuth users
+            isAdmin: false,
+          });
+          console.log('Created new OAuth user:', dbUser.email);
+        }
+        
+        // Set user._id and isAdmin for JWT callback
+        user._id = dbUser._id.toString();
+        user.isAdmin = dbUser.isAdmin;
+        
+        await db.disconnect();
+      }
+      
+      return true;
+    },
   },
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
+    GitHubProvider({
+      clientId: process.env.GITHUB_ID,
+      clientSecret: process.env.GITHUB_SECRET,
+    }),
     CredentialsProvider({
       name: "Credentials",
       credentials: {

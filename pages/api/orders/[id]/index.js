@@ -1,9 +1,10 @@
 import Order from "@/models/Order";
 import db from "@/utils/db";
-import { getSession } from "next-auth/react";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../../auth/[...nextauth]";
 
 const handler = async (req, res) => {
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
   
   if (!session) {
     return res.status(401).send({ message: "Sign in required" });
