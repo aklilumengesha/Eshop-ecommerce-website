@@ -80,6 +80,7 @@ export default function Home({ featuredProducts = [], products = [], productsByC
               product={product}
               key={product.slug}
               addToCartHandler={addToCartHandler}
+              allProducts={products}
             />
           ))}
         </div>
@@ -117,6 +118,7 @@ export default function Home({ featuredProducts = [], products = [], productsByC
                 product={product}
                 key={product.slug}
                 addToCartHandler={addToCartHandler}
+                allProducts={products}
               />
             ))}
           </div>

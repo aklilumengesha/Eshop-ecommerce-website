@@ -211,6 +211,7 @@ export default function Search(props) {
                   product={product}
                   key={product.slug}
                   addToCartHandler={addToCartHandler}
+                  allProducts={products}
                 />
               ))}
             </div>
