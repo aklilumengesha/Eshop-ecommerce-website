@@ -81,9 +81,15 @@ export default function AdminProductEdit() {
     const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`;
     try {
       dispatch({ type: "UPLOAD_REQUEST" });
+      
+      console.log('=== UPLOAD HANDLER ===');
+      console.log('Requesting signature from /api/admin/cloudinary-sign');
+      
       const {
         data: { signature, timestamp },
       } = await axios.get("/api/admin/cloudinary-sign");
+      
+      console.log('✓ Signature received');
 
       const file = e.target.files[0];
       const formData = new FormData();
@@ -92,13 +98,18 @@ export default function AdminProductEdit() {
       formData.append("timestamp", timestamp);
       formData.append("api_key", process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY);
       
+      console.log('Uploading to Cloudinary...');
       const { data } = await axios.post(url, formData);
       
       dispatch({ type: "UPLOAD_SUCCESS" });
       setValue(imageField, data.secure_url);
       toast.success("File uploaded successfully");
+      console.log('✓ Upload complete:', data.secure_url);
     } catch (err) {
       dispatch({ type: "UPLOAD_FAIL", payload: getError(err) });
+      console.error('=== UPLOAD ERROR ===');
+      console.error('Error:', err);
+      console.error('Error response:', err.response?.data);
       toast.error(getError(err));
     }
   };

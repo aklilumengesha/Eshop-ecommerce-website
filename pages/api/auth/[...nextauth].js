@@ -10,21 +10,35 @@ export const authOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user?._id) {
+      // On initial sign in, add user data to token
+      if (user) {
         token._id = user._id;
-      }
-      if (user?.isAdmin !== undefined) {
         token.isAdmin = user.isAdmin;
+        console.log('=== JWT CALLBACK (Initial Login) ===');
+        console.log('Setting token with user data:', {
+          _id: user._id,
+          isAdmin: user.isAdmin,
+          email: user.email
+        });
       }
+      
+      console.log('=== JWT CALLBACK (Current Token) ===');
+      console.log('Token _id:', token._id);
+      console.log('Token isAdmin:', token.isAdmin);
+      
       return token;
     },
     async session({ session, token }) {
-      if (token?._id) {
-        session.user._id = token._id;
-      }
-      if (token?.isAdmin !== undefined) {
-        session.user.isAdmin = token.isAdmin;
-      }
+      session.user._id = token._id;
+      session.user.isAdmin = token.isAdmin;
+      
+      console.log('=== SESSION CALLBACK ===');
+      console.log('Session user:', {
+        email: session.user.email,
+        _id: session.user._id,
+        isAdmin: session.user.isAdmin
+      });
+      
       return session;
     },
   },
@@ -44,16 +58,33 @@ export const authOptions = {
         
         await db.disconnect();
         
+        console.log('=== LOGIN ATTEMPT ===');
+        console.log('Email:', credentials.email);
+        console.log('User found:', !!user);
+        
+        if (user) {
+          console.log('User details from DB:');
+          console.log('  - ID:', user._id.toString());
+          console.log('  - Name:', user.name);
+          console.log('  - Email:', user.email);
+          console.log('  - isAdmin:', user.isAdmin);
+          console.log('  - isAdmin type:', typeof user.isAdmin);
+        }
+        
         if (user && bcryptjs.compareSync(credentials.password, user.password)) {
-          return {
-            _id: user._id,
+          const userData = {
+            _id: user._id.toString(),
             name: user.name,
             email: user.email,
             image: "default",
             isAdmin: user.isAdmin,
           };
+          console.log('✓ Login successful!');
+          console.log('Returning user data:', JSON.stringify(userData, null, 2));
+          return userData;
         }
         
+        console.log('✗ Login failed: Invalid credentials');
         throw new Error("Invalid email or password");
       },
     }),
