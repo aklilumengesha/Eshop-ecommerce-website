@@ -4,6 +4,15 @@ import React from "react";
 import ReactStars from "react-rating-stars-component";
 
 export default function ProductItem({ product, addToCartHandler }) {
+  // Truncate product name to first 4 words
+  const truncateName = (name, wordLimit = 4) => {
+    const words = name.split(' ');
+    if (words.length > wordLimit) {
+      return words.slice(0, wordLimit).join(' ') + '...';
+    }
+    return name;
+  };
+
   return (
     <div className="card">
       <Link href={`/product/${product.slug}`}>
@@ -17,7 +26,12 @@ export default function ProductItem({ product, addToCartHandler }) {
       </Link>
       <div className="flex flex-col items-center justify-center p-5">
         <Link href={`/product/${product.slug}`}>
-          <h2 className="text-lg font-semibold">{product.name}</h2>
+          <h2 
+            className="text-lg font-semibold hover:text-blue-600 transition-colors" 
+            title={product.name}
+          >
+            {truncateName(product.name)}
+          </h2>
         </Link>
         <p className="mb-2 text-gray-600">{product.brand}</p>
         <div className="flex items-center mb-2">
