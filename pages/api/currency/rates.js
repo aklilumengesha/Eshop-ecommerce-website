@@ -1,11 +1,17 @@
 // API route to fetch real-time currency exchange rates
-// Uses exchangerate-api.com (free tier: 1,500 requests/month)
+// Uses exchangerate-api.com with API key for better reliability and higher limits
 
 const handler = async (req, res) => {
   try {
-    // Free API - no key required for basic usage
-    // Alternative: https://api.exchangerate-api.com/v4/latest/USD
-    const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+    const apiKey = process.env.EXCHANGERATE_API_KEY;
+    
+    if (!apiKey) {
+      throw new Error('EXCHANGERATE_API_KEY is not configured');
+    }
+
+    // Use the authenticated API endpoint with your API key
+    // Standard plan: 100,000 requests/month
+    const response = await fetch(`https://v6.exchangerate-api.com/v6/${apiKey}/latest/USD`);
     
     if (!response.ok) {
       throw new Error('Failed to fetch exchange rates');
@@ -13,12 +19,17 @@ const handler = async (req, res) => {
 
     const data = await response.json();
     
+    // Check for API errors
+    if (data.result === 'error') {
+      throw new Error(data['error-type'] || 'API returned an error');
+    }
+    
     // Extract only the currencies we support
     const supportedCurrencies = ['USD', 'EUR', 'GBP', 'JPY', 'CNY', 'INR', 'AUD', 'CAD'];
     const rates = {};
     
     supportedCurrencies.forEach(currency => {
-      rates[currency] = data.rates[currency] || 1;
+      rates[currency] = data.conversion_rates[currency] || 1;
     });
 
     // Cache for 1 hour
@@ -27,7 +38,8 @@ const handler = async (req, res) => {
     res.status(200).json({
       base: 'USD',
       rates: rates,
-      lastUpdated: data.date || new Date().toISOString(),
+      lastUpdated: data.time_last_update_utc || new Date().toISOString(),
+      nextUpdate: data.time_next_update_utc,
     });
   } catch (error) {
     console.error('Currency API Error:', error);
