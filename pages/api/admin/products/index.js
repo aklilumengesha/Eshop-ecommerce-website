@@ -32,7 +32,7 @@ const postHandler = async (req, res) => {
   const newProduct = new Product({
     name: req.body.name || "Sample Product",
     slug: req.body.slug || "sample-product-" + Math.random(),
-    image: req.body.image || "/images/sample.jpg",
+    image: req.body.image?.trim() || "/images/sample.jpg",
     price: req.body.price || 0,
     category: req.body.category || "Sample Category",
     brand: req.body.brand || "Sample Brand",
@@ -44,7 +44,7 @@ const postHandler = async (req, res) => {
     numReviews: 0,
     reviews: [],
     isFeatured: req.body.isFeatured || false,
-    banner: req.body.banner || "",
+    banner: req.body.banner?.trim() || "",
   });
 
   const product = await newProduct.save();
