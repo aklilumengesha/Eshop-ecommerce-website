@@ -9,11 +9,12 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { formatPrice } from "@/utils/currency";
 
 export default function PlaceOrder() {
   const router = useRouter();
   const { state, dispatch } = useContext(Store);
-  const { cart } = state;
+  const { cart, currency } = state;
   const { cartItems, shippingAddress, paymentMethod } = cart;
 
   const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
@@ -130,9 +131,9 @@ export default function PlaceOrder() {
                         </Link>
                       </td>
                       <td className="p-5 text-right">{item.quantity}</td>
-                      <td className="p-5 text-right">${item.price}</td>
+                      <td className="p-5 text-right">{formatPrice(item.price, currency)}</td>
                       <td className="p-5 text-right">
-                        ${item.quantity * item.price}
+                        {formatPrice(item.quantity * item.price, currency)}
                       </td>
                     </tr>
                   ))}
@@ -153,25 +154,25 @@ export default function PlaceOrder() {
                 <li>
                   <div className="flex justify-between">
                     <div>Items</div>
-                    <div>${itemsPrice}</div>
+                    <div>{formatPrice(itemsPrice, currency)}</div>
                   </div>
                 </li>
                 <li>
                   <div className="flex justify-between">
                     <div>Tax</div>
-                    <div>${taxPrice}</div>
+                    <div>{formatPrice(taxPrice, currency)}</div>
                   </div>
                 </li>
                 <li>
                   <div className="flex justify-between">
                     <div>Shipping</div>
-                    <div>${shippingPrice}</div>
+                    <div>{formatPrice(shippingPrice, currency)}</div>
                   </div>
                 </li>
                 <li className="border-t pt-2">
                   <div className="flex justify-between text-lg font-bold">
                     <div>Total</div>
-                    <div className="text-blue-600">${totalPrice}</div>
+                    <div className="text-blue-600">{formatPrice(totalPrice, currency)}</div>
                   </div>
                 </li>
                 <li>

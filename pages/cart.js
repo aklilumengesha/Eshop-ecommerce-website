@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { formatPrice } from "@/utils/currency";
 
 function Cart() {
   const router = useRouter();
@@ -15,6 +16,7 @@ function Cart() {
 
   const {
     cart: { cartItems },
+    currency,
   } = state;
 
   const removeItemHandler = (item) => {
@@ -93,7 +95,7 @@ function Cart() {
                         ))}
                       </select>
                     </td>
-                    <td className="p-5 text-right font-semibold">${item.price}</td>
+                    <td className="p-5 text-right font-semibold">{formatPrice(item.price, currency)}</td>
                     <td className="p-5 text-center">
                       <button
                         onClick={() => removeItemHandler(item)}
@@ -119,11 +121,13 @@ function Cart() {
                 <div className="flex justify-between text-2xl font-bold">
                   <div>Total</div>
                   <div className="text-blue-600">
-                    $
-                    {cartItems.reduce(
-                      (total, item) => total + item.quantity * item.price,
-                      0
-                    ).toFixed(2)}
+                    {formatPrice(
+                      cartItems.reduce(
+                        (total, item) => total + item.quantity * item.price,
+                        0
+                      ),
+                      currency
+                    )}
                   </div>
                 </div>
               </li>

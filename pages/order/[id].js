@@ -4,9 +4,11 @@ import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useContext } from "react";
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import { toast } from "react-toastify";
+import { Store } from "@/utils/Store";
+import { formatPrice } from "@/utils/currency";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -30,6 +32,8 @@ function reducer(state, action) {
 }
 
 function OrderDetail() {
+  const { state } = useContext(Store);
+  const { currency } = state;
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
   const { query } = useRouter();
   const orderId = query.id;
@@ -172,9 +176,9 @@ function OrderDetail() {
                         </Link>
                       </td>
                       <td className="p-5 text-right">{item.quantity}</td>
-                      <td className="p-5 text-right">${item.price}</td>
+                      <td className="p-5 text-right">{formatPrice(item.price, currency)}</td>
                       <td className="p-5 text-right">
-                        ${item.quantity * item.price}
+                        {formatPrice(item.quantity * item.price, currency)}
                       </td>
                     </tr>
                   ))}
@@ -190,25 +194,25 @@ function OrderDetail() {
                 <li>
                   <div className="flex justify-between">
                     <div>Items</div>
-                    <div>${order.itemsPrice}</div>
+                    <div>{formatPrice(order.itemsPrice, currency)}</div>
                   </div>
                 </li>
                 <li>
                   <div className="flex justify-between">
                     <div>Tax</div>
-                    <div>${order.taxPrice}</div>
+                    <div>{formatPrice(order.taxPrice, currency)}</div>
                   </div>
                 </li>
                 <li>
                   <div className="flex justify-between">
                     <div>Shipping</div>
-                    <div>${order.shippingPrice}</div>
+                    <div>{formatPrice(order.shippingPrice, currency)}</div>
                   </div>
                 </li>
                 <li className="border-t pt-2">
                   <div className="flex justify-between text-lg font-bold">
                     <div>Total</div>
-                    <div className="text-blue-600">${order.totalPrice}</div>
+                    <div className="text-blue-600">{formatPrice(order.totalPrice, currency)}</div>
                   </div>
                 </li>
                 {!order.isPaid && (

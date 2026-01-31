@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
 import DropdownLink from "./DropdownLink";
-import { currencies, setDefaultCurrency } from "@/utils/currency";
+import { currencyMetadata, setDefaultCurrency, fetchExchangeRates } from "@/utils/currency";
 
 function Layout({ title, children }) {
   const router = useRouter();
@@ -18,10 +18,27 @@ function Layout({ title, children }) {
   const [cartItemsCount, setCartItemsCount] = useState(0);
   const [toggle, setToggle] = useState(false);
   const [query, setQuery] = useState("");
+  const [exchangeRates, setExchangeRates] = useState(null);
+  const [ratesLoading, setRatesLoading] = useState(true);
 
   useEffect(() => {
     setCartItemsCount(cart.cartItems.reduce((a, c) => a + c.quantity, 0));
   }, [cart.cartItems]);
+
+  // Fetch exchange rates on mount
+  useEffect(() => {
+    const loadRates = async () => {
+      try {
+        const rates = await fetchExchangeRates();
+        setExchangeRates(rates);
+      } catch (error) {
+        console.error('Failed to load exchange rates:', error);
+      } finally {
+        setRatesLoading(false);
+      }
+    };
+    loadRates();
+  }, []);
 
   const logoutClickHandler = () => {
     Cookies.remove("cart");
@@ -136,7 +153,12 @@ function Layout({ title, children }) {
                   </svg>
                 </Menu.Button>
                 <Menu.Items className="absolute right-0 w-48 origin-top-right p-2 bg-white shadow-lg rounded-lg mt-2 max-h-96 overflow-y-auto">
-                  {Object.keys(currencies).map((code) => (
+                  {ratesLoading && (
+                    <div className="px-4 py-2 text-sm text-gray-500 text-center">
+                      Loading rates...
+                    </div>
+                  )}
+                  {Object.keys(currencyMetadata).map((code) => (
                     <Menu.Item key={code}>
                       {({ active }) => (
                         <button
@@ -148,15 +170,20 @@ function Layout({ title, children }) {
                           } w-full text-left px-4 py-2 rounded hover:bg-blue-50 transition-colors flex items-center justify-between`}
                         >
                           <span>
-                            {currencies[code].symbol} {code}
+                            {currencyMetadata[code].symbol} {code}
                           </span>
-                          <span className="text-sm text-gray-500">
-                            {currencies[code].name}
+                          <span className="text-xs text-gray-500">
+                            {currencyMetadata[code].name}
                           </span>
                         </button>
                       )}
                     </Menu.Item>
                   ))}
+                  {exchangeRates && !ratesLoading && (
+                    <div className="px-4 py-2 text-xs text-gray-400 text-center border-t mt-2">
+                      Live rates • Updated hourly
+                    </div>
+                  )}
                 </Menu.Items>
               </Menu>
 
