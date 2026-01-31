@@ -109,6 +109,9 @@ export default function Dashboard() {
             <li>
               <Link href="/admin/users">Users</Link>
             </li>
+            <li>
+              <Link href="/admin/reviews">Reviews</Link>
+            </li>
           </ul>
         </div>
         <div className="md:col-span-3">
