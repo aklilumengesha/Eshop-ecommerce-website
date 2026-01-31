@@ -37,12 +37,12 @@ export default function Home({ featuredProducts, products }) {
   return (
     <Layout title="Home">
       {featuredProducts.length > 0 && (
-        <div className="mb-8">
+        <div className="-mx-8 md:-mx-12 xl:-mx-14 mb-8">
           <Carousel showThumbs={false} autoPlay infiniteLoop>
             {featuredProducts.map((product) => (
               <div key={product._id} className="relative">
                 <Link href={`/product/${product.slug}`} passHref>
-                  <div className="relative w-full h-64 md:h-96 lg:h-[500px] overflow-hidden rounded-lg">
+                  <div className="relative w-full h-[calc(100vh-56px)] overflow-hidden">
                     <Image
                       src={product.banner}
                       alt={product.name}
@@ -50,13 +50,18 @@ export default function Home({ featuredProducts, products }) {
                       className="object-cover object-center"
                       priority
                     />
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
-                      <h2 className="text-white text-2xl md:text-3xl font-bold mb-2">
-                        {product.name}
-                      </h2>
-                      <p className="text-white text-lg md:text-xl font-semibold">
-                        ${product.price}
-                      </p>
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-8 md:p-12">
+                      <div className="max-w-7xl mx-auto px-8">
+                        <h2 className="text-white text-3xl md:text-5xl lg:text-6xl font-bold mb-3 md:mb-4">
+                          {product.name}
+                        </h2>
+                        <p className="text-white text-xl md:text-3xl lg:text-4xl font-semibold mb-4">
+                          ${product.price}
+                        </p>
+                        <button className="bg-white text-gray-900 px-6 py-3 md:px-8 md:py-4 rounded-lg font-semibold text-base md:text-lg hover:bg-gray-100 transition-colors">
+                          Shop Now
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </Link>
