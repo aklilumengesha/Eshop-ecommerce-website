@@ -1,4 +1,5 @@
-import { getSession } from "next-auth/react";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../auth/[...nextauth]";
 import cloudinary from "cloudinary";
 
 cloudinary.v2.config({
@@ -8,7 +9,7 @@ cloudinary.v2.config({
 });
 
 const handler = async (req, res) => {
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
   
   if (!session || !session.user.isAdmin) {
     return res.status(401).send("Admin sign in required");
