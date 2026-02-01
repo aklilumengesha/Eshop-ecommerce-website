@@ -8,10 +8,21 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 export default function ProductQuickView({ product, isOpen, closeModal, currency, onAddToCart }) {
   const [selectedImage, setSelectedImage] = useState(0);
   
+  // Debug logging
+  console.log('ProductQuickView - product:', {
+    name: product.name,
+    hasImages: !!product.images,
+    imagesIsArray: Array.isArray(product.images),
+    imagesLength: product.images?.length,
+    images: product.images
+  });
+  
   // Use product images array, fallback to main image if no gallery
   const productImages = product.images && product.images.length > 0 
     ? product.images 
     : [product.image];
+    
+  console.log('ProductQuickView - productImages:', productImages);
 
   return (
     <Transition appear show={isOpen} as={Fragment}>

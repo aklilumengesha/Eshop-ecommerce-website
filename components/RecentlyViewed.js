@@ -7,24 +7,71 @@ import { toast } from 'react-toastify';
 
 export default function RecentlyViewed({ currentProductSlug = null, limit = 12 }) {
   const [recentProducts, setRecentProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
 
   useEffect(() => {
-    // Get recently viewed products from localStorage
-    let products = getRecentlyViewed();
-    
-    // Filter out current product if on product detail page
-    if (currentProductSlug) {
-      products = products.filter(p => p.slug !== currentProductSlug);
-    }
-    
-    // Apply limit
-    if (limit) {
-      products = products.slice(0, limit);
-    }
-    
-    setRecentProducts(products);
+    const fetchRecentProducts = async () => {
+      try {
+        setLoading(true);
+        
+        // Get product IDs from localStorage
+        let storedProducts = getRecentlyViewed();
+        
+        console.log('Recently Viewed - Stored products from localStorage:', storedProducts);
+        
+        // Filter out current product if on product detail page
+        if (currentProductSlug) {
+          storedProducts = storedProducts.filter(p => p.slug !== currentProductSlug);
+        }
+        
+        // Apply limit
+        if (limit) {
+          storedProducts = storedProducts.slice(0, limit);
+        }
+        
+        // If no stored products, return empty
+        if (storedProducts.length === 0) {
+          setRecentProducts([]);
+          setLoading(false);
+          return;
+        }
+        
+        // Fetch fresh product data from API for each product
+        const productPromises = storedProducts.map(async (storedProduct) => {
+          try {
+            const { data } = await axios.get(`/api/products/${storedProduct._id}`);
+            console.log(`Fetched fresh data for ${data.name}:`, {
+              hasImages: !!data.images,
+              imagesCount: data.images?.length
+            });
+            return data;
+          } catch (error) {
+            console.error(`Error fetching product ${storedProduct._id}:`, error);
+            // Fallback to stored data if API fails
+            return storedProduct;
+          }
+        });
+        
+        const freshProducts = await Promise.all(productPromises);
+        
+        console.log('Recently Viewed - Fresh products from API:', freshProducts.map(p => ({
+          name: p.name,
+          hasImages: !!p.images,
+          imagesCount: p.images?.length
+        })));
+        
+        setRecentProducts(freshProducts);
+      } catch (error) {
+        console.error('Error loading recently viewed:', error);
+        setRecentProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecentProducts();
   }, [currentProductSlug, limit]);
 
   const addToCartHandler = async (product) => {
@@ -47,6 +94,27 @@ export default function RecentlyViewed({ currentProductSlug = null, limit = 12 }
   };
 
   // Don't render if no products
+  if (loading) {
+    return (
+      <div className="my-12">
+        <h2 className="text-2xl md:text-3xl font-bold mb-6">Recently Viewed</h2>
+        <div className="flex gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="flex-none w-72">
+              <div className="card animate-pulse">
+                <div className="bg-gray-200 h-64 rounded"></div>
+                <div className="p-5 space-y-3">
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   if (recentProducts.length === 0) {
     return null;
   }

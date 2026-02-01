@@ -38,12 +38,22 @@ export const addToRecentlyViewed = (product) => {
       (item) => item.slug !== product.slug
     );
     
+    // Ensure images is an array
+    const productImages = Array.isArray(product.images) ? product.images : [];
+    
+    console.log('Adding to recently viewed:', {
+      slug: product.slug,
+      hasImages: productImages.length > 0,
+      images: productImages
+    });
+    
     // Add product to the beginning of the array
     recentlyViewed.unshift({
       _id: product._id,
       slug: product.slug,
       name: product.name,
       image: product.image,
+      images: productImages,
       price: product.price,
       brand: product.brand,
       category: product.category,
@@ -59,6 +69,7 @@ export const addToRecentlyViewed = (product) => {
     }
     
     localStorage.setItem(STORAGE_KEY, JSON.stringify(recentlyViewed));
+    console.log('Saved to localStorage successfully');
   } catch (error) {
     console.error('Error saving recently viewed:', error);
   }

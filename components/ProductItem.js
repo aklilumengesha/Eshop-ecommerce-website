@@ -17,6 +17,24 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
   const [showQuickView, setShowQuickView] = useState(false);
   const [showSimilar, setShowSimilar] = useState(false);
 
+  // Ensure product has images array (for backward compatibility)
+  const productWithImages = {
+    ...product,
+    images: Array.isArray(product.images) && product.images.length > 0 
+      ? product.images 
+      : []
+  };
+
+  // Debug logging
+  console.log('ProductItem - product:', {
+    name: product.name,
+    hasImages: !!product.images,
+    imagesIsArray: Array.isArray(product.images),
+    imagesLength: product.images?.length,
+    images: product.images,
+    productWithImages: productWithImages.images
+  });
+
   // Real-time inventory
   const { stock, isConnected, isLowStock, isSoldOut } = useInventory(
     product._id,
@@ -236,7 +254,7 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
 
       {/* Modals */}
       <ProductQuickView
-        product={product}
+        product={productWithImages}
         isOpen={showQuickView}
         closeModal={() => setShowQuickView(false)}
         currency={currency}
@@ -244,7 +262,7 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
       />
 
       <SimilarProducts
-        product={product}
+        product={productWithImages}
         allProducts={allProducts || []}
         isOpen={showSimilar}
         closeModal={() => setShowSimilar(false)}
