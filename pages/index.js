@@ -4,6 +4,7 @@ import RecentlyViewed from "@/components/RecentlyViewed";
 import HeroCarousel from "@/components/HeroCarousel";
 import TrustBadges from "@/components/TrustBadges";
 import Testimonials from "@/components/Testimonials";
+import NewsletterSection from "@/components/NewsletterSection";
 import Product from "@/models/Product";
 import db from "@/utils/db";
 import { Store } from "@/utils/Store";
@@ -108,6 +109,9 @@ export default function Home({ featuredProducts = [], products = [], productsByC
           </div>
         </div>
       ))}
+
+      {/* Newsletter Subscription */}
+      <NewsletterSection />
     </Layout>
   );
 }
