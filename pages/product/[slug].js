@@ -14,11 +14,14 @@ import ReviewsSection from "@/components/ReviewsSection";
 import RecentlyViewed from "@/components/RecentlyViewed";
 import { addToRecentlyViewed } from "@/utils/recentlyViewed";
 import { useInventory } from "@/hooks/useInventory";
+import NotifyMeButton from "@/components/NotifyMeButton";
+import { useSession } from "next-auth/react";
 
 export default function ProductDetail(props) {
   const { product } = props;
   const { state, dispatch } = useContext(Store);
   const router = useRouter();
+  const { data: session } = useSession();
 
   // Real-time inventory tracking
   const { stock, isConnected, isLowStock, isSoldOut } = useInventory(
@@ -245,6 +248,18 @@ export default function ProductDetail(props) {
             >
               {isSoldOut ? 'Out of Stock' : 'Add to Cart'}
             </button>
+            
+            {/* Stock Notification Button */}
+            {isSoldOut && (
+              <div className="mt-2">
+                <NotifyMeButton 
+                  product={product} 
+                  userEmail={session?.user?.email}
+                  className="w-full"
+                />
+              </div>
+            )}
+            
             <button
               className={`w-full mt-2 py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
                 isInWishlist
