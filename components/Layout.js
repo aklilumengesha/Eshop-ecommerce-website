@@ -10,6 +10,7 @@ import DropdownLink from "./DropdownLink";
 import WelcomeBanner from "./WelcomeBanner";
 import ConnectionStatus from "./ConnectionStatus";
 import SearchAutocomplete from "./SearchAutocomplete";
+import Footer from "./Footer";
 import { currencyMetadata, setDefaultCurrency, fetchExchangeRates } from "@/utils/currency";
 
 function Layout({ title, children }) {
@@ -575,9 +576,7 @@ function Layout({ title, children }) {
           {children}
         </main>
 
-        <footer role="contentinfo" className="flex h-10 justify-center items-center shadow-inner">
-          <p>Copyright © 2026 eShop. All rights reserved.</p>
-        </footer>
+        <Footer />
 
         {/* WebSocket Connection Status */}
         <ConnectionStatus />
