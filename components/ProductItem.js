@@ -68,10 +68,11 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
 
   return (
     <>
-      <div 
+      <article 
         className="card relative"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        aria-label={`${product.name} product card`}
       >
         {/* Action Buttons - Top Right */}
         <div className="absolute top-3 right-3 z-10 flex flex-col gap-2">
@@ -79,7 +80,8 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
           <button
             onClick={toggleWishlistHandler}
             className="bg-white rounded-full p-2 shadow-md hover:shadow-lg transition-shadow"
-            aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+            aria-label={isInWishlist ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
+            aria-pressed={isInWishlist}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -103,7 +105,8 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
             className={`rounded-full p-2 shadow-md hover:shadow-lg transition-all ${
               isInCompare ? "bg-purple-600" : "bg-white"
             }`}
-            aria-label={isInCompare ? "Remove from comparison" : "Add to comparison"}
+            aria-label={isInCompare ? `Remove ${product.name} from comparison` : `Add ${product.name} to comparison`}
+            aria-pressed={isInCompare}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -125,7 +128,7 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
         <Link href={`/product/${product.slug}`}>
           <Image
             src={product.image}
-            alt={product.name}
+            alt={`${product.name} - ${product.brand}`}
             className="rounded shadow object-cover w-full h-64 object-top"
             height={400}
             width={400}
@@ -142,7 +145,7 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
             </h2>
           </Link>
           <p className="mb-2 text-gray-600">{product.brand}</p>
-          <div className="flex items-center mb-2">
+          <div className="flex items-center mb-2" role="img" aria-label={`Rated ${product.rating} out of 5 stars with ${product.numReviews} reviews`}>
             <ReactStars
               count={5}
               size={24}
@@ -150,7 +153,7 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
               value={product.rating}
               edit={false}
             />
-            <span className="ml-2 text-sm text-gray-600">
+            <span className="ml-2 text-sm text-gray-600" aria-hidden="true">
               ({product.numReviews})
             </span>
           </div>
@@ -174,6 +177,7 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
             type="button"
             onClick={() => addToCartHandler(product)}
             disabled={isSoldOut}
+            aria-label={isSoldOut ? `${product.name} is out of stock` : `Add ${product.name} to cart`}
           >
             {isSoldOut ? 'Out of Stock' : 'Add to cart'}
           </button>
@@ -212,6 +216,7 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
                 setShowQuickView(true);
               }}
               className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded-lg font-semibold transition-colors text-sm"
+              aria-label={`Quick view for ${product.name}`}
             >
               Quick View
             </button>
@@ -221,12 +226,13 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
                 setShowSimilar(true);
               }}
               className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded-lg font-semibold transition-colors text-sm"
+              aria-label={`View products similar to ${product.name}`}
             >
               Similar
             </button>
           </div>
         </div>
-      </div>
+      </article>
 
       {/* Modals */}
       <ProductQuickView

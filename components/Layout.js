@@ -81,10 +81,15 @@ function Layout({ title, children }) {
       </Head>
 
       <div className="flex min-h-screen flex-col justify-between">
+        {/* Skip to main content link for keyboard users */}
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
+
         {/* Welcome Banner - Above Header */}
         <WelcomeBanner />
         
-        <header>
+        <header role="banner">
           <nav className="flex h-14 justify-between shadow-md items-center px-16">
             <div className="flex items-center space-x-2">
               <svg
@@ -94,6 +99,7 @@ function Layout({ title, children }) {
                 strokeWidth="1.5"
                 stroke="currentColor"
                 className="w-6 h-6"
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -106,14 +112,18 @@ function Layout({ title, children }) {
               </Link>
             </div>
 
-            <div className="mx-auto hidden w-full max-w-md justify-center md:flex">
+            <div className="mx-auto hidden w-full max-w-md justify-center md:flex" role="search" aria-label="Product search">
               <SearchAutocomplete />
             </div>
 
             <div className="hidden md:flex items-center gap-4">
               {/* Font Size Controls */}
               <Menu as="div" className="relative inline-block z-10">
-                <Menu.Button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                <Menu.Button 
+                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  aria-label="Font size options"
+                >
+                  <span className="sr-only">Change font size</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -121,6 +131,7 @@ function Layout({ title, children }) {
                     strokeWidth="1.5"
                     stroke="currentColor"
                     className="w-6 h-6"
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"
@@ -182,8 +193,10 @@ function Layout({ title, children }) {
               <button
                 onClick={toggleDarkMode}
                 className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                aria-label="Toggle dark mode"
+                aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+                aria-pressed={darkMode}
               >
+                <span className="sr-only">{darkMode ? "Light mode" : "Dark mode"}</span>
                 {darkMode ? (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -192,6 +205,7 @@ function Layout({ title, children }) {
                     strokeWidth="1.5"
                     stroke="currentColor"
                     className="w-6 h-6 text-yellow-500"
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"
@@ -207,6 +221,7 @@ function Layout({ title, children }) {
                     strokeWidth="1.5"
                     stroke="currentColor"
                     className="w-6 h-6 text-gray-700"
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"
@@ -217,9 +232,41 @@ function Layout({ title, children }) {
                 )}
               </button>
 
+              {/* High Contrast Toggle */}
+              <button
+                onClick={toggleHighContrast}
+                className={`p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${
+                  highContrast ? 'bg-gray-200 dark:bg-gray-700' : ''
+                }`}
+                aria-label={highContrast ? "Disable high contrast mode" : "Enable high contrast mode"}
+                aria-pressed={highContrast}
+                title="High Contrast Mode"
+              >
+                <span className="sr-only">High contrast mode</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className={`w-6 h-6 ${highContrast ? 'text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'}`}
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9.348 14.651a3.75 3.75 0 010-5.303m5.304 0a3.75 3.75 0 010 5.303m-7.425 2.122a6.75 6.75 0 010-9.546m9.546 0a6.75 6.75 0 010 9.546M5.106 18.894c-3.808-3.808-3.808-9.98 0-13.789m13.788 0c3.808 3.808 3.808 9.981 0 13.79M12 12h.008v.007H12V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+                  />
+                </svg>
+              </button>
+
               {/* Currency Selector */}
               <Menu as="div" className="relative inline-block z-10">
-                <Menu.Button className="flex items-center gap-1 text-gray-700 hover:text-blue-600 transition-colors">
+                <Menu.Button 
+                  className="flex items-center gap-1 text-gray-700 hover:text-blue-600 transition-colors"
+                  aria-label="Select currency"
+                >
+                  <span className="sr-only">Currency selector</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -227,6 +274,7 @@ function Layout({ title, children }) {
                     strokeWidth="1.5"
                     stroke="currentColor"
                     className="w-5 h-5"
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"
@@ -402,7 +450,11 @@ function Layout({ title, children }) {
                 type="button"
                 className="mobile-menu-button"
                 onClick={() => setToggle(!toggle)}
+                aria-label="Toggle mobile menu"
+                aria-expanded={toggle}
+                aria-controls="mobile-menu"
               >
+                <span className="sr-only">Open main menu</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -410,6 +462,7 @@ function Layout({ title, children }) {
                   strokeWidth="1.5"
                   stroke="currentColor"
                   className="w-6 h-6"
+                  aria-hidden="true"
                 >
                   <path
                     strokeLinecap="round"
@@ -546,11 +599,11 @@ function Layout({ title, children }) {
           </div>
         </header>
 
-        <main className="container m-auto mt-4 xl:px-14 md:px-12 px-8">
+        <main id="main-content" role="main" className="container m-auto mt-4 xl:px-14 md:px-12 px-8">
           {children}
         </main>
 
-        <footer className="flex h-10 justify-center items-center shadow-inner">
+        <footer role="contentinfo" className="flex h-10 justify-center items-center shadow-inner">
           <p>Copyright © 2026 eShop. All rights reserved.</p>
         </footer>
 
