@@ -142,6 +142,9 @@ export default function AdminReviewsScreen() {
                 Reviews
               </Link>
             </li>
+            <li>
+              <Link href="/admin/coupons">Coupons</Link>
+            </li>
           </ul>
         </div>
         <div className="md:col-span-3">
