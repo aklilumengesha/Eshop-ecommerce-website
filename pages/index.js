@@ -6,6 +6,7 @@ import TrustBadges from "@/components/TrustBadges";
 import Testimonials from "@/components/Testimonials";
 import NewsletterSection from "@/components/NewsletterSection";
 import BrandShowcase from "@/components/BrandShowcase";
+import CategoryShowcase from "@/components/CategoryShowcase";
 import Product from "@/models/Product";
 import db from "@/utils/db";
 import { Store } from "@/utils/Store";
@@ -15,7 +16,7 @@ import { useContext } from "react";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { toast } from "react-toastify";
 
-export default function Home({ featuredProducts = [], products = [], productsByCategory = {}, brands = [] }) {
+export default function Home({ featuredProducts = [], products = [], productsByCategory = {}, brands = [], categories = [] }) {
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
 
@@ -50,6 +51,9 @@ export default function Home({ featuredProducts = [], products = [], productsByC
       
       {/* Trust Badges */}
       <TrustBadges />
+      
+      {/* Category Showcase */}
+      <CategoryShowcase categories={categories} />
       
       {/* Brand Showcase */}
       <BrandShowcase brands={brands} />
@@ -146,14 +150,40 @@ export async function getServerSideProps() {
         brandMap[brand] = {
           name: brand,
           productCount: 0,
+          logo: product.brandLogo || null,
         };
       }
       brandMap[brand].productCount++;
+      // Use the first non-empty logo found
+      if (!brandMap[brand].logo && product.brandLogo) {
+        brandMap[brand].logo = product.brandLogo;
+      }
     }
   });
   
   // Convert to array and sort by product count
   const brands = Object.values(brandMap).sort(
+    (a, b) => b.productCount - a.productCount
+  );
+  
+  // Extract and count categories
+  const categoryMap = {};
+  products.forEach((product) => {
+    const category = product.category;
+    if (category) {
+      if (!categoryMap[category]) {
+        categoryMap[category] = {
+          name: category,
+          productCount: 0,
+          image: null, // Can be extended to support category images
+        };
+      }
+      categoryMap[category].productCount++;
+    }
+  });
+  
+  // Convert to array and sort by product count
+  const categories = Object.values(categoryMap).sort(
     (a, b) => b.productCount - a.productCount
   );
   
@@ -168,6 +198,7 @@ export async function getServerSideProps() {
         return acc;
       }, {}),
       brands,
+      categories,
     },
   };
 }

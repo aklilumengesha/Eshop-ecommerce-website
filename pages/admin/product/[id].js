@@ -63,6 +63,7 @@ export default function AdminProductEdit() {
         setValue("image", data.image);
         setValue("category", data.category);
         setValue("brand", data.brand);
+        setValue("brandLogo", data.brandLogo || "");
         setValue("countInStock", data.countInStock);
         setValue("description", data.description);
         setValue("isFeatured", data.isFeatured);
@@ -132,6 +133,7 @@ export default function AdminProductEdit() {
     category,
     image,
     brand,
+    brandLogo,
     countInStock,
     description,
     isFeatured,
@@ -154,6 +156,7 @@ export default function AdminProductEdit() {
           category,
           image,
           brand,
+          brandLogo,
           countInStock,
           description,
           isFeatured,
@@ -174,6 +177,7 @@ export default function AdminProductEdit() {
           category,
           image,
           brand,
+          brandLogo,
           countInStock,
           description,
           isFeatured,
@@ -365,6 +369,20 @@ export default function AdminProductEdit() {
               </div>
 
               <div className="mb-4">
+                <label htmlFor="brandLogo">Brand Logo URL (Optional)</label>
+                <input
+                  type="text"
+                  className="w-full"
+                  id="brandLogo"
+                  placeholder="Enter brand logo URL (e.g., https://logo.clearbit.com/apple.com)"
+                  {...register("brandLogo")}
+                />
+                <p className="text-sm text-gray-600 mt-1">
+                  Optional: Add a brand logo URL to display in the brand showcase
+                </p>
+              </div>
+
+              <div className="mb-4">
                 <label htmlFor="countInStock">Count In Stock</label>
                 <input
                   type="number"
@@ -501,8 +519,6 @@ export default function AdminProductEdit() {
                     Shows discount badge (e.g., "50% OFF")
                   </p>
                 </div>
-              </div>
-                />
               </div>
 
               <div className="mb-4">

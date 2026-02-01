@@ -34,6 +34,11 @@ const productSchema = new mongoose.Schema(
       required: [true, "Please provide a brand"],
       trim: true,
     },
+    brandLogo: {
+      type: String,
+      default: "",
+      trim: true,
+    },
     rating: {
       type: Number,
       required: true,

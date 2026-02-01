@@ -46,6 +46,7 @@ const putHandler = async (req, res) => {
     product.category = req.body.category;
     product.image = req.body.image?.trim() || req.body.image;
     product.brand = req.body.brand;
+    product.brandLogo = req.body.brandLogo?.trim() || req.body.brandLogo || "";
     product.countInStock = newStock;
     product.description = req.body.description;
     product.isFeatured = req.body.isFeatured;

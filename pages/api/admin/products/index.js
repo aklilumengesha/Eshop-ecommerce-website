@@ -36,6 +36,7 @@ const postHandler = async (req, res) => {
     price: req.body.price || 0,
     category: req.body.category || "Sample Category",
     brand: req.body.brand || "Sample Brand",
+    brandLogo: req.body.brandLogo?.trim() || "",
     countInStock: req.body.countInStock || 0,
     description: req.body.description || "Sample description",
     rating: 0,

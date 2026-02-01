@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 
 export default function BrandShowcase({ brands = [] }) {
@@ -112,14 +113,26 @@ export default function BrandShowcase({ brands = [] }) {
               className="group"
             >
               <div className="bg-white rounded-lg p-6 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center justify-center h-32 border border-gray-200 hover:border-blue-400">
-                <div className="text-center">
-                  <h3 className="font-bold text-lg text-gray-800 group-hover:text-blue-600 transition-colors mb-1">
-                    {brand.name}
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    {brand.productCount} {brand.productCount === 1 ? 'product' : 'products'}
-                  </p>
-                </div>
+                {brand.logo ? (
+                  <div className="mb-2">
+                    <Image
+                      src={brand.logo}
+                      alt={brand.name}
+                      width={80}
+                      height={40}
+                      className="object-contain"
+                    />
+                  </div>
+                ) : (
+                  <div className="text-center">
+                    <h3 className="font-bold text-lg text-gray-800 group-hover:text-blue-600 transition-colors mb-1">
+                      {brand.name}
+                    </h3>
+                  </div>
+                )}
+                <p className="text-sm text-gray-500 text-center mt-auto">
+                  {brand.productCount} {brand.productCount === 1 ? 'product' : 'products'}
+                </p>
               </div>
             </Link>
           ))}
