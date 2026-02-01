@@ -7,17 +7,24 @@ import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import ReactStars from "react-rating-stars-component";
 import { toast } from "react-toastify";
 import ReviewsSection from "@/components/ReviewsSection";
 import RecentlyViewed from "@/components/RecentlyViewed";
 import { addToRecentlyViewed } from "@/utils/recentlyViewed";
+import { useInventory } from "@/hooks/useInventory";
 
 export default function ProductDetail(props) {
   const { product } = props;
   const { state, dispatch } = useContext(Store);
   const router = useRouter();
+
+  // Real-time inventory tracking
+  const { stock, isConnected, isLowStock, isSoldOut } = useInventory(
+    product?._id,
+    product?.countInStock || 0
+  );
 
   // Track product view in recently viewed
   useEffect(() => {
@@ -168,31 +175,42 @@ export default function ProductDetail(props) {
         </div>
         <div>
           <div className="card p-5">
+            <h2 className="mb-2 text-lg font-bold">Price</h2>
             <div className="mb-2 flex justify-between">
               <div className="font-semibold">Price</div>
               <div className="text-2xl font-bold text-blue-600">${product.price}</div>
             </div>
-            <div className="mb-2 flex justify-between">
+            <div className="mb-2 flex justify-between items-center">
               <div className="font-semibold">Status</div>
-              <div>
-                {product.countInStock > 0 ? (
-                  <span className="text-green-600 font-semibold">In Stock</span>
+              <div className="flex items-center gap-2">
+                {isConnected && (
+                  <span className="flex items-center gap-1 text-xs text-gray-500">
+                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    LIVE
+                  </span>
+                )}
+                {isSoldOut ? (
+                  <span className="text-red-600 font-semibold">Out of Stock</span>
+                ) : isLowStock ? (
+                  <span className="text-orange-600 font-semibold">
+                    Low Stock ({stock} left)
+                  </span>
                 ) : (
-                  <span className="text-red-600 font-semibold">Unavailable</span>
+                  <span className="text-green-600 font-semibold">In Stock</span>
                 )}
               </div>
             </div>
-            {product.countInStock > 0 && (
+            {stock > 0 && (
               <div className="mb-2 text-sm text-gray-600">
-                {product.countInStock} {product.countInStock === 1 ? 'item' : 'items'} available
+                {stock} {stock === 1 ? 'item' : 'items'} available
               </div>
             )}
             <button
               className="primary-button w-full"
               onClick={addToCartHandler}
-              disabled={product.countInStock === 0}
+              disabled={isSoldOut}
             >
-              {product.countInStock === 0 ? 'Out of Stock' : 'Add to Cart'}
+              {isSoldOut ? 'Out of Stock' : 'Add to Cart'}
             </button>
             <button
               className={`w-full mt-2 py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
