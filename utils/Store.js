@@ -11,6 +11,9 @@ const initialState = {
   wishlist: Cookies.get("wishlist")
     ? JSON.parse(Cookies.get("wishlist"))
     : { wishlistItems: [] },
+  compare: Cookies.get("compare")
+    ? JSON.parse(Cookies.get("compare"))
+    : { compareItems: [] },
   currency: getDefaultCurrency(),
 };
 
@@ -112,6 +115,42 @@ function reducer(state, action) {
       return {
         ...state,
         wishlist: { wishlistItems: [] },
+      };
+    }
+
+    case "COMPARE_ADD_ITEM": {
+      const newItem = action.payload;
+      const existItem = state.compare.compareItems.find(
+        (item) => item.slug === newItem.slug
+      );
+      
+      if (existItem) {
+        return state; // Item already in comparison
+      }
+
+      // Limit to 4 products for comparison
+      if (state.compare.compareItems.length >= 4) {
+        return state; // Maximum comparison limit reached
+      }
+      
+      const compareItems = [...state.compare.compareItems, newItem];
+      Cookies.set("compare", JSON.stringify({ compareItems }));
+      return { ...state, compare: { compareItems } };
+    }
+
+    case "COMPARE_REMOVE_ITEM": {
+      const compareItems = state.compare.compareItems.filter(
+        (item) => item.slug !== action.payload.slug
+      );
+      Cookies.set("compare", JSON.stringify({ compareItems }));
+      return { ...state, compare: { compareItems } };
+    }
+
+    case "COMPARE_CLEAR": {
+      Cookies.remove("compare");
+      return {
+        ...state,
+        compare: { compareItems: [] },
       };
     }
 

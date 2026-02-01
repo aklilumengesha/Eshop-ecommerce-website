@@ -13,10 +13,11 @@ function Layout({ title, children }) {
   const router = useRouter();
   const { status, data: session } = useSession();
   const { state, dispatch } = useContext(Store);
-  const { cart, currency, wishlist } = state;
+  const { cart, currency, wishlist, compare } = state;
 
   const [cartItemsCount, setCartItemsCount] = useState(0);
   const [wishlistItemsCount, setWishlistItemsCount] = useState(0);
+  const [compareItemsCount, setCompareItemsCount] = useState(0);
   const [toggle, setToggle] = useState(false);
   const [query, setQuery] = useState("");
   const [exchangeRates, setExchangeRates] = useState(null);
@@ -29,6 +30,10 @@ function Layout({ title, children }) {
   useEffect(() => {
     setWishlistItemsCount(wishlist.wishlistItems.length);
   }, [wishlist.wishlistItems]);
+
+  useEffect(() => {
+    setCompareItemsCount(compare.compareItems.length);
+  }, [compare.compareItems]);
 
   // Fetch exchange rates on mount
   useEffect(() => {
@@ -251,6 +256,32 @@ function Layout({ title, children }) {
                 </Link>
               )}
 
+              {/* Compare */}
+              <Link href="/compare">
+                <div className="flex items-center gap-2 relative">
+                  <div className="relative">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                      className="w-7 h-7"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
+                      />
+                    </svg>
+                    <span className="absolute -top-1.5 -right-1.5 rounded-full bg-purple-600 px-1.5 py-0.5 text-[10px] font-semibold text-white min-w-[18px] h-[18px] flex items-center justify-center leading-none">
+                      {compareItemsCount}
+                    </span>
+                  </div>
+                  <span className="text-base font-medium">Compare</span>
+                </div>
+              </Link>
+
               {/* Cart */}
               <Link href="/cart">
                 <div className="flex items-center gap-2 relative">
@@ -339,6 +370,32 @@ function Layout({ title, children }) {
             </form>
 
             <div className="flex flex-col space-y-3 mx-auto">
+              <div>
+                <Link href="/compare">
+                  <div className="flex items-center gap-2 relative">
+                    <div className="relative">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        className="w-7 h-7"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
+                        />
+                      </svg>
+                      <span className="absolute -top-1.5 -right-1.5 rounded-full bg-purple-600 px-1.5 py-0.5 text-[10px] font-semibold text-white min-w-[18px] h-[18px] flex items-center justify-center leading-none">
+                        {compareItemsCount}
+                      </span>
+                    </div>
+                    <span className="text-base font-medium">Compare</span>
+                  </div>
+                </Link>
+              </div>
               <div>
                 <Link href="/cart">
                   <div className="flex items-center gap-2 relative">
