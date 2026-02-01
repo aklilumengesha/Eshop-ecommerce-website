@@ -6,7 +6,6 @@ import TrustBadges from "@/components/TrustBadges";
 import Testimonials from "@/components/Testimonials";
 import NewsletterSection from "@/components/NewsletterSection";
 import BrandShowcase from "@/components/BrandShowcase";
-import CategoryShowcase from "@/components/CategoryShowcase";
 import Product from "@/models/Product";
 import db from "@/utils/db";
 import { Store } from "@/utils/Store";
@@ -16,7 +15,7 @@ import { useContext } from "react";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { toast } from "react-toastify";
 
-export default function Home({ featuredProducts = [], products = [], productsByCategory = {}, brands = [], categories = [] }) {
+export default function Home({ featuredProducts = [], products = [], productsByCategory = {}, brands = [] }) {
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
 
@@ -51,9 +50,6 @@ export default function Home({ featuredProducts = [], products = [], productsByC
       
       {/* Trust Badges */}
       <TrustBadges />
-      
-      {/* Category Showcase */}
-      <CategoryShowcase categories={categories} />
       
       {/* Brand Showcase */}
       <BrandShowcase brands={brands} />
@@ -166,27 +162,6 @@ export async function getServerSideProps() {
     (a, b) => b.productCount - a.productCount
   );
   
-  // Extract and count categories
-  const categoryMap = {};
-  products.forEach((product) => {
-    const category = product.category;
-    if (category) {
-      if (!categoryMap[category]) {
-        categoryMap[category] = {
-          name: category,
-          productCount: 0,
-          image: null, // Can be extended to support category images
-        };
-      }
-      categoryMap[category].productCount++;
-    }
-  });
-  
-  // Convert to array and sort by product count
-  const categories = Object.values(categoryMap).sort(
-    (a, b) => b.productCount - a.productCount
-  );
-  
   await db.disconnect();
   
   return {
@@ -198,7 +173,6 @@ export async function getServerSideProps() {
         return acc;
       }, {}),
       brands,
-      categories,
     },
   };
 }
