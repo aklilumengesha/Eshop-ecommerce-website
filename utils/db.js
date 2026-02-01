@@ -48,6 +48,12 @@ function convertDocToObj(doc) {
   doc._id = doc._id.toString();
   doc.createdAt = doc.createdAt.toString();
   doc.updatedAt = doc.updatedAt.toString();
+  
+  // Convert flashSaleEndDate if it exists
+  if (doc.flashSaleEndDate) {
+    doc.flashSaleEndDate = doc.flashSaleEndDate.toString();
+  }
+  
   return doc;
 }
 
