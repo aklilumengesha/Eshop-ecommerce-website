@@ -2,6 +2,8 @@ import Layout from "@/components/Layout";
 import ProductItem from "@/components/ProductItem";
 import RecentlyViewed from "@/components/RecentlyViewed";
 import HeroCarousel from "@/components/HeroCarousel";
+import TrustBadges from "@/components/TrustBadges";
+import Testimonials from "@/components/Testimonials";
 import Product from "@/models/Product";
 import db from "@/utils/db";
 import { Store } from "@/utils/Store";
@@ -44,6 +46,9 @@ export default function Home({ featuredProducts = [], products = [], productsByC
         />
       )}
       
+      {/* Trust Badges */}
+      <TrustBadges />
+      
       {/* Latest Products */}
       <div className="mb-12">
         <h1 className="text-3xl font-bold mb-6">Latest Products</h1>
@@ -61,6 +66,9 @@ export default function Home({ featuredProducts = [], products = [], productsByC
 
       {/* Recently Viewed Products */}
       <RecentlyViewed limit={8} />
+
+      {/* Customer Testimonials */}
+      <Testimonials />
 
       {/* Products by Category */}
       {productsByCategory && Object.keys(productsByCategory).map((category) => (
