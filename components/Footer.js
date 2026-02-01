@@ -180,21 +180,10 @@ export default function Footer() {
       {/* Bottom Bar */}
       <div className="border-t border-gray-800">
         <div className="container mx-auto px-8 py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-gray-400 text-sm text-center md:text-left">
-              © 2026 eShop. All rights reserved. | Built with ❤️ for shoppers
+          <div className="flex flex-col items-center gap-3">
+            <p className="text-gray-400 text-sm text-center">
+              © 2026 eShop. All rights reserved. | Developed by Aklilu Mengesha
             </p>
-            <div className="flex flex-wrap justify-center gap-6 text-sm">
-              <a href="#" className="hover:text-blue-400 transition-colors">
-                Privacy Policy
-              </a>
-              <a href="#" className="hover:text-blue-400 transition-colors">
-                Terms of Service
-              </a>
-              <a href="#" className="hover:text-blue-400 transition-colors">
-                Cookie Policy
-              </a>
-            </div>
           </div>
         </div>
       </div>
