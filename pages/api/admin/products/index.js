@@ -33,6 +33,7 @@ const postHandler = async (req, res) => {
     name: req.body.name || "Sample Product",
     slug: req.body.slug || "sample-product-" + Math.random(),
     image: req.body.image?.trim() || "/images/sample.jpg",
+    images: req.body.images || [],
     price: req.body.price || 0,
     category: req.body.category || "Sample Category",
     brand: req.body.brand || "Sample Brand",

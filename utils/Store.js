@@ -16,6 +16,7 @@ const initialState = {
     : { compareItems: [] },
   currency: getDefaultCurrency(),
   darkMode: Cookies.get("darkMode") === "ON",
+  fontSize: Cookies.get("fontSize") || "medium", // small, medium, large
 };
 
 function reducer(state, action) {
@@ -188,6 +189,11 @@ function reducer(state, action) {
     case "DARK_MODE_OFF": {
       Cookies.set("darkMode", "OFF");
       return { ...state, darkMode: false };
+    }
+
+    case "SET_FONT_SIZE": {
+      Cookies.set("fontSize", action.payload);
+      return { ...state, fontSize: action.payload };
     }
 
     default:

@@ -16,7 +16,7 @@ function Layout({ title, children }) {
   const router = useRouter();
   const { status, data: session } = useSession();
   const { state, dispatch } = useContext(Store);
-  const { cart, currency, wishlist, compare, darkMode } = state;
+  const { cart, currency, wishlist, compare, darkMode, fontSize } = state;
 
   const [cartItemsCount, setCartItemsCount] = useState(0);
   const [wishlistItemsCount, setWishlistItemsCount] = useState(0);
@@ -67,6 +67,10 @@ function Layout({ title, children }) {
     dispatch({ type: darkMode ? "DARK_MODE_OFF" : "DARK_MODE_ON" });
   };
 
+  const changeFontSize = (size) => {
+    dispatch({ type: "SET_FONT_SIZE", payload: size });
+  };
+
   return (
     <>
       <Head>
@@ -107,6 +111,73 @@ function Layout({ title, children }) {
             </div>
 
             <div className="hidden md:flex items-center gap-4">
+              {/* Font Size Controls */}
+              <Menu as="div" className="relative inline-block z-10">
+                <Menu.Button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
+                    />
+                  </svg>
+                </Menu.Button>
+                <Menu.Items className="absolute right-0 w-40 origin-top-right p-2 bg-white dark:bg-gray-800 shadow-lg rounded-lg mt-2">
+                  <div className="px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
+                    Font Size
+                  </div>
+                  <Menu.Item>
+                    {({ active }) => (
+                      <button
+                        onClick={() => changeFontSize('small')}
+                        className={`${
+                          active ? "bg-blue-50 dark:bg-blue-900/20" : ""
+                        } ${
+                          fontSize === 'small' ? "bg-blue-100 dark:bg-blue-900/30 font-semibold" : ""
+                        } w-full text-left px-4 py-2 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-sm`}
+                      >
+                        Small
+                      </button>
+                    )}
+                  </Menu.Item>
+                  <Menu.Item>
+                    {({ active }) => (
+                      <button
+                        onClick={() => changeFontSize('medium')}
+                        className={`${
+                          active ? "bg-blue-50 dark:bg-blue-900/20" : ""
+                        } ${
+                          fontSize === 'medium' ? "bg-blue-100 dark:bg-blue-900/30 font-semibold" : ""
+                        } w-full text-left px-4 py-2 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-base`}
+                      >
+                        Medium
+                      </button>
+                    )}
+                  </Menu.Item>
+                  <Menu.Item>
+                    {({ active }) => (
+                      <button
+                        onClick={() => changeFontSize('large')}
+                        className={`${
+                          active ? "bg-blue-50 dark:bg-blue-900/20" : ""
+                        } ${
+                          fontSize === 'large' ? "bg-blue-100 dark:bg-blue-900/30 font-semibold" : ""
+                        } w-full text-left px-4 py-2 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-lg`}
+                      >
+                        Large
+                      </button>
+                    )}
+                  </Menu.Item>
+                </Menu.Items>
+              </Menu>
+
               {/* Dark Mode Toggle */}
               <button
                 onClick={toggleDarkMode}

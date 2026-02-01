@@ -49,7 +49,10 @@ export default function AdminProductEdit() {
     handleSubmit,
     formState: { errors },
     setValue,
+    watch,
   } = useForm();
+
+  const images = watch("images") || [];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,6 +64,7 @@ export default function AdminProductEdit() {
         setValue("slug", data.slug);
         setValue("price", data.price);
         setValue("image", data.image);
+        setValue("images", data.images || []);
         setValue("category", data.category);
         setValue("brand", data.brand);
         setValue("brandLogo", data.brandLogo || "");
@@ -132,6 +136,7 @@ export default function AdminProductEdit() {
     price,
     category,
     image,
+    images,
     brand,
     brandLogo,
     countInStock,
@@ -155,6 +160,7 @@ export default function AdminProductEdit() {
           price,
           category,
           image,
+          images: images || [],
           brand,
           brandLogo,
           countInStock,
@@ -176,6 +182,7 @@ export default function AdminProductEdit() {
           price,
           category,
           image,
+          images: images || [],
           brand,
           brandLogo,
           countInStock,
@@ -205,6 +212,22 @@ export default function AdminProductEdit() {
       dispatch({ type: "UPDATE_FAIL", payload: getError(err) });
       toast.error(getError(err));
     }
+  };
+
+  const addImageUrl = () => {
+    const currentImages = images || [];
+    setValue("images", [...currentImages, ""]);
+  };
+
+  const removeImageUrl = (index) => {
+    const currentImages = images || [];
+    setValue("images", currentImages.filter((_, i) => i !== index));
+  };
+
+  const updateImageUrl = (index, value) => {
+    const currentImages = [...images];
+    currentImages[index] = value;
+    setValue("images", currentImages);
   };
 
   return (
@@ -334,6 +357,50 @@ export default function AdminProductEdit() {
                 {!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME && (
                   <p className="text-sm text-amber-600 mt-1">
                     ⚠️ Cloudinary not configured. Please enter image URL directly above.
+                  </p>
+                )}
+              </div>
+
+              {/* Additional Images Gallery */}
+              <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                <div className="flex justify-between items-center mb-3">
+                  <label className="font-semibold">Additional Images (for Quick View Gallery)</label>
+                  <button
+                    type="button"
+                    onClick={addImageUrl}
+                    className="text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition-colors"
+                  >
+                    + Add Image
+                  </button>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                  Add multiple product images to display in the quick view gallery
+                </p>
+                
+                {images && images.length > 0 ? (
+                  <div className="space-y-2">
+                    {images.map((img, index) => (
+                      <div key={index} className="flex gap-2">
+                        <input
+                          type="text"
+                          value={img}
+                          onChange={(e) => updateImageUrl(index, e.target.value)}
+                          placeholder={`Image URL ${index + 1}`}
+                          className="flex-1"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeImageUrl(index)}
+                          className="text-red-600 hover:text-red-800 px-3 py-2 rounded hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+                    No additional images added. Click "Add Image" to add gallery images.
                   </p>
                 )}
               </div>

@@ -8,12 +8,10 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 export default function ProductQuickView({ product, isOpen, closeModal, currency, onAddToCart }) {
   const [selectedImage, setSelectedImage] = useState(0);
   
-  // Mock multiple images - in real app, these would come from product data
-  const productImages = [
-    product.image,
-    product.image, // You can add more images here
-    product.image,
-  ];
+  // Use product images array, fallback to main image if no gallery
+  const productImages = product.images && product.images.length > 0 
+    ? product.images 
+    : [product.image];
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -67,26 +65,28 @@ export default function ProductQuickView({ product, isOpen, closeModal, currency
                     </div>
                     
                     {/* Thumbnail Gallery */}
-                    <div className="grid grid-cols-3 gap-2">
-                      {productImages.map((img, index) => (
-                        <button
-                          key={index}
-                          onClick={() => setSelectedImage(index)}
-                          className={`relative h-24 rounded-lg overflow-hidden border-2 transition-all ${
-                            selectedImage === index
-                              ? "border-blue-600"
-                              : "border-gray-200 hover:border-gray-400"
-                          }`}
-                        >
-                          <Image
-                            src={img}
-                            alt={`${product.name} view ${index + 1}`}
-                            fill
-                            className="object-contain"
-                          />
-                        </button>
-                      ))}
-                    </div>
+                    {productImages.length > 1 && (
+                      <div className="grid grid-cols-4 gap-2">
+                        {productImages.map((img, index) => (
+                          <button
+                            key={index}
+                            onClick={() => setSelectedImage(index)}
+                            className={`relative h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                              selectedImage === index
+                                ? "border-blue-600"
+                                : "border-gray-200 hover:border-gray-400"
+                            }`}
+                          >
+                            <Image
+                              src={img}
+                              alt={`${product.name} view ${index + 1}`}
+                              fill
+                              className="object-contain"
+                            />
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* Product Details */}

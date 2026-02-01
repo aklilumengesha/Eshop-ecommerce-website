@@ -35,7 +35,7 @@ export default function App({
 
 function DarkModeHandler() {
   const { state } = useContext(Store);
-  const { darkMode } = state;
+  const { darkMode, fontSize } = state;
 
   useEffect(() => {
     if (darkMode) {
@@ -44,6 +44,20 @@ function DarkModeHandler() {
       document.documentElement.classList.remove('dark');
     }
   }, [darkMode]);
+
+  useEffect(() => {
+    // Remove all font size classes
+    document.documentElement.classList.remove('text-sm', 'text-base', 'text-lg');
+    
+    // Add the appropriate font size class
+    if (fontSize === 'small') {
+      document.documentElement.classList.add('text-sm');
+    } else if (fontSize === 'large') {
+      document.documentElement.classList.add('text-lg');
+    } else {
+      document.documentElement.classList.add('text-base');
+    }
+  }, [fontSize]);
 
   return null;
 }
