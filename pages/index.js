@@ -1,5 +1,6 @@
 import Layout from "@/components/Layout";
 import ProductItem from "@/components/ProductItem";
+import RecentlyViewed from "@/components/RecentlyViewed";
 import Product from "@/models/Product";
 import db from "@/utils/db";
 import { Store } from "@/utils/Store";
@@ -85,6 +86,9 @@ export default function Home({ featuredProducts = [], products = [], productsByC
           ))}
         </div>
       </div>
+
+      {/* Recently Viewed Products */}
+      <RecentlyViewed limit={8} />
 
       {/* Products by Category */}
       {productsByCategory && Object.keys(productsByCategory).map((category) => (

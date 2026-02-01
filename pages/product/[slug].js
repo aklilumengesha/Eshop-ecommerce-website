@@ -11,6 +11,7 @@ import React, { useContext, useEffect } from "react";
 import ReactStars from "react-rating-stars-component";
 import { toast } from "react-toastify";
 import ReviewsSection from "@/components/ReviewsSection";
+import RecentlyViewed from "@/components/RecentlyViewed";
 import { addToRecentlyViewed } from "@/utils/recentlyViewed";
 
 export default function ProductDetail(props) {
@@ -247,6 +248,9 @@ export default function ProductDetail(props) {
 
       {/* Reviews Section */}
       <ReviewsSection productId={product._id} />
+
+      {/* Recently Viewed Products */}
+      <RecentlyViewed currentProductSlug={product.slug} limit={8} />
     </Layout>
   );
 }
