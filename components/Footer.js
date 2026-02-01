@@ -83,30 +83,35 @@ export default function Footer() {
           {/* Quick Links */}
           <div>
             <h4 className="text-white font-bold text-lg mb-4">Quick Links</h4>
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               <li>
-                <Link href="/" className="hover:text-blue-400 transition-colors flex items-center gap-2">
-                  <span>→</span> Home
+                <Link href="/" className="hover:text-blue-400 transition-colors">
+                  Home
                 </Link>
               </li>
               <li>
-                <Link href="/search" className="hover:text-blue-400 transition-colors flex items-center gap-2">
-                  <span>→</span> Shop
+                <Link href="/search" className="hover:text-blue-400 transition-colors">
+                  Shop
                 </Link>
               </li>
               <li>
-                <Link href="/wishlist" className="hover:text-blue-400 transition-colors flex items-center gap-2">
-                  <span>→</span> Wishlist
+                <Link href="/wishlist" className="hover:text-blue-400 transition-colors">
+                  Wishlist
                 </Link>
               </li>
               <li>
-                <Link href="/compare" className="hover:text-blue-400 transition-colors flex items-center gap-2">
-                  <span>→</span> Compare
+                <Link href="/compare" className="hover:text-blue-400 transition-colors">
+                  Compare
                 </Link>
               </li>
               <li>
-                <Link href="/order-history" className="hover:text-blue-400 transition-colors flex items-center gap-2">
-                  <span>→</span> Order History
+                <Link href="/order-history" className="hover:text-blue-400 transition-colors">
+                  Order History
+                </Link>
+              </li>
+              <li>
+                <Link href="/profile" className="hover:text-blue-400 transition-colors">
+                  My Account
                 </Link>
               </li>
             </ul>
@@ -115,31 +120,21 @@ export default function Footer() {
           {/* Customer Service */}
           <div>
             <h4 className="text-white font-bold text-lg mb-4">Customer Service</h4>
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               <li>
-                <a href="#" className="hover:text-blue-400 transition-colors flex items-center gap-2">
-                  <span>→</span> Contact Us
-                </a>
+                <Link href="/cart" className="hover:text-blue-400 transition-colors">
+                  Shopping Cart
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-400 transition-colors flex items-center gap-2">
-                  <span>→</span> Shipping Info
-                </a>
+                <Link href="/shipping" className="hover:text-blue-400 transition-colors">
+                  Shipping
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-400 transition-colors flex items-center gap-2">
-                  <span>→</span> Returns & Exchanges
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-blue-400 transition-colors flex items-center gap-2">
-                  <span>→</span> FAQs
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-blue-400 transition-colors flex items-center gap-2">
-                  <span>→</span> Track Order
-                </a>
+                <Link href="/order-history" className="hover:text-blue-400 transition-colors">
+                  Track Order
+                </Link>
               </li>
             </ul>
           </div>
