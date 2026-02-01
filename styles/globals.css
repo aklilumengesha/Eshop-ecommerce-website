@@ -8,10 +8,11 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200;
 }
 
 a {
-  @apply text-primary-600 hover:text-primary-700;
+  @apply text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300;
   text-decoration: none;
 }
 
@@ -25,7 +26,7 @@ a {
 
 /* Card Styles */
 .card {
-  @apply mb-5 block rounded-lg border border-gray-200 shadow-md bg-white;
+  @apply mb-5 block rounded-lg border border-gray-200 dark:border-gray-700 shadow-md bg-white dark:bg-gray-800;
 }
 
 /* Button Styles */
@@ -46,66 +47,66 @@ a {
 }
 
 .default-button {
-  @apply rounded-lg bg-gray-100 py-2.5 px-5 text-gray-700 shadow-md outline-none hover:bg-gray-200 active:bg-gray-300 font-semibold transition-colors duration-200;
+  @apply rounded-lg bg-gray-100 dark:bg-gray-700 py-2.5 px-5 text-gray-700 dark:text-gray-200 shadow-md outline-none hover:bg-gray-200 dark:hover:bg-gray-600 active:bg-gray-300 dark:active:bg-gray-500 font-semibold transition-colors duration-200;
 }
 
 .outline-button {
-  @apply rounded-lg border-2 border-primary-600 py-2 px-5 text-primary-600 outline-none hover:bg-primary-50 active:bg-primary-100 font-semibold transition-colors duration-200;
+  @apply rounded-lg border-2 border-primary-600 dark:border-primary-400 py-2 px-5 text-primary-600 dark:text-primary-400 outline-none hover:bg-primary-50 dark:hover:bg-primary-900/20 active:bg-primary-100 dark:active:bg-primary-900/30 font-semibold transition-colors duration-200;
 }
 
 /* Alert Styles */
 .alert-error {
-  @apply my-3 rounded-lg bg-danger-50 border border-danger-200 p-4 text-danger-700 font-medium;
+  @apply my-3 rounded-lg bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 p-4 text-danger-700 dark:text-danger-300 font-medium;
 }
 
 .alert-success {
-  @apply my-3 rounded-lg bg-success-50 border border-success-200 p-4 text-success-700 font-medium;
+  @apply my-3 rounded-lg bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 p-4 text-success-700 dark:text-success-300 font-medium;
 }
 
 .alert-warning {
-  @apply my-3 rounded-lg bg-warning-50 border border-warning-200 p-4 text-warning-700 font-medium;
+  @apply my-3 rounded-lg bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 p-4 text-warning-700 dark:text-warning-300 font-medium;
 }
 
 .alert-info {
-  @apply my-3 rounded-lg bg-info-50 border border-info-200 p-4 text-info-700 font-medium;
+  @apply my-3 rounded-lg bg-info-50 dark:bg-info-900/20 border border-info-200 dark:border-info-800 p-4 text-info-700 dark:text-info-300 font-medium;
 }
 
 /* Badge Styles */
 .badge-primary {
-  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary-100 text-primary-800;
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300;
 }
 
 .badge-secondary {
-  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-secondary-100 text-secondary-800;
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-secondary-100 dark:bg-secondary-900/30 text-secondary-800 dark:text-secondary-300;
 }
 
 .badge-success {
-  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-success-100 text-success-800;
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-success-100 dark:bg-success-900/30 text-success-800 dark:text-success-300;
 }
 
 .badge-danger {
-  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-danger-100 text-danger-800;
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-danger-100 dark:bg-danger-900/30 text-danger-800 dark:text-danger-300;
 }
 
 .badge-warning {
-  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-warning-100 text-warning-800;
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-warning-100 dark:bg-warning-900/30 text-warning-800 dark:text-warning-300;
 }
 
 .badge-info {
-  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-info-100 text-info-800;
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-info-100 dark:bg-info-900/30 text-info-800 dark:text-info-300;
 }
 
 /* Form Input Styles */
 input,
 select,
 textarea {
-  @apply rounded-lg border border-gray-300 p-2.5 outline-none ring-primary-300 focus:ring-2 focus:border-primary-500 transition-all duration-200;
+  @apply rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-2.5 outline-none ring-primary-300 dark:ring-primary-600 focus:ring-2 focus:border-primary-500 dark:focus:border-primary-400 transition-all duration-200;
 }
 
 input:disabled,
 select:disabled,
 textarea:disabled {
-  @apply bg-gray-100 text-gray-500 cursor-not-allowed;
+  @apply bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed;
 }
 
 /* Loading Spinner */
@@ -126,7 +127,7 @@ textarea:disabled {
 
 /* Dropdown Styles */
 .dropdown-link {
-  @apply flex p-2 hover:bg-gray-100 rounded-lg transition-colors duration-150;
+  @apply flex p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors duration-150;
 }
 
 /* Gradient Backgrounds */
@@ -157,15 +158,15 @@ textarea:disabled {
 
 /* Stock Status Styles */
 .in-stock {
-  @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-success-100 text-success-700;
+  @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-300;
 }
 
 .low-stock {
-  @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-warning-100 text-warning-700;
+  @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-warning-100 dark:bg-warning-900/30 text-warning-700 dark:text-warning-300;
 }
 
 .out-of-stock {
-  @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-danger-100 text-danger-700;
+  @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-danger-100 dark:bg-danger-900/30 text-danger-700 dark:text-danger-300;
 }
 
 /* Hover Effects */
@@ -179,16 +180,16 @@ textarea:disabled {
 
 /* Section Styles */
 .section-title {
-  @apply text-2xl md:text-3xl font-bold text-gray-900 mb-6;
+  @apply text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6;
 }
 
 .section-subtitle {
-  @apply text-lg text-gray-600 mb-4;
+  @apply text-lg text-gray-600 dark:text-gray-400 mb-4;
 }
 
 /* Trust Badge Styles */
 .trust-badge {
-  @apply flex flex-col items-center p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200;
+  @apply flex flex-col items-center p-4 rounded-lg bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200;
 }
 
 /* Smooth Transitions */
@@ -198,7 +199,7 @@ textarea:disabled {
 
 /* Focus Visible (Accessibility) */
 *:focus-visible {
-  @apply outline-2 outline-offset-2 outline-primary-500;
+  @apply outline-2 outline-offset-2 outline-primary-500 dark:outline-primary-400;
 }
 
 /* Custom Scrollbar */
@@ -208,18 +209,18 @@ textarea:disabled {
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-gray-100;
+  @apply bg-gray-100 dark:bg-gray-800;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 rounded-full hover:bg-gray-400;
+  @apply bg-gray-300 dark:bg-gray-600 rounded-full hover:bg-gray-400 dark:hover:bg-gray-500;
 }
 
 /* Selection Color */
 ::selection {
-  @apply bg-primary-200 text-primary-900;
+  @apply bg-primary-200 dark:bg-primary-800 text-primary-900 dark:text-primary-100;
 }
 
 ::-moz-selection {
-  @apply bg-primary-200 text-primary-900;
+  @apply bg-primary-200 dark:bg-primary-800 text-primary-900 dark:text-primary-100;
 }

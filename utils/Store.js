@@ -15,6 +15,7 @@ const initialState = {
     ? JSON.parse(Cookies.get("compare"))
     : { compareItems: [] },
   currency: getDefaultCurrency(),
+  darkMode: Cookies.get("darkMode") === "ON",
 };
 
 function reducer(state, action) {
@@ -177,6 +178,16 @@ function reducer(state, action) {
         ...state,
         cart: updatedCart,
       };
+    }
+
+    case "DARK_MODE_ON": {
+      Cookies.set("darkMode", "ON");
+      return { ...state, darkMode: true };
+    }
+
+    case "DARK_MODE_OFF": {
+      Cookies.set("darkMode", "OFF");
+      return { ...state, darkMode: false };
     }
 
     default:

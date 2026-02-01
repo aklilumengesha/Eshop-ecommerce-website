@@ -3,9 +3,10 @@ import { SessionProvider, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { StoreProvider } from "@/utils/Store";
+import { StoreProvider, Store } from "@/utils/Store";
 import { SocketProvider } from "@/utils/SocketContext";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import { useContext, useEffect } from "react";
 
 export default function App({
   Component,
@@ -14,6 +15,7 @@ export default function App({
   return (
     <SessionProvider session={session}>
       <StoreProvider>
+        <DarkModeHandler />
         <SocketProvider>
           <PayPalScriptProvider deferLoading={true}>
             <ToastContainer position="top-right" limit={1} />
@@ -29,6 +31,21 @@ export default function App({
       </StoreProvider>
     </SessionProvider>
   );
+}
+
+function DarkModeHandler() {
+  const { state } = useContext(Store);
+  const { darkMode } = state;
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
+
+  return null;
 }
 
 function Auth({ children, adminOnly }) {
