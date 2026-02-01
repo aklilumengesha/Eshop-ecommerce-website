@@ -1,67 +1,12 @@
 import Link from "next/link";
-import { useState } from "react";
-import { toast } from "react-toastify";
 
 export default function Footer() {
-  const [email, setEmail] = useState("");
-  const [subscribing, setSubscribing] = useState(false);
-
-  const handleNewsletterSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!email) {
-      toast.error("Please enter your email");
-      return;
-    }
-
-    setSubscribing(true);
-    
-    // Simulate newsletter subscription
-    setTimeout(() => {
-      toast.success("Thanks for subscribing! Check your email for confirmation.");
-      setEmail("");
-      setSubscribing(false);
-    }, 1000);
-  };
-
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
     <footer className="bg-gray-900 dark:bg-black text-gray-300 mt-16">
-      {/* Newsletter Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800">
-        <div className="container mx-auto px-8 py-12">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="text-center md:text-left">
-              <h3 className="text-2xl font-bold text-white mb-2">
-                Subscribe to Our Newsletter
-              </h3>
-              <p className="text-blue-100">
-                Get the latest deals, new arrivals, and exclusive offers!
-              </p>
-            </div>
-            <form onSubmit={handleNewsletterSubmit} className="flex gap-2 w-full md:w-auto">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="px-4 py-3 rounded-lg w-full md:w-80 text-gray-900 focus:outline-none focus:ring-2 focus:ring-white"
-              />
-              <button
-                type="submit"
-                disabled={subscribing}
-                className="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors whitespace-nowrap disabled:bg-gray-300"
-              >
-                {subscribing ? "Subscribing..." : "Subscribe"}
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-
       {/* Main Footer Content */}
       <div className="container mx-auto px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
