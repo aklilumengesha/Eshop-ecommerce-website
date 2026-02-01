@@ -7,15 +7,23 @@ import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import ReactStars from "react-rating-stars-component";
 import { toast } from "react-toastify";
 import ReviewsSection from "@/components/ReviewsSection";
+import { addToRecentlyViewed } from "@/utils/recentlyViewed";
 
 export default function ProductDetail(props) {
   const { product } = props;
   const { state, dispatch } = useContext(Store);
   const router = useRouter();
+
+  // Track product view in recently viewed
+  useEffect(() => {
+    if (product) {
+      addToRecentlyViewed(product);
+    }
+  }, [product]);
 
   if (!product) {
     return (
