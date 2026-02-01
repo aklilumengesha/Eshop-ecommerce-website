@@ -56,15 +56,6 @@ export default function WelcomeBanner() {
     setShowBanner(false);
   };
 
-  // Debug banner - always show when logged in
-  if (session?.user && !showBanner) {
-    return (
-      <div className="bg-yellow-500 text-black py-2 px-4 text-center text-sm">
-        <strong>Debug:</strong> {debugInfo} | User: {session.user.email} | ID: {session.user._id || 'NO ID'}
-      </div>
-    );
-  }
-
   if (!showBanner || !coupon) {
     return null;
   }
