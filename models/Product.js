@@ -41,7 +41,6 @@ const productSchema = new mongoose.Schema(
     brandLogo: {
       type: String,
       default: "",
-      trim: true,
     },
     rating: {
       type: Number,

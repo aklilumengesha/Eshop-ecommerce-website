@@ -152,49 +152,39 @@ export default function AdminProductEdit() {
     try {
       dispatch({ type: "UPDATE_REQUEST" });
       
+      console.log('=== FORM SUBMIT DEBUG ===');
+      console.log('brandLogo value:', brandLogo);
+      console.log('images value:', images);
+      
+      const payload = {
+        name,
+        slug,
+        price,
+        category,
+        image,
+        images: images || [],
+        brand,
+        brandLogo: brandLogo || "",
+        countInStock,
+        description,
+        isFeatured,
+        banner: banner || "",
+        isNewArrival,
+        isFlashSale,
+        flashSalePrice: flashSalePrice || null,
+        flashSaleEndDate: flashSaleEndDate || null,
+        discountPercentage: discountPercentage || 0,
+      };
+      
+      console.log('Payload being sent:', JSON.stringify(payload, null, 2));
+      
       if (isNewProduct) {
         // Create new product
-        await axios.post(`/api/admin/products`, {
-          name,
-          slug,
-          price,
-          category,
-          image,
-          images: images || [],
-          brand,
-          brandLogo,
-          countInStock,
-          description,
-          isFeatured,
-          banner,
-          isNewArrival,
-          isFlashSale,
-          flashSalePrice: flashSalePrice || null,
-          flashSaleEndDate: flashSaleEndDate || null,
-          discountPercentage: discountPercentage || 0,
-        });
+        await axios.post(`/api/admin/products`, payload);
         toast.success("Product created successfully");
       } else {
         // Update existing product
-        const { data } = await axios.put(`/api/admin/products/${productId}`, {
-          name,
-          slug,
-          price,
-          category,
-          image,
-          images: images || [],
-          brand,
-          brandLogo,
-          countInStock,
-          description,
-          isFeatured,
-          banner,
-          isNewArrival,
-          isFlashSale,
-          flashSalePrice: flashSalePrice || null,
-          flashSaleEndDate: flashSaleEndDate || null,
-          discountPercentage: discountPercentage || 0,
-        });
+        const { data } = await axios.put(`/api/admin/products/${productId}`, payload);
         
         // Show special message if product was restocked
         if (data.restocked) {

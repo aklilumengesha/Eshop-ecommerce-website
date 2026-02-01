@@ -32,12 +32,14 @@ const postHandler = async (req, res) => {
   const newProduct = new Product({
     name: req.body.name || "Sample Product",
     slug: req.body.slug || "sample-product-" + Math.random(),
-    image: req.body.image?.trim() || "/images/sample.jpg",
-    images: req.body.images || [],
+    image: req.body.image || "/images/sample.jpg",
+    images: Array.isArray(req.body.images) 
+      ? req.body.images.filter(img => img && img.trim() !== '') 
+      : [],
     price: req.body.price || 0,
     category: req.body.category || "Sample Category",
     brand: req.body.brand || "Sample Brand",
-    brandLogo: req.body.brandLogo?.trim() || "",
+    brandLogo: req.body.brandLogo || "",
     countInStock: req.body.countInStock || 0,
     description: req.body.description || "Sample description",
     rating: 0,
@@ -46,7 +48,7 @@ const postHandler = async (req, res) => {
     numReviews: 0,
     reviews: [],
     isFeatured: req.body.isFeatured || false,
-    banner: req.body.banner?.trim() || "",
+    banner: req.body.banner || "",
     isNewArrival: req.body.isNewArrival || false,
     isFlashSale: req.body.isFlashSale || false,
     flashSalePrice: req.body.flashSalePrice || null,

@@ -39,19 +39,26 @@ const putHandler = async (req, res) => {
     const oldStock = product.countInStock;
     const newStock = req.body.countInStock;
     
+    console.log('=== UPDATE PRODUCT DEBUG ===');
+    console.log('Product ID:', req.query.id);
+    console.log('Received brandLogo:', req.body.brandLogo);
+    console.log('Received images:', req.body.images);
+    
     // Update product fields
     product.name = req.body.name;
     product.slug = req.body.slug;
     product.price = req.body.price;
     product.category = req.body.category;
-    product.image = req.body.image?.trim() || req.body.image;
-    product.images = req.body.images || [];
+    product.image = req.body.image;
+    product.images = Array.isArray(req.body.images) 
+      ? req.body.images.filter(img => img && img.trim() !== '') 
+      : [];
     product.brand = req.body.brand;
-    product.brandLogo = req.body.brandLogo?.trim() || req.body.brandLogo || "";
+    product.brandLogo = req.body.brandLogo || "";
     product.countInStock = newStock;
     product.description = req.body.description;
     product.isFeatured = req.body.isFeatured;
-    product.banner = req.body.banner?.trim() || req.body.banner;
+    product.banner = req.body.banner || "";
     
     // Hero section enhancement fields
     product.isNewArrival = req.body.isNewArrival || false;
@@ -60,7 +67,14 @@ const putHandler = async (req, res) => {
     product.flashSaleEndDate = req.body.flashSaleEndDate || null;
     product.discountPercentage = req.body.discountPercentage || 0;
     
+    console.log('Before save - brandLogo:', product.brandLogo);
+    console.log('Before save - images:', product.images);
+    
     await product.save();
+    
+    console.log('After save - brandLogo:', product.brandLogo);
+    console.log('After save - images:', product.images);
+    console.log('=== END DEBUG ===');
     
     // Check if product was restocked (from 0 to >0)
     if (oldStock === 0 && newStock > 0) {
