@@ -29,6 +29,14 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: false,
     },
+    welcomeCouponCode: {
+      type: String,
+      default: null,
+    },
+    welcomeCouponUsed: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
