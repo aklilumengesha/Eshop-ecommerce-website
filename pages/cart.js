@@ -13,7 +13,7 @@ import { useSession } from "next-auth/react";
 
 function Cart() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const { state, dispatch } = useContext(Store);
 
   const {
@@ -47,7 +47,18 @@ function Cart() {
   };
 
   const applyCouponHandler = async () => {
-    if (!session) {
+    console.log('=== Apply Coupon Handler ===');
+    console.log('Session status:', status);
+    console.log('Session data:', session);
+    console.log('Session user:', session?.user);
+    
+    if (status === 'loading') {
+      toast.info('Please wait...');
+      return;
+    }
+    
+    if (!session || status === 'unauthenticated') {
+      console.log('Not authenticated - redirecting to login');
       toast.error('Please sign in to use coupons');
       router.push('/login?redirect=/cart');
       return;
@@ -57,6 +68,8 @@ function Cart() {
       toast.error('Please enter a coupon code');
       return;
     }
+
+    console.log('Proceeding to apply coupon...');
 
     setLoadingCoupon(true);
     try {
@@ -181,6 +194,9 @@ function Cart() {
                 <label className="block text-sm font-semibold mb-2">
                   Have a coupon code?
                 </label>
+                <div className="text-xs text-gray-500 mb-2">
+                  Logged in as: {session.user.email} (Status: {status})
+                </div>
                 {!coupon ? (
                   <div className="flex gap-2">
                     <input
