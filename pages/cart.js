@@ -2,22 +2,27 @@ import Layout from "@/components/Layout";
 import { XCircleIcon } from "@heroicons/react/24/outline";
 import { Store } from "@/utils/Store";
 import Link from "next/link";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { formatPrice } from "@/utils/currency";
+import { useSession } from "next-auth/react";
 
 function Cart() {
   const router = useRouter();
+  const { data: session } = useSession();
   const { state, dispatch } = useContext(Store);
 
   const {
-    cart: { cartItems },
+    cart: { cartItems, coupon },
     currency,
   } = state;
+
+  const [couponCode, setCouponCode] = useState('');
+  const [loadingCoupon, setLoadingCoupon] = useState(false);
 
   const removeItemHandler = (item) => {
     dispatch({ type: "CART_REMOVE_ITEM", payload: item });
@@ -40,6 +45,64 @@ function Cart() {
 
     toast.success("Cart updated");
   };
+
+  const applyCouponHandler = async () => {
+    if (!session) {
+      toast.error('Please sign in to use coupons');
+      router.push('/login?redirect=/cart');
+      return;
+    }
+
+    if (!couponCode.trim()) {
+      toast.error('Please enter a coupon code');
+      return;
+    }
+
+    setLoadingCoupon(true);
+    try {
+      const subtotal = cartItems.reduce(
+        (total, item) => total + item.quantity * item.price,
+        0
+      );
+
+      const { data } = await axios.post('/api/coupons/apply', {
+        code: couponCode.trim(),
+        cartTotal: subtotal,
+      });
+
+      dispatch({
+        type: 'CART_APPLY_COUPON',
+        payload: {
+          code: data.coupon.code,
+          discountType: data.coupon.discountType,
+          discountValue: data.coupon.discountValue,
+          discountAmount: data.discount,
+          maxUsagePerProduct: data.coupon.maxUsagePerProduct,
+        },
+      });
+
+      toast.success(`Coupon applied! You saved ${formatPrice(data.discount, currency)}`);
+      setCouponCode('');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to apply coupon');
+    } finally {
+      setLoadingCoupon(false);
+    }
+  };
+
+  const removeCouponHandler = () => {
+    dispatch({ type: 'CART_REMOVE_COUPON' });
+    toast.success('Coupon removed');
+  };
+
+  // Calculate totals
+  const subtotal = cartItems.reduce(
+    (total, item) => total + item.quantity * item.price,
+    0
+  );
+
+  const discountAmount = coupon ? coupon.discountAmount : 0;
+  const total = subtotal - discountAmount;
 
   return (
     <Layout title="Shopping Cart">
@@ -111,23 +174,90 @@ function Cart() {
           </div>
           <div className="card p-5 h-fit">
             <h2 className="text-xl font-bold mb-4">Order Summary</h2>
+            
+            {/* Coupon Section */}
+            {session && (
+              <div className="mb-4 pb-4 border-b">
+                <label className="block text-sm font-semibold mb-2">
+                  Have a coupon code?
+                </label>
+                {!coupon ? (
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                      placeholder="Enter code"
+                      className="flex-1 px-3 py-2 border rounded-lg"
+                      disabled={loadingCoupon}
+                    />
+                    <button
+                      onClick={applyCouponHandler}
+                      disabled={loadingCoupon || !couponCode.trim()}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    >
+                      {loadingCoupon ? 'Applying...' : 'Apply'}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth="2"
+                          stroke="currentColor"
+                          className="w-5 h-5 text-green-600"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        <div>
+                          <p className="font-semibold text-green-800">
+                            Coupon "{coupon.code}" applied!
+                          </p>
+                          <p className="text-sm text-green-600">
+                            You saved {formatPrice(discountAmount, currency)}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={removeCouponHandler}
+                        className="text-red-600 hover:text-red-800 font-medium text-sm"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             <ul className="space-y-3">
               <li>
                 <div className="flex justify-between text-lg">
                   <div>Subtotal ({cartItems.reduce((total, item) => total + item.quantity, 0)} items)</div>
+                  <div>{formatPrice(subtotal, currency)}</div>
                 </div>
               </li>
+              {coupon && (
+                <li>
+                  <div className="flex justify-between text-green-600 font-semibold">
+                    <div>Discount ({coupon.discountValue}%)</div>
+                    <div>-{formatPrice(discountAmount, currency)}</div>
+                  </div>
+                </li>
+              )}
               <li className="border-t pt-3">
                 <div className="flex justify-between text-2xl font-bold">
                   <div>Total</div>
                   <div className="text-blue-600">
-                    {formatPrice(
-                      cartItems.reduce(
-                        (total, item) => total + item.quantity * item.price,
-                        0
-                      ),
-                      currency
-                    )}
+                    {formatPrice(total, currency)}
                   </div>
                 </div>
               </li>

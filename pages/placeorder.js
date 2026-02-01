@@ -15,7 +15,7 @@ export default function PlaceOrder() {
   const router = useRouter();
   const { state, dispatch } = useContext(Store);
   const { cart, currency } = state;
-  const { cartItems, shippingAddress, paymentMethod } = cart;
+  const { cartItems, shippingAddress, paymentMethod, coupon } = cart;
 
   const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
 
@@ -23,9 +23,12 @@ export default function PlaceOrder() {
     cartItems.reduce((total, item) => total + item.quantity * item.price, 0)
   );
 
+  // Apply coupon discount
+  const discountAmount = coupon ? round2(coupon.discountAmount) : 0;
+
   const shippingPrice = itemsPrice > 200 ? 0 : 15;
-  const taxPrice = round2(itemsPrice * 0.15);
-  const totalPrice = round2(itemsPrice + shippingPrice + taxPrice);
+  const taxPrice = round2((itemsPrice - discountAmount) * 0.15);
+  const totalPrice = round2(itemsPrice - discountAmount + shippingPrice + taxPrice);
 
   useEffect(() => {
     if (!paymentMethod) {
@@ -46,15 +49,30 @@ export default function PlaceOrder() {
         shippingPrice,
         taxPrice,
         totalPrice,
+        couponCode: coupon?.code || null,
+        discountAmount: discountAmount,
       });
+
+      // Mark coupon as used if applied
+      if (coupon?.code) {
+        try {
+          await axios.post('/api/coupons/mark-used', {
+            code: coupon.code,
+          });
+        } catch (error) {
+          console.error('Error marking coupon as used:', error);
+        }
+      }
 
       setLoading(false);
       dispatch({ type: "CART_CLEAR_ITEMS" });
+      dispatch({ type: "CART_REMOVE_COUPON" });
       Cookies.set(
         "cart",
         JSON.stringify({
           ...cart,
           cartItems: [],
+          coupon: null,
         })
       );
       router.push(`/order/${data._id}`);
@@ -157,6 +175,14 @@ export default function PlaceOrder() {
                     <div>{formatPrice(itemsPrice, currency)}</div>
                   </div>
                 </li>
+                {coupon && (
+                  <li>
+                    <div className="flex justify-between text-green-600 font-semibold">
+                      <div>Discount ({coupon.code})</div>
+                      <div>-{formatPrice(discountAmount, currency)}</div>
+                    </div>
+                  </li>
+                )}
                 <li>
                   <div className="flex justify-between">
                     <div>Tax</div>
