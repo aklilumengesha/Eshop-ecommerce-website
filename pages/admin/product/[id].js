@@ -152,7 +152,7 @@ export default function AdminProductEdit() {
         toast.success("Product created successfully");
       } else {
         // Update existing product
-        await axios.put(`/api/admin/products/${productId}`, {
+        const { data } = await axios.put(`/api/admin/products/${productId}`, {
           name,
           slug,
           price,
@@ -164,7 +164,15 @@ export default function AdminProductEdit() {
           isFeatured,
           banner,
         });
-        toast.success("Product updated successfully");
+        
+        // Show special message if product was restocked
+        if (data.restocked) {
+          toast.success("Product updated and restock notifications sent!", {
+            autoClose: 5000,
+          });
+        } else {
+          toast.success("Product updated successfully");
+        }
       }
       
       dispatch({ type: "UPDATE_SUCCESS" });

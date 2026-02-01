@@ -2,6 +2,8 @@ import Product from "@/models/Product";
 import db from "@/utils/db";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../auth/[...nextauth]";
+import axios from "axios";
+import { emitProductRestocked } from "@/utils/socket";
 
 const handler = async (req, res) => {
   const session = await getServerSession(req, res, authOptions);
@@ -33,20 +35,69 @@ const putHandler = async (req, res) => {
   const product = await Product.findById(req.query.id);
   
   if (product) {
+    // Store old stock count to detect restocking
+    const oldStock = product.countInStock;
+    const newStock = req.body.countInStock;
+    
+    // Update product fields
     product.name = req.body.name;
     product.slug = req.body.slug;
     product.price = req.body.price;
     product.category = req.body.category;
     product.image = req.body.image?.trim() || req.body.image;
     product.brand = req.body.brand;
-    product.countInStock = req.body.countInStock;
+    product.countInStock = newStock;
     product.description = req.body.description;
     product.isFeatured = req.body.isFeatured;
     product.banner = req.body.banner?.trim() || req.body.banner;
     
     await product.save();
+    
+    // Check if product was restocked (from 0 to >0)
+    if (oldStock === 0 && newStock > 0) {
+      console.log(`🔔 Product restocked: ${product.name} (${oldStock} → ${newStock})`);
+      
+      // Emit WebSocket event for real-time updates
+      emitProductRestocked(product._id.toString(), {
+        slug: product.slug,
+        name: product.name,
+        newStock: newStock,
+      });
+      
+      // Trigger email notifications asynchronously
+      try {
+        const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+        
+        // Make internal API call to send notifications
+        // Using setTimeout to not block the response
+        setTimeout(async () => {
+          try {
+            const response = await axios.post(
+              `${baseUrl}/api/stock-notifications/send`,
+              { productId: product._id.toString() },
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              }
+            );
+            console.log(`✅ Notification emails triggered: ${response.data.sent} sent`);
+          } catch (emailError) {
+            console.error('❌ Failed to trigger notification emails:', emailError.message);
+          }
+        }, 1000); // Delay 1 second to ensure response is sent first
+        
+      } catch (error) {
+        console.error('Error triggering notifications:', error);
+        // Don't fail the product update if notifications fail
+      }
+    }
+    
     await db.disconnect();
-    res.send({ message: "Product updated successfully" });
+    res.send({ 
+      message: "Product updated successfully",
+      restocked: oldStock === 0 && newStock > 0,
+    });
   } else {
     await db.disconnect();
     res.status(404).send({ message: "Product not found" });
