@@ -45,6 +45,11 @@ const postHandler = async (req, res) => {
     reviews: [],
     isFeatured: req.body.isFeatured || false,
     banner: req.body.banner?.trim() || "",
+    isNewArrival: req.body.isNewArrival || false,
+    isFlashSale: req.body.isFlashSale || false,
+    flashSalePrice: req.body.flashSalePrice || null,
+    flashSaleEndDate: req.body.flashSaleEndDate || null,
+    discountPercentage: req.body.discountPercentage || 0,
   });
 
   const product = await newProduct.save();

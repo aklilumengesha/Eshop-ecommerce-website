@@ -51,6 +51,13 @@ const putHandler = async (req, res) => {
     product.isFeatured = req.body.isFeatured;
     product.banner = req.body.banner?.trim() || req.body.banner;
     
+    // Hero section enhancement fields
+    product.isNewArrival = req.body.isNewArrival || false;
+    product.isFlashSale = req.body.isFlashSale || false;
+    product.flashSalePrice = req.body.flashSalePrice || null;
+    product.flashSaleEndDate = req.body.flashSaleEndDate || null;
+    product.discountPercentage = req.body.discountPercentage || 0;
+    
     await product.save();
     
     // Check if product was restocked (from 0 to >0)

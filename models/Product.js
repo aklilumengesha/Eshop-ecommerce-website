@@ -88,6 +88,30 @@ const productSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    // Hero Section Enhancement Fields
+    isNewArrival: {
+      type: Boolean,
+      default: false,
+    },
+    isFlashSale: {
+      type: Boolean,
+      default: false,
+    },
+    flashSalePrice: {
+      type: Number,
+      default: null,
+      min: [0, "Flash sale price cannot be negative"],
+    },
+    flashSaleEndDate: {
+      type: Date,
+      default: null,
+    },
+    discountPercentage: {
+      type: Number,
+      default: 0,
+      min: [0, "Discount cannot be negative"],
+      max: [100, "Discount cannot exceed 100%"],
+    },
   },
   {
     timestamps: true,

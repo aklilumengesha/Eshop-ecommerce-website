@@ -67,6 +67,11 @@ export default function AdminProductEdit() {
         setValue("description", data.description);
         setValue("isFeatured", data.isFeatured);
         setValue("banner", data.banner);
+        setValue("isNewArrival", data.isNewArrival || false);
+        setValue("isFlashSale", data.isFlashSale || false);
+        setValue("flashSalePrice", data.flashSalePrice || "");
+        setValue("flashSaleEndDate", data.flashSaleEndDate ? new Date(data.flashSaleEndDate).toISOString().slice(0, 16) : "");
+        setValue("discountPercentage", data.discountPercentage || 0);
       } catch (err) {
         dispatch({ type: "FETCH_FAIL", payload: getError(err) });
       }
@@ -131,6 +136,11 @@ export default function AdminProductEdit() {
     description,
     isFeatured,
     banner,
+    isNewArrival,
+    isFlashSale,
+    flashSalePrice,
+    flashSaleEndDate,
+    discountPercentage,
   }) => {
     try {
       dispatch({ type: "UPDATE_REQUEST" });
@@ -148,6 +158,11 @@ export default function AdminProductEdit() {
           description,
           isFeatured,
           banner,
+          isNewArrival,
+          isFlashSale,
+          flashSalePrice: flashSalePrice || null,
+          flashSaleEndDate: flashSaleEndDate || null,
+          discountPercentage: discountPercentage || 0,
         });
         toast.success("Product created successfully");
       } else {
@@ -163,6 +178,11 @@ export default function AdminProductEdit() {
           description,
           isFeatured,
           banner,
+          isNewArrival,
+          isFlashSale,
+          flashSalePrice: flashSalePrice || null,
+          flashSaleEndDate: flashSaleEndDate || null,
+          discountPercentage: discountPercentage || 0,
         });
         
         // Show special message if product was restocked
@@ -398,6 +418,90 @@ export default function AdminProductEdit() {
                   id="banner"
                   placeholder="Enter banner image URL (optional)"
                   {...register("banner")}
+                />
+                <p className="text-sm text-gray-600 mt-1">
+                  Banner image for hero carousel (recommended: 1920x600px)
+                </p>
+              </div>
+
+              {/* Hero Section Enhancement Fields */}
+              <div className="mb-6 p-4 bg-primary-50 rounded-lg border border-primary-200">
+                <h3 className="text-lg font-semibold text-primary-900 mb-4">Hero Section Settings</h3>
+                
+                <div className="mb-4">
+                  <label htmlFor="isNewArrival" className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="mr-2"
+                      id="isNewArrival"
+                      {...register("isNewArrival")}
+                    />
+                    <span className="font-medium">Mark as New Arrival</span>
+                  </label>
+                  <p className="text-sm text-gray-600 mt-1 ml-6">
+                    Shows "NEW" badge on hero carousel
+                  </p>
+                </div>
+
+                <div className="mb-4">
+                  <label htmlFor="isFlashSale" className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="mr-2"
+                      id="isFlashSale"
+                      {...register("isFlashSale")}
+                    />
+                    <span className="font-medium">Enable Flash Sale</span>
+                  </label>
+                  <p className="text-sm text-gray-600 mt-1 ml-6">
+                    Shows countdown timer and special pricing
+                  </p>
+                </div>
+
+                <div className="mb-4">
+                  <label htmlFor="flashSalePrice">Flash Sale Price</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    className="w-full"
+                    id="flashSalePrice"
+                    placeholder="Enter flash sale price (optional)"
+                    {...register("flashSalePrice")}
+                  />
+                  <p className="text-sm text-gray-600 mt-1">
+                    Special price during flash sale (leave empty to use discount percentage)
+                  </p>
+                </div>
+
+                <div className="mb-4">
+                  <label htmlFor="flashSaleEndDate">Flash Sale End Date</label>
+                  <input
+                    type="datetime-local"
+                    className="w-full"
+                    id="flashSaleEndDate"
+                    {...register("flashSaleEndDate")}
+                  />
+                  <p className="text-sm text-gray-600 mt-1">
+                    When the flash sale ends (shows countdown timer)
+                  </p>
+                </div>
+
+                <div className="mb-4">
+                  <label htmlFor="discountPercentage">Discount Percentage</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    className="w-full"
+                    id="discountPercentage"
+                    placeholder="Enter discount percentage (0-100)"
+                    {...register("discountPercentage")}
+                  />
+                  <p className="text-sm text-gray-600 mt-1">
+                    Shows discount badge (e.g., "50% OFF")
+                  </p>
+                </div>
+              </div>
                 />
               </div>
 
