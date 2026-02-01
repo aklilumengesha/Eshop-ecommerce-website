@@ -98,7 +98,7 @@ function Layout({ title, children }) {
               </Link>
             </div>
 
-            <div className="mx-auto hidden w-full justify-center md:flex">
+            <div className="mx-auto hidden w-full max-w-md justify-center md:flex">
               <SearchAutocomplete />
             </div>
 
