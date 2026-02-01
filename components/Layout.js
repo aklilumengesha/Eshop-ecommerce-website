@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
 import DropdownLink from "./DropdownLink";
+import WelcomeBanner from "./WelcomeBanner";
 import { currencyMetadata, setDefaultCurrency, fetchExchangeRates } from "@/utils/currency";
 
 function Layout({ title, children }) {
@@ -76,6 +77,9 @@ function Layout({ title, children }) {
       </Head>
 
       <div className="flex min-h-screen flex-col justify-between">
+        {/* Welcome Banner - Above Header */}
+        <WelcomeBanner />
+        
         <header>
           <nav className="flex h-14 justify-between shadow-md items-center px-16">
             <div className="flex items-center space-x-2">

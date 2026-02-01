@@ -8,22 +8,40 @@ export default function WelcomeBanner() {
   const [coupon, setCoupon] = useState(null);
   const [showBanner, setShowBanner] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [debugInfo, setDebugInfo] = useState('Loading...');
 
   useEffect(() => {
+    console.log('=== WelcomeBanner Component Mounted ===');
+    console.log('Session status:', session ? 'Logged in' : 'Not logged in');
     if (session?.user) {
+      console.log('User email:', session.user.email);
+      console.log('User ID:', session.user._id);
       fetchUserCoupon();
+    } else {
+      setDebugInfo('Not logged in');
     }
   }, [session]);
 
   const fetchUserCoupon = async () => {
     try {
+      console.log('Fetching user coupon...');
+      console.log('Session:', session);
+      setDebugInfo('Fetching coupon...');
       const { data } = await axios.get('/api/coupons/user-coupon');
+      console.log('Coupon API response:', data);
       if (data.hasCoupon) {
         setCoupon(data.coupon);
         setShowBanner(true);
+        setDebugInfo('Coupon found!');
+        console.log('Coupon found and banner will show:', data.coupon);
+      } else {
+        setDebugInfo('No coupon available');
+        console.log('No coupon available');
       }
     } catch (error) {
       console.error('Error fetching coupon:', error);
+      console.error('Error response:', error.response?.data);
+      setDebugInfo(`Error: ${error.response?.data?.message || error.message}`);
     }
   };
 
@@ -37,6 +55,15 @@ export default function WelcomeBanner() {
   const closeBanner = () => {
     setShowBanner(false);
   };
+
+  // Debug banner - always show when logged in
+  if (session?.user && !showBanner) {
+    return (
+      <div className="bg-yellow-500 text-black py-2 px-4 text-center text-sm">
+        <strong>Debug:</strong> {debugInfo} | User: {session.user.email} | ID: {session.user._id || 'NO ID'}
+      </div>
+    );
+  }
 
   if (!showBanner || !coupon) {
     return null;

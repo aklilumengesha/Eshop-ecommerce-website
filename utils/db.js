@@ -3,23 +3,33 @@ import mongoose from "mongoose";
 const connection = {};
 
 async function connect() {
-  if (connection.isConnected) {
+  // Check if already connected
+  if (connection.isConnected && mongoose.connection.readyState === 1) {
     console.log("Already connected to database");
     return;
   }
   
+  // Check existing connections
   if (mongoose.connections.length > 0) {
     connection.isConnected = mongoose.connections[0].readyState;
     if (connection.isConnected === 1) {
       console.log("Using existing database connection");
       return;
     }
-    await mongoose.disconnect();
+    // Disconnect if connection is in bad state
+    if (connection.isConnected !== 0) {
+      await mongoose.disconnect();
+    }
   }
   
-  const db = await mongoose.connect(process.env.MONGODB_URL);
-  console.log("New database connection established");
-  connection.isConnected = db.connections[0].readyState;
+  try {
+    const db = await mongoose.connect(process.env.MONGODB_URL);
+    console.log("New database connection established");
+    connection.isConnected = db.connections[0].readyState;
+  } catch (error) {
+    console.error("Database connection error:", error);
+    throw error;
+  }
 }
 
 async function disconnect() {
