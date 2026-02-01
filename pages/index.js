@@ -1,6 +1,7 @@
 import Layout from "@/components/Layout";
 import ProductItem from "@/components/ProductItem";
 import RecentlyViewed from "@/components/RecentlyViewed";
+import WelcomeBanner from "@/components/WelcomeBanner";
 import Product from "@/models/Product";
 import db from "@/utils/db";
 import { Store } from "@/utils/Store";
@@ -37,6 +38,11 @@ export default function Home({ featuredProducts = [], products = [], productsByC
 
   return (
     <Layout title="Home">
+      {/* Welcome Banner for new users with coupon */}
+      <div className="-mx-8 md:-mx-12 xl:-mx-14 mb-4">
+        <WelcomeBanner />
+      </div>
+
       {featuredProducts.length > 0 && (
         <div className="-mx-8 md:-mx-12 xl:-mx-14 mb-8">
           <Carousel showThumbs={false} autoPlay infiniteLoop>

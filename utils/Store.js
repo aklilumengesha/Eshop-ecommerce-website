@@ -7,7 +7,7 @@ export const Store = createContext();
 const initialState = {
   cart: Cookies.get("cart")
     ? JSON.parse(Cookies.get("cart"))
-    : { cartItems: [], shippingAddress: {}, paymentMethod: "" },
+    : { cartItems: [], shippingAddress: {}, paymentMethod: "", coupon: null },
   wishlist: Cookies.get("wishlist")
     ? JSON.parse(Cookies.get("wishlist"))
     : { wishlistItems: [] },
@@ -49,6 +49,7 @@ function reducer(state, action) {
           cartItems: [],
           shippingAddress: { location: {} },
           paymentMethod: "",
+          coupon: null,
         },
       };
     }
@@ -151,6 +152,30 @@ function reducer(state, action) {
       return {
         ...state,
         compare: { compareItems: [] },
+      };
+    }
+
+    case "CART_APPLY_COUPON": {
+      const updatedCart = {
+        ...state.cart,
+        coupon: action.payload,
+      };
+      Cookies.set("cart", JSON.stringify(updatedCart));
+      return {
+        ...state,
+        cart: updatedCart,
+      };
+    }
+
+    case "CART_REMOVE_COUPON": {
+      const updatedCart = {
+        ...state.cart,
+        coupon: null,
+      };
+      Cookies.set("cart", JSON.stringify(updatedCart));
+      return {
+        ...state,
+        cart: updatedCart,
       };
     }
 
