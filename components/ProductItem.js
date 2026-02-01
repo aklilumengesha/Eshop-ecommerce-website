@@ -7,6 +7,8 @@ import { formatPrice } from "@/utils/currency";
 import { toast } from "react-toastify";
 import ProductQuickView from "./ProductQuickView";
 import SimilarProducts from "./SimilarProducts";
+import LiveStockBadge from "./LiveStockBadge";
+import { useInventory } from "@/hooks/useInventory";
 
 export default function ProductItem({ product, addToCartHandler, allProducts }) {
   const { state, dispatch } = useContext(Store);
@@ -14,6 +16,12 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
   const [isHovered, setIsHovered] = useState(false);
   const [showQuickView, setShowQuickView] = useState(false);
   const [showSimilar, setShowSimilar] = useState(false);
+
+  // Real-time inventory
+  const { stock, isConnected, isLowStock, isSoldOut } = useInventory(
+    product._id,
+    product.countInStock
+  );
 
   const isInWishlist = wishlist.wishlistItems.some(
     (item) => item.slug === product.slug
@@ -146,6 +154,18 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
               ({product.numReviews})
             </span>
           </div>
+          
+          {/* Live Stock Badge */}
+          <div className="mb-2">
+            <LiveStockBadge 
+              stock={stock}
+              isConnected={isConnected}
+              isLowStock={isLowStock}
+              isSoldOut={isSoldOut}
+              size="sm"
+            />
+          </div>
+          
           <p className="text-xl font-bold text-blue-600">{formatPrice(product.price, currency)}</p>
           
           {/* Add to Cart button - always visible */}
@@ -153,8 +173,9 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
             className="primary-button mt-3 w-full"
             type="button"
             onClick={() => addToCartHandler(product)}
+            disabled={isSoldOut}
           >
-            Add to cart
+            {isSoldOut ? 'Out of Stock' : 'Add to cart'}
           </button>
           
           {/* Hover action buttons - shown on hover below Add to Cart */}

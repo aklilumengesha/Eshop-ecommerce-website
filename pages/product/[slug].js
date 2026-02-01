@@ -26,6 +26,39 @@ export default function ProductDetail(props) {
     product?.countInStock || 0
   );
 
+  // Show notifications for stock changes
+  useEffect(() => {
+    if (!product) return;
+
+    const handleStockUpdate = (data) => {
+      if (data.productId === product._id) {
+        if (data.newStock === 0) {
+          toast.error(`${product.name} just sold out!`, {
+            icon: '🚫',
+          });
+        } else if (data.newStock <= 5 && data.oldStock > 5) {
+          toast.warning(`Only ${data.newStock} left in stock!`, {
+            icon: '⚠️',
+          });
+        } else if (data.newStock < data.oldStock) {
+          toast.info(`Stock updated: ${data.newStock} available`, {
+            icon: '📦',
+          });
+        }
+      }
+    };
+
+    if (typeof window !== 'undefined' && window.io) {
+      // Listen for stock updates
+      const socket = window.io();
+      socket.on('stock-updated', handleStockUpdate);
+      
+      return () => {
+        socket.off('stock-updated', handleStockUpdate);
+      };
+    }
+  }, [product]);
+
   // Track product view in recently viewed
   useEffect(() => {
     if (product) {

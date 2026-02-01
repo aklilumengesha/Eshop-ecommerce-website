@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
 import DropdownLink from "./DropdownLink";
 import WelcomeBanner from "./WelcomeBanner";
+import ConnectionStatus from "./ConnectionStatus";
 import { currencyMetadata, setDefaultCurrency, fetchExchangeRates } from "@/utils/currency";
 
 function Layout({ title, children }) {
@@ -495,6 +496,9 @@ function Layout({ title, children }) {
         <footer className="flex h-10 justify-center items-center shadow-inner">
           <p>Copyright © 2026 eShop. All rights reserved.</p>
         </footer>
+
+        {/* WebSocket Connection Status */}
+        <ConnectionStatus />
       </div>
     </>
   );
