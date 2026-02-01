@@ -145,6 +145,9 @@ export default function AdminReviewsScreen() {
             <li>
               <Link href="/admin/coupons">Coupons</Link>
             </li>
+            <li>
+              <Link href="/admin/stock-notifications">Stock Notifications</Link>
+            </li>
           </ul>
         </div>
         <div className="md:col-span-3">

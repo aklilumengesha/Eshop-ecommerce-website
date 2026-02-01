@@ -136,6 +136,9 @@ export default function AdminCoupons() {
                 Coupons
               </Link>
             </li>
+            <li>
+              <Link href="/admin/stock-notifications">Stock Notifications</Link>
+            </li>
           </ul>
         </div>
 

@@ -104,6 +104,9 @@ export default function AdminUsers() {
             <li>
               <Link href="/admin/coupons">Coupons</Link>
             </li>
+            <li>
+              <Link href="/admin/stock-notifications">Stock Notifications</Link>
+            </li>
           </ul>
         </div>
         <div className="overflow-x-auto md:col-span-3">
