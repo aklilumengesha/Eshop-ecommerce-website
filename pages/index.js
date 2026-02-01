@@ -5,6 +5,7 @@ import HeroCarousel from "@/components/HeroCarousel";
 import TrustBadges from "@/components/TrustBadges";
 import Testimonials from "@/components/Testimonials";
 import NewsletterSection from "@/components/NewsletterSection";
+import BrandShowcase from "@/components/BrandShowcase";
 import Product from "@/models/Product";
 import db from "@/utils/db";
 import { Store } from "@/utils/Store";
@@ -14,7 +15,7 @@ import { useContext } from "react";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { toast } from "react-toastify";
 
-export default function Home({ featuredProducts = [], products = [], productsByCategory = {} }) {
+export default function Home({ featuredProducts = [], products = [], productsByCategory = {}, brands = [] }) {
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
 
@@ -49,6 +50,9 @@ export default function Home({ featuredProducts = [], products = [], productsByC
       
       {/* Trust Badges */}
       <TrustBadges />
+      
+      {/* Brand Showcase */}
+      <BrandShowcase brands={brands} />
       
       {/* Latest Products */}
       <div className="mb-12">
@@ -133,6 +137,26 @@ export async function getServerSideProps() {
     productsByCategory[category].push(product);
   });
   
+  // Extract and count brands
+  const brandMap = {};
+  products.forEach((product) => {
+    const brand = product.brand;
+    if (brand) {
+      if (!brandMap[brand]) {
+        brandMap[brand] = {
+          name: brand,
+          productCount: 0,
+        };
+      }
+      brandMap[brand].productCount++;
+    }
+  });
+  
+  // Convert to array and sort by product count
+  const brands = Object.values(brandMap).sort(
+    (a, b) => b.productCount - a.productCount
+  );
+  
   await db.disconnect();
   
   return {
@@ -143,6 +167,7 @@ export async function getServerSideProps() {
         acc[key] = productsByCategory[key].map(db.convertDocToObj);
         return acc;
       }, {}),
+      brands,
     },
   };
 }
