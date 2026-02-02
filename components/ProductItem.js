@@ -156,13 +156,13 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
         <div className="flex flex-col items-center justify-center p-5">
           <Link href={`/product/${product.slug}`}>
             <h2 
-              className="text-lg font-semibold hover:text-blue-600 transition-colors" 
+              className="text-lg font-semibold hover:text-blue-600 dark:hover:text-blue-400 transition-colors dark:text-white" 
               title={product.name}
             >
               {truncateName(product.name)}
             </h2>
           </Link>
-          <p className="mb-2 text-gray-600">{product.brand}</p>
+          <p className="mb-2 text-gray-600 dark:text-gray-300">{product.brand}</p>
           <div className="flex items-center mb-2" role="img" aria-label={`Rated ${product.rating} out of 5 stars with ${product.numReviews} reviews`}>
             <ReactStars
               count={5}
@@ -171,7 +171,7 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
               value={product.rating}
               edit={false}
             />
-            <span className="ml-2 text-sm text-gray-600" aria-hidden="true">
+            <span className="ml-2 text-sm text-gray-600 dark:text-gray-300" aria-hidden="true">
               ({product.numReviews})
             </span>
           </div>
@@ -187,7 +187,7 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
             />
           </div>
           
-          <p className="text-xl font-bold text-blue-600">{formatPrice(product.price, currency)}</p>
+          <p className="text-xl font-bold text-blue-600 dark:text-blue-400">{formatPrice(product.price, currency)}</p>
           
           {/* Add to Cart button - always visible */}
           <button
@@ -203,7 +203,7 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
           {/* Notify Me link for out of stock products */}
           {isSoldOut && (
             <Link href={`/product/${product.slug}`}>
-              <div className="text-center mt-2 text-sm text-blue-600 hover:text-blue-800 cursor-pointer flex items-center justify-center gap-1">
+              <div className="text-center mt-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 cursor-pointer flex items-center justify-center gap-1">
                 <svg
                   className="w-4 h-4"
                   fill="none"
