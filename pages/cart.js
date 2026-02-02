@@ -2,7 +2,7 @@ import Layout from "@/components/Layout";
 import { XCircleIcon } from "@heroicons/react/24/outline";
 import { Store } from "@/utils/Store";
 import Link from "next/link";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
@@ -10,11 +10,13 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { formatPrice } from "@/utils/currency";
 import { useSession } from "next-auth/react";
+import { SkeletonCartItem } from "@/components/skeletons";
 
 function Cart() {
   const router = useRouter();
   const { data: session, status } = useSession();
   const { state, dispatch } = useContext(Store);
+  const [isLoading, setIsLoading] = useState(true);
 
   const {
     cart: { cartItems, coupon },
@@ -23,6 +25,14 @@ function Cart() {
 
   const [couponCode, setCouponCode] = useState('');
   const [loadingCoupon, setLoadingCoupon] = useState(false);
+
+  useEffect(() => {
+    // Simulate initial loading
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, []);
 
   const removeItemHandler = (item) => {
     dispatch({ type: "CART_REMOVE_ITEM", payload: item });
@@ -140,48 +150,58 @@ function Cart() {
                 </tr>
               </thead>
               <tbody>
-                {cartItems.map((item) => (
-                  <tr key={item.slug} className="border-b">
-                    <td>
-                      <Link href={`/product/${item.slug}`}>
-                        <span className="flex items-center">
-                          <Image
-                            className="rounded-sm"
-                            src={item.image}
-                            alt={item.name}
-                            width={50}
-                            height={50}
-                          />
-                          <span className="ml-3">{item.name}</span>
-                        </span>
-                      </Link>
-                    </td>
-                    <td className="p-5 text-right">
-                      <select
-                        value={item.quantity}
-                        onChange={(e) =>
-                          updateCartHandler(item, e.target.value)
-                        }
-                        className="rounded border p-2"
-                      >
-                        {[...Array(item.countInStock).keys()].map((num) => (
-                          <option key={num + 1} value={num + 1}>
-                            {num + 1}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="p-5 text-right font-semibold">{formatPrice(item.price, currency)}</td>
-                    <td className="p-5 text-center">
-                      <button
-                        onClick={() => removeItemHandler(item)}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        <XCircleIcon className="h-6 w-6" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {isLoading ? (
+                  [...Array(3)].map((_, i) => (
+                    <tr key={i}>
+                      <td colSpan="4" className="p-5">
+                        <SkeletonCartItem />
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  cartItems.map((item) => (
+                    <tr key={item.slug} className="border-b">
+                      <td>
+                        <Link href={`/product/${item.slug}`}>
+                          <span className="flex items-center">
+                            <Image
+                              className="rounded-sm"
+                              src={item.image}
+                              alt={item.name}
+                              width={50}
+                              height={50}
+                            />
+                            <span className="ml-3">{item.name}</span>
+                          </span>
+                        </Link>
+                      </td>
+                      <td className="p-5 text-right">
+                        <select
+                          value={item.quantity}
+                          onChange={(e) =>
+                            updateCartHandler(item, e.target.value)
+                          }
+                          className="rounded border p-2"
+                        >
+                          {[...Array(item.countInStock).keys()].map((num) => (
+                            <option key={num + 1} value={num + 1}>
+                              {num + 1}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td className="p-5 text-right font-semibold">{formatPrice(item.price, currency)}</td>
+                      <td className="p-5 text-center">
+                        <button
+                          onClick={() => removeItemHandler(item)}
+                          className="text-red-600 hover:text-red-800"
+                        >
+                          <XCircleIcon className="h-6 w-6" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

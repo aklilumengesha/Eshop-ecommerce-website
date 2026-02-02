@@ -13,6 +13,7 @@ import {
 import Link from "next/link";
 import React, { useEffect, useReducer } from "react";
 import { Bar } from "react-chartjs-2";
+import { SkeletonStats } from "@/components/skeletons";
 
 ChartJS.register(
   CategoryScale,
@@ -134,9 +135,7 @@ export default function Dashboard() {
         <div className="md:col-span-3">
           <h1 className="mb-4 text-3xl font-bold">Admin Dashboard</h1>
           {loading ? (
-            <div className="flex justify-center items-center min-h-screen">
-              <div className="spinner"></div>
-            </div>
+            <SkeletonStats count={4} />
           ) : error ? (
             <div className="alert-error">{error}</div>
           ) : (

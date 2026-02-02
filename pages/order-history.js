@@ -3,6 +3,7 @@ import { getError } from "@/utils/error";
 import axios from "axios";
 import Link from "next/link";
 import React, { useEffect, useReducer } from "react";
+import { SkeletonTable } from "@/components/skeletons";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -41,9 +42,7 @@ function OrderHistory() {
     <Layout title="Order History">
       <h1 className="mb-4 text-3xl font-bold">Order History</h1>
       {loading ? (
-        <div className="flex justify-center items-center min-h-screen">
-          <div className="spinner"></div>
-        </div>
+        <SkeletonTable rows={5} columns={6} />
       ) : error ? (
         <div className="alert-error">{error}</div>
       ) : (

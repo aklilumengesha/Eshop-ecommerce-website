@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useReducer } from "react";
 import { toast } from "react-toastify";
+import { SkeletonTable } from "@/components/skeletons";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -131,9 +132,7 @@ export default function AdminProducts() {
           </div>
 
           {loading ? (
-            <div className="flex justify-center items-center min-h-screen">
-              <div className="spinner"></div>
-            </div>
+            <SkeletonTable rows={10} columns={7} />
           ) : error ? (
             <div className="alert-error">{error}</div>
           ) : (

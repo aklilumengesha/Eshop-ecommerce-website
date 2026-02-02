@@ -16,6 +16,7 @@ import { addToRecentlyViewed } from "@/utils/recentlyViewed";
 import { useInventory } from "@/hooks/useInventory";
 import NotifyMeButton from "@/components/NotifyMeButton";
 import { useSession } from "next-auth/react";
+import { SkeletonProductDetail } from "@/components/skeletons";
 
 export default function ProductDetail(props) {
   const { product } = props;
@@ -70,6 +71,26 @@ export default function ProductDetail(props) {
   }, [product]);
 
   if (!product) {
+    return (
+      <Layout title="Loading...">
+        <div className="container mx-auto px-4 py-8">
+          <SkeletonProductDetail />
+        </div>
+      </Layout>
+    );
+  }
+
+  if (router.isFallback) {
+    return (
+      <Layout title="Loading...">
+        <div className="container mx-auto px-4 py-8">
+          <SkeletonProductDetail />
+        </div>
+      </Layout>
+    );
+  }
+
+  if (product === 'not-found') {
     return (
       <Layout title="Product Not Found">
         <div className="flex flex-col items-center justify-center min-h-screen">

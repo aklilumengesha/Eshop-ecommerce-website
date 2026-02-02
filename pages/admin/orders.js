@@ -3,6 +3,7 @@ import { getError } from "@/utils/error";
 import axios from "axios";
 import Link from "next/link";
 import React, { useEffect, useReducer } from "react";
+import { SkeletonTable } from "@/components/skeletons";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -82,9 +83,7 @@ export default function AdminOrders() {
         <div className="overflow-x-auto md:col-span-3">
           <h1 className="mb-4 text-3xl font-bold">Orders Management</h1>
           {loading ? (
-            <div className="flex justify-center items-center min-h-screen">
-              <div className="spinner"></div>
-            </div>
+            <SkeletonTable rows={10} columns={7} />
           ) : error ? (
             <div className="alert-error">{error}</div>
           ) : (

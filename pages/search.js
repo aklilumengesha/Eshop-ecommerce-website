@@ -4,10 +4,11 @@ import db from "@/utils/db";
 import { Store } from "@/utils/Store";
 import axios from "axios";
 import { useRouter } from "next/router";
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { XCircleIcon } from "@heroicons/react/24/outline";
 import ProductItem from "@/components/ProductItem";
+import { SkeletonProductGrid } from "@/components/skeletons";
 
 const PAGE_SIZE = 9;
 
@@ -31,6 +32,22 @@ const ratings = [1, 2, 3, 4, 5];
 export default function Search(props) {
   const { countProducts, products, categories, brands, pages } = props;
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const handleRouteChangeStart = () => setIsLoading(true);
+    const handleRouteChangeComplete = () => setIsLoading(false);
+
+    router.events.on('routeChangeStart', handleRouteChangeStart);
+    router.events.on('routeChangeComplete', handleRouteChangeComplete);
+    router.events.on('routeChangeError', handleRouteChangeComplete);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChangeStart);
+      router.events.off('routeChangeComplete', handleRouteChangeComplete);
+      router.events.off('routeChangeError', handleRouteChangeComplete);
+    };
+  }, [router]);
 
   const {
     query = "all",
@@ -205,31 +222,37 @@ export default function Search(props) {
             </div>
           </div>
           <div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              {products.map((product) => (
-                <ProductItem
-                  product={product}
-                  key={product.slug}
-                  addToCartHandler={addToCartHandler}
-                  allProducts={products}
-                />
-              ))}
-            </div>
-            {pages > 1 && (
-              <ul className="flex mt-4">
-                {[...Array(pages).keys()].map((pageNumber) => (
-                  <li key={pageNumber}>
-                    <button
-                      className={`default-button m-2 ${
-                        page == pageNumber + 1 ? "font-bold bg-blue-500 text-white" : ""
-                      }`}
-                      onClick={() => pageHandler(pageNumber + 1)}
-                    >
-                      {pageNumber + 1}
-                    </button>
-                  </li>
-                ))}
-              </ul>
+            {isLoading ? (
+              <SkeletonProductGrid count={9} />
+            ) : (
+              <>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                  {products.map((product) => (
+                    <ProductItem
+                      product={product}
+                      key={product.slug}
+                      addToCartHandler={addToCartHandler}
+                      allProducts={products}
+                    />
+                  ))}
+                </div>
+                {pages > 1 && (
+                  <ul className="flex mt-4">
+                    {[...Array(pages).keys()].map((pageNumber) => (
+                      <li key={pageNumber}>
+                        <button
+                          className={`default-button m-2 ${
+                            page == pageNumber + 1 ? "font-bold bg-blue-500 text-white" : ""
+                          }`}
+                          onClick={() => pageHandler(pageNumber + 1)}
+                        >
+                          {pageNumber + 1}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </>
             )}
           </div>
         </div>
