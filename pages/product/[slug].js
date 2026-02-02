@@ -180,7 +180,7 @@ export default function ProductDetail(props) {
     >
       <div className="py-2">
         <Link href="/">
-          <span className="text-blue-600 hover:text-blue-800">← Back to products</span>
+          <span className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">← Back to products</span>
         </Link>
       </div>
       <div className="grid md:grid-cols-4 md:gap-3 my-4">
@@ -196,12 +196,12 @@ export default function ProductDetail(props) {
         <div>
           <ul className="space-y-3">
             <li>
-              <h1 className="text-2xl font-bold">{product.name}</h1>
+              <h1 className="text-2xl font-bold dark:text-white">{product.name}</h1>
             </li>
-            <li className="text-gray-600">
+            <li className="text-gray-600 dark:text-gray-300">
               <span className="font-semibold">Category:</span> {product.category}
             </li>
-            <li className="text-gray-600">
+            <li className="text-gray-600 dark:text-gray-300">
               <span className="font-semibold">Brand:</span> {product.brand}
             </li>
             <li className="flex items-center space-x-2">
@@ -212,17 +212,17 @@ export default function ProductDetail(props) {
                 value={product.rating}
                 edit={false}
               />
-              <span className="text-gray-600">
+              <span className="text-gray-600 dark:text-gray-300">
                 ({product.totalRatings} {product.totalRatings === 1 ? 'rating' : 'ratings'})
               </span>
             </li>
-            <li className="text-gray-700">
+            <li className="text-gray-700 dark:text-gray-300">
               <span className="font-semibold">Description:</span>
               <p className="mt-1">{product.description}</p>
             </li>
             <li className="pt-4">
-              <div className="border-t pt-4">
-                <p className="font-semibold mb-2">Rate this product:</p>
+              <div className="border-t dark:border-gray-700 pt-4">
+                <p className="font-semibold mb-2 dark:text-white">Rate this product:</p>
                 <ReactStars
                   count={5}
                   onChange={(count) => {
@@ -238,33 +238,33 @@ export default function ProductDetail(props) {
         </div>
         <div>
           <div className="card p-5">
-            <h2 className="mb-2 text-lg font-bold">Price</h2>
+            <h2 className="mb-2 text-lg font-bold dark:text-white">Price</h2>
             <div className="mb-2 flex justify-between">
-              <div className="font-semibold">Price</div>
-              <div className="text-2xl font-bold text-blue-600">${product.price}</div>
+              <div className="font-semibold dark:text-gray-300">Price</div>
+              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">${product.price}</div>
             </div>
             <div className="mb-2 flex justify-between items-center">
-              <div className="font-semibold">Status</div>
+              <div className="font-semibold dark:text-gray-300">Status</div>
               <div className="flex items-center gap-2">
                 {isConnected && (
-                  <span className="flex items-center gap-1 text-xs text-gray-500">
+                  <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                     <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
                     LIVE
                   </span>
                 )}
                 {isSoldOut ? (
-                  <span className="text-red-600 font-semibold">Out of Stock</span>
+                  <span className="text-red-600 dark:text-red-400 font-semibold">Out of Stock</span>
                 ) : isLowStock ? (
-                  <span className="text-orange-600 font-semibold">
+                  <span className="text-orange-600 dark:text-orange-400 font-semibold">
                     Low Stock ({stock} left)
                   </span>
                 ) : (
-                  <span className="text-green-600 font-semibold">In Stock</span>
+                  <span className="text-green-600 dark:text-green-400 font-semibold">In Stock</span>
                 )}
               </div>
             </div>
             {stock > 0 && (
-              <div className="mb-2 text-sm text-gray-600">
+              <div className="mb-2 text-sm text-gray-600 dark:text-gray-400">
                 {stock} {stock === 1 ? 'item' : 'items'} available
               </div>
             )}
@@ -290,8 +290,8 @@ export default function ProductDetail(props) {
             <button
               className={`w-full mt-2 py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
                 isInWishlist
-                  ? 'bg-red-100 text-red-600 hover:bg-red-200'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
               onClick={toggleWishlistHandler}
             >
@@ -314,8 +314,8 @@ export default function ProductDetail(props) {
             <button
               className={`w-full mt-2 py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
                 isInCompare
-                  ? 'bg-purple-100 text-purple-600 hover:bg-purple-200'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 hover:bg-purple-200 dark:hover:bg-purple-900/50'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
               onClick={toggleCompareHandler}
             >
