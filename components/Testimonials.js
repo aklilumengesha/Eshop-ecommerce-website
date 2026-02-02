@@ -1,9 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 export default function Testimonials() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const testimonials = [
+  // Fallback testimonials if API fails or returns empty
+  const fallbackTestimonials = [
     {
       name: "Sarah Johnson",
       role: "Verified Buyer",
@@ -30,6 +34,26 @@ export default function Testimonials() {
     },
   ];
 
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const { data } = await axios.get('/api/testimonials');
+        if (data && data.length > 0) {
+          setTestimonials(data);
+        } else {
+          setTestimonials(fallbackTestimonials);
+        }
+      } catch (error) {
+        console.error('Failed to fetch testimonials:', error);
+        setTestimonials(fallbackTestimonials);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTestimonials();
+  }, []);
+
   const nextTestimonial = () => {
     setActiveIndex((prev) => (prev + 1) % testimonials.length);
   };
@@ -37,6 +61,25 @@ export default function Testimonials() {
   const prevTestimonial = () => {
     setActiveIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
   };
+
+  if (loading) {
+    return (
+      <div className="bg-gradient-to-br from-primary-50 to-white py-16 mb-12">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center">
+            <div className="animate-pulse">
+              <div className="h-8 bg-gray-200 rounded w-64 mx-auto mb-4"></div>
+              <div className="h-4 bg-gray-200 rounded w-96 mx-auto"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (testimonials.length === 0) {
+    return null;
+  }
 
   return (
     <div className="bg-gradient-to-br from-primary-50 to-white py-16 mb-12">
