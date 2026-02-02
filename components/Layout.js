@@ -12,9 +12,10 @@ import ConnectionStatus from "./ConnectionStatus";
 import SearchAutocomplete from "./SearchAutocomplete";
 import Footer from "./Footer";
 import MegaMenu from "./MegaMenu";
+import Breadcrumb from "./Breadcrumb";
 import { currencyMetadata, setDefaultCurrency, fetchExchangeRates } from "@/utils/currency";
 
-function Layout({ title, children }) {
+function Layout({ title, children, breadcrumbProps }) {
   const router = useRouter();
   const { status, data: session } = useSession();
   const { state, dispatch } = useContext(Store);
@@ -604,6 +605,7 @@ function Layout({ title, children }) {
         </header>
 
         <main id="main-content" role="main" className="container m-auto mt-4 xl:px-14 md:px-12 px-8">
+          <Breadcrumb {...breadcrumbProps} />
           {children}
         </main>
 

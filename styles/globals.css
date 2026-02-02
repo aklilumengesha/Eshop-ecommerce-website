@@ -386,3 +386,44 @@ html {
   animation: slideDown 0.3s ease-out;
 }
 
+/* ===================================
+   BREADCRUMB STYLES
+   =================================== */
+
+/* Breadcrumb Navigation */
+.breadcrumb {
+  @apply flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-gray-400;
+}
+
+.breadcrumb-item {
+  @apply flex items-center gap-2;
+}
+
+.breadcrumb-link {
+  @apply text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200;
+}
+
+.breadcrumb-link:hover {
+  @apply underline;
+}
+
+.breadcrumb-current {
+  @apply text-gray-900 dark:text-gray-100 font-medium;
+}
+
+.breadcrumb-separator {
+  @apply text-gray-400 dark:text-gray-600;
+}
+
+/* Breadcrumb with background */
+.breadcrumb-container {
+  @apply bg-gray-50 dark:bg-gray-800/50 rounded-lg px-4 py-2 mb-4;
+}
+
+/* Responsive breadcrumb */
+@media (max-width: 640px) {
+  .breadcrumb {
+    @apply text-xs;
+  }
+}
+

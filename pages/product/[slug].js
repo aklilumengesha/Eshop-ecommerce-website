@@ -150,7 +150,13 @@ export default function ProductDetail(props) {
   };
 
   return (
-    <Layout title={product.name}>
+    <Layout 
+      title={product.name}
+      breadcrumbProps={{
+        productName: product.name,
+        categoryName: product.category,
+      }}
+    >
       <div className="py-2">
         <Link href="/">
           <span className="text-blue-600 hover:text-blue-800">← Back to products</span>
