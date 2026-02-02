@@ -7,44 +7,12 @@ export default function Testimonials() {
   const [socialProofStats, setSocialProofStats] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fallback testimonials if API fails or returns empty
-  const fallbackTestimonials = [
-    {
-      name: "Sarah Johnson",
-      role: "Verified Buyer",
-      image: "https://ui-avatars.com/api/?name=Sarah+Johnson&background=4F46E5&color=fff&size=128",
-      rating: 5,
-      text: "Amazing quality and fast shipping! The products exceeded my expectations. Will definitely shop here again.",
-      product: "Wireless Headphones",
-    },
-    {
-      name: "Michael Chen",
-      role: "Verified Buyer",
-      image: "https://ui-avatars.com/api/?name=Michael+Chen&background=10B981&color=fff&size=128",
-      rating: 5,
-      text: "Best online shopping experience I've had. Customer service was incredibly helpful and responsive.",
-      product: "Smart Watch",
-    },
-    {
-      name: "Emily Rodriguez",
-      role: "Verified Buyer",
-      image: "https://ui-avatars.com/api/?name=Emily+Rodriguez&background=F59E0B&color=fff&size=128",
-      rating: 5,
-      text: "Great prices and excellent product selection. The website is easy to navigate and checkout was smooth.",
-      product: "Laptop Bag",
-    },
-  ];
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Fetch testimonials
         const { data: testimonialsData } = await axios.get('/api/testimonials');
-        if (testimonialsData && testimonialsData.length > 0) {
-          setTestimonials(testimonialsData);
-        } else {
-          setTestimonials(fallbackTestimonials);
-        }
+        setTestimonials(testimonialsData || []);
 
         // Fetch social proof stats
         try {
@@ -56,7 +24,7 @@ export default function Testimonials() {
         }
       } catch (error) {
         console.error('Failed to fetch testimonials:', error);
-        setTestimonials(fallbackTestimonials);
+        setTestimonials([]);
       } finally {
         setLoading(false);
       }
