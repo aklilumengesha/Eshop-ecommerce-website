@@ -26,6 +26,21 @@ function Layout({ title, children }) {
   const [toggle, setToggle] = useState(false);
   const [exchangeRates, setExchangeRates] = useState(null);
   const [ratesLoading, setRatesLoading] = useState(true);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // Detect scroll for sticky header
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     setCartItemsCount(cart.cartItems.reduce((a, c) => a + c.quantity, 0));
@@ -91,8 +106,13 @@ function Layout({ title, children }) {
         {/* Welcome Banner - Above Header */}
         <WelcomeBanner />
         
-        <header role="banner">
-          <nav className="flex h-14 justify-between shadow-md items-center px-16">
+        <header 
+          role="banner" 
+          className={`sticky top-0 z-40 bg-white dark:bg-gray-900 transition-all duration-300 ${
+            isScrolled ? 'shadow-lg' : 'shadow-md'
+          }`}
+        >
+          <nav className="flex h-14 justify-between items-center px-16">
             <div className="flex items-center space-x-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

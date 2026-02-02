@@ -352,3 +352,37 @@ textarea:focus {
   animation: fadeIn 0.2s ease-out;
 }
 
+/* ===================================
+   STICKY HEADER STYLES
+   =================================== */
+
+/* Sticky Header */
+.sticky-header {
+  @apply sticky top-0 z-40 bg-white dark:bg-gray-900 transition-all duration-300;
+}
+
+.sticky-header.scrolled {
+  @apply shadow-lg;
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Header slide down animation */
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.header-slide-down {
+  animation: slideDown 0.3s ease-out;
+}
+
