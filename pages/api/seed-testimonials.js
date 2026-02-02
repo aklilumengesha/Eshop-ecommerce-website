@@ -1,11 +1,12 @@
-import { getSession } from 'next-auth/react';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '../auth/[...nextauth]';
 import Testimonial from '@/models/Testimonial';
 import db from '@/utils/db';
 
 const handler = async (req, res) => {
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
   if (!session || !session.user.isAdmin) {
-    return res.status(401).json({ message: 'Admin access required' });
+    return res.status(401).send('Admin sign in required');
   }
 
   if (req.method !== 'POST') {
