@@ -273,7 +273,7 @@ function Layout({ title, children, breadcrumbProps }) {
               {/* Currency Selector */}
               <Menu as="div" className="relative inline-block z-10">
                 <Menu.Button 
-                  className="flex items-center gap-1 text-gray-700 hover:text-blue-600 transition-colors"
+                  className="flex items-center gap-1 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                   aria-label="Select currency"
                 >
                   <span className="sr-only">Currency selector</span>
@@ -308,9 +308,9 @@ function Layout({ title, children, breadcrumbProps }) {
                     />
                   </svg>
                 </Menu.Button>
-                <Menu.Items className="absolute right-0 w-48 origin-top-right p-2 bg-white shadow-lg rounded-lg mt-2 max-h-96 overflow-y-auto">
+                <Menu.Items className="absolute right-0 w-48 origin-top-right p-2 bg-white dark:bg-gray-800 shadow-lg rounded-lg mt-2 max-h-96 overflow-y-auto">
                   {ratesLoading && (
-                    <div className="px-4 py-2 text-sm text-gray-500 text-center">
+                    <div className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400 text-center">
                       Loading rates...
                     </div>
                   )}
@@ -320,15 +320,15 @@ function Layout({ title, children, breadcrumbProps }) {
                         <button
                           onClick={() => changeCurrency(code)}
                           className={`${
-                            active ? "bg-blue-50" : ""
+                            active ? "bg-blue-50 dark:bg-blue-900/20" : ""
                           } ${
-                            currency === code ? "bg-blue-100 font-semibold" : ""
-                          } w-full text-left px-4 py-2 rounded hover:bg-blue-50 transition-colors flex items-center justify-between`}
+                            currency === code ? "bg-blue-100 dark:bg-blue-900/30 font-semibold" : ""
+                          } w-full text-left px-4 py-2 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors flex items-center justify-between dark:text-gray-200`}
                         >
                           <span>
                             {currencyMetadata[code].symbol} {code}
                           </span>
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
                             {currencyMetadata[code].name}
                           </span>
                         </button>
@@ -336,7 +336,7 @@ function Layout({ title, children, breadcrumbProps }) {
                     </Menu.Item>
                   ))}
                   {exchangeRates && !ratesLoading && (
-                    <div className="px-4 py-2 text-xs text-gray-400 text-center border-t mt-2">
+                    <div className="px-4 py-2 text-xs text-gray-400 dark:text-gray-500 text-center border-t dark:border-gray-700 mt-2">
                       Live rates • Updated hourly
                     </div>
                   )}
@@ -344,10 +344,10 @@ function Layout({ title, children, breadcrumbProps }) {
               </Menu>
 
               {status === "loading" ? (
-                "Loading"
+                <span className="dark:text-gray-300">Loading</span>
               ) : session?.user ? (
                 <Menu as="div" className="relative inline-block z-10">
-                  <Menu.Button className="flex items-center gap-2 text-blue-600">
+                  <Menu.Button className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -364,7 +364,7 @@ function Layout({ title, children, breadcrumbProps }) {
                     </svg>
                     {session.user.name}
                   </Menu.Button>
-                  <Menu.Items className="absolute right-0 w-56 origin-top-right p-2 bg-white shadow-lg rounded-t-lg rounded-b-lg">
+                  <Menu.Items className="absolute right-0 w-56 origin-top-right p-2 bg-white dark:bg-gray-800 shadow-lg rounded-t-lg rounded-b-lg">
                     <Menu.Item>
                       <DropdownLink href="/profile">Profile</DropdownLink>
                     </Menu.Item>
@@ -398,7 +398,7 @@ function Layout({ title, children, breadcrumbProps }) {
                 </Menu>
               ) : (
                 <Link href="/login">
-                  <span className="p-2">Login</span>
+                  <span className="p-2 dark:text-gray-300">Login</span>
                 </Link>
               )}
 
@@ -412,7 +412,7 @@ function Layout({ title, children, breadcrumbProps }) {
                       viewBox="0 0 24 24"
                       strokeWidth="1.5"
                       stroke="currentColor"
-                      className="w-7 h-7"
+                      className="w-7 h-7 dark:text-gray-300"
                     >
                       <path
                         strokeLinecap="round"
@@ -424,7 +424,7 @@ function Layout({ title, children, breadcrumbProps }) {
                       {compareItemsCount}
                     </span>
                   </div>
-                  <span className="text-base font-medium">Compare</span>
+                  <span className="text-base font-medium dark:text-gray-300">Compare</span>
                 </div>
               </Link>
 
@@ -438,7 +438,7 @@ function Layout({ title, children, breadcrumbProps }) {
                       viewBox="0 0 24 24"
                       strokeWidth="1.5"
                       stroke="currentColor"
-                      className="w-7 h-7"
+                      className="w-7 h-7 dark:text-gray-300"
                     >
                       <path
                         strokeLinecap="round"
@@ -450,7 +450,7 @@ function Layout({ title, children, breadcrumbProps }) {
                       {cartItemsCount}
                     </span>
                   </div>
-                  <span className="text-base font-medium">Cart</span>
+                  <span className="text-base font-medium dark:text-gray-300">Cart</span>
                 </div>
               </Link>
             </div>
