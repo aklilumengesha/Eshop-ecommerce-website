@@ -57,18 +57,12 @@ function Cart() {
   };
 
   const applyCouponHandler = async () => {
-    console.log('=== Apply Coupon Handler ===');
-    console.log('Session status:', status);
-    console.log('Session data:', session);
-    console.log('Session user:', session?.user);
-    
     if (status === 'loading') {
       toast.info('Please wait...');
       return;
     }
     
     if (!session || status === 'unauthenticated') {
-      console.log('Not authenticated - redirecting to login');
       toast.error('Please sign in to use coupons');
       router.push('/login?redirect=/cart');
       return;
@@ -78,8 +72,6 @@ function Cart() {
       toast.error('Please enter a coupon code');
       return;
     }
-
-    console.log('Proceeding to apply coupon...');
 
     setLoadingCoupon(true);
     try {
