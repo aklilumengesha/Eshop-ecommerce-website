@@ -114,13 +114,17 @@ export default function BrandShowcase({ brands = [] }) {
               <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center justify-center min-h-[140px] border border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500">
                 {/* Logo (if available) */}
                 {brand.logo && (
-                  <div className="mb-3 flex-shrink-0 h-10 flex items-center justify-center">
+                  <div className="mb-3 flex-shrink-0 h-10 flex items-center justify-center w-full">
                     <img
                       src={brand.logo}
-                      alt={brand.name}
+                      alt={`${brand.name} logo`}
                       className="max-w-[80px] max-h-10 object-contain"
+                      loading="lazy"
                       onError={(e) => {
+                        // Hide broken image and show only text
                         e.target.style.display = 'none';
+                        const parent = e.target.parentElement;
+                        if (parent) parent.style.display = 'none';
                       }}
                     />
                   </div>
