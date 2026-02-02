@@ -112,27 +112,29 @@ export default function BrandShowcase({ brands = [] }) {
               href={`/search?brand=${encodeURIComponent(brand.name)}`}
               className="group"
             >
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center justify-center h-32 border border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500">
-                {brand.logo ? (
-                  <div className="mb-2">
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center justify-center min-h-[140px] border border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500">
+                {/* Logo (if available) */}
+                {brand.logo && (
+                  <div className="mb-3 flex-shrink-0">
                     <Image
                       src={brand.logo}
                       alt={brand.name}
                       width={80}
                       height={40}
-                      className="object-contain"
+                      className="object-contain max-h-10"
                     />
                   </div>
-                ) : (
-                  <div className="text-center">
-                    <h3 className="font-bold text-lg text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-1">
-                      {brand.name}
-                    </h3>
-                  </div>
                 )}
-                <p className="text-sm text-gray-500 dark:text-gray-400 text-center mt-auto">
-                  {brand.productCount} {brand.productCount === 1 ? 'product' : 'products'}
-                </p>
+                
+                {/* Brand Name (always shown) */}
+                <div className="text-center flex-grow flex flex-col justify-center">
+                  <h3 className="font-bold text-base text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-2">
+                    {brand.name}
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {brand.productCount} {brand.productCount === 1 ? 'product' : 'products'}
+                  </p>
+                </div>
               </div>
             </Link>
           ))}
