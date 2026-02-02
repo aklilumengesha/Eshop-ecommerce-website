@@ -67,14 +67,14 @@ export default function Testimonials() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-primary-50 to-white py-16 mb-12">
+    <div className="bg-gradient-to-br from-primary-50 to-white dark:from-gray-800 dark:to-gray-900 py-16 mb-12">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             What Our Customers Say
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             Join thousands of satisfied customers who trust us for quality products and excellent service
           </p>
           {stats.totalReviews > 0 && (
@@ -83,7 +83,7 @@ export default function Testimonials() {
                 {[...Array(5)].map((_, i) => (
                   <svg 
                     key={i} 
-                    className={`w-6 h-6 ${i < Math.floor(stats.averageRating) ? 'text-secondary-500' : 'text-gray-300'}`} 
+                    className={`w-6 h-6 ${i < Math.floor(stats.averageRating) ? 'text-secondary-500' : 'text-gray-300 dark:text-gray-600'}`} 
                     fill="currentColor" 
                     viewBox="0 0 20 20"
                   >
@@ -91,7 +91,7 @@ export default function Testimonials() {
                   </svg>
                 ))}
               </div>
-              <span className="text-gray-700 font-semibold">
+              <span className="text-gray-700 dark:text-gray-300 font-semibold">
                 {stats.averageRating}/5 from {stats.totalReviews} {stats.totalReviews === 1 ? 'review' : 'reviews'}
               </span>
             </div>
@@ -100,9 +100,9 @@ export default function Testimonials() {
 
         {/* Testimonial Carousel */}
         <div className="relative max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-12">
             {/* Quote Icon */}
-            <div className="absolute top-8 left-8 text-primary-200">
+            <div className="absolute top-8 left-8 text-primary-200 dark:text-primary-800">
               <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
               </svg>
@@ -118,7 +118,7 @@ export default function Testimonials() {
                 ))}
               </div>
 
-              <p className="text-xl text-gray-700 mb-6 leading-relaxed">
+              <p className="text-xl text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">
                 "{testimonials[activeIndex].text}"
               </p>
 
@@ -126,12 +126,12 @@ export default function Testimonials() {
                 <img
                   src={testimonials[activeIndex].image}
                   alt={testimonials[activeIndex].name}
-                  className="w-16 h-16 rounded-full border-4 border-primary-100"
+                  className="w-16 h-16 rounded-full border-4 border-primary-100 dark:border-primary-800"
                 />
                 <div>
-                  <h4 className="font-bold text-gray-900">{testimonials[activeIndex].name}</h4>
-                  <p className="text-sm text-gray-600">{testimonials[activeIndex].role}</p>
-                  <p className="text-sm text-primary-600 font-medium">
+                  <h4 className="font-bold text-gray-900 dark:text-white">{testimonials[activeIndex].name}</h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{testimonials[activeIndex].role}</p>
+                  <p className="text-sm text-primary-600 dark:text-primary-400 font-medium">
                     Purchased: {testimonials[activeIndex].product}
                   </p>
                 </div>
@@ -142,7 +142,7 @@ export default function Testimonials() {
           {/* Navigation Buttons */}
           <button
             onClick={prevTestimonial}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center text-gray-600 hover:text-primary-600 hover:shadow-xl transition-all duration-200"
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-12 h-12 bg-white dark:bg-gray-700 rounded-full shadow-lg flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:shadow-xl transition-all duration-200"
             aria-label="Previous testimonial"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -152,7 +152,7 @@ export default function Testimonials() {
 
           <button
             onClick={nextTestimonial}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center text-gray-600 hover:text-primary-600 hover:shadow-xl transition-all duration-200"
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-12 h-12 bg-white dark:bg-gray-700 rounded-full shadow-lg flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:shadow-xl transition-all duration-200"
             aria-label="Next testimonial"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -169,7 +169,7 @@ export default function Testimonials() {
                 className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                   index === activeIndex
                     ? 'bg-primary-600 w-8'
-                    : 'bg-gray-300 hover:bg-gray-400'
+                    : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
                 }`}
                 aria-label={`Go to testimonial ${index + 1}`}
               />
