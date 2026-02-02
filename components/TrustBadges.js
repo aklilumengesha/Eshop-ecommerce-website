@@ -44,30 +44,30 @@ export default function TrustBadges() {
 
   const getColorClasses = (color) => {
     const colors = {
-      primary: "text-primary-600 bg-primary-50 group-hover:bg-primary-100",
-      success: "text-success-600 bg-success-50 group-hover:bg-success-100",
-      info: "text-info-600 bg-info-50 group-hover:bg-info-100",
-      secondary: "text-secondary-600 bg-secondary-50 group-hover:bg-secondary-100",
+      primary: "text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 group-hover:bg-primary-100 dark:group-hover:bg-primary-900/40",
+      success: "text-success-600 dark:text-success-400 bg-success-50 dark:bg-success-900/30 group-hover:bg-success-100 dark:group-hover:bg-success-900/40",
+      info: "text-info-600 dark:text-info-400 bg-info-50 dark:bg-info-900/30 group-hover:bg-info-100 dark:group-hover:bg-info-900/40",
+      secondary: "text-secondary-600 dark:text-secondary-400 bg-secondary-50 dark:bg-secondary-900/30 group-hover:bg-secondary-100 dark:group-hover:bg-secondary-900/40",
     };
     return colors[color] || colors.primary;
   };
 
   return (
-    <div className="bg-gray-50 py-12 mb-12">
+    <div className="bg-gray-50 dark:bg-gray-900 py-12 mb-12">
       <div className="max-w-7xl mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {badges.map((badge, index) => (
             <div
               key={index}
-              className="group flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1"
+              className="group flex flex-col items-center text-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1"
             >
               <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-colors duration-300 ${getColorClasses(badge.color)}`}>
                 {badge.icon}
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-1">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
                 {badge.title}
               </h3>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 {badge.description}
               </p>
             </div>

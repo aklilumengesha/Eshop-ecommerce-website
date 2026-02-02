@@ -11,42 +11,42 @@ export default function CategoryShowcase({ categories = [] }) {
     Electronics: {
       icon: '💻',
       gradient: 'from-blue-500 to-cyan-500',
-      bgColor: 'bg-blue-50',
+      bgColor: 'bg-blue-50 dark:bg-blue-900/20',
     },
     Clothing: {
       icon: '👕',
       gradient: 'from-purple-500 to-pink-500',
-      bgColor: 'bg-purple-50',
+      bgColor: 'bg-purple-50 dark:bg-purple-900/20',
     },
     Books: {
       icon: '📚',
       gradient: 'from-green-500 to-emerald-500',
-      bgColor: 'bg-green-50',
+      bgColor: 'bg-green-50 dark:bg-green-900/20',
     },
     Toys: {
       icon: '🎮',
       gradient: 'from-orange-500 to-red-500',
-      bgColor: 'bg-orange-50',
+      bgColor: 'bg-orange-50 dark:bg-orange-900/20',
     },
     Sports: {
       icon: '⚽',
       gradient: 'from-indigo-500 to-blue-500',
-      bgColor: 'bg-indigo-50',
+      bgColor: 'bg-indigo-50 dark:bg-indigo-900/20',
     },
     Home: {
       icon: '🏠',
       gradient: 'from-yellow-500 to-orange-500',
-      bgColor: 'bg-yellow-50',
+      bgColor: 'bg-yellow-50 dark:bg-yellow-900/20',
     },
     Beauty: {
       icon: '💄',
       gradient: 'from-pink-500 to-rose-500',
-      bgColor: 'bg-pink-50',
+      bgColor: 'bg-pink-50 dark:bg-pink-900/20',
     },
     Food: {
       icon: '🍔',
       gradient: 'from-red-500 to-orange-500',
-      bgColor: 'bg-red-50',
+      bgColor: 'bg-red-50 dark:bg-red-900/20',
     },
   };
 
@@ -60,12 +60,12 @@ export default function CategoryShowcase({ categories = [] }) {
       'from-yellow-500 to-orange-500',
     ];
     const bgColors = [
-      'bg-blue-50',
-      'bg-purple-50',
-      'bg-green-50',
-      'bg-orange-50',
-      'bg-indigo-50',
-      'bg-yellow-50',
+      'bg-blue-50 dark:bg-blue-900/20',
+      'bg-purple-50 dark:bg-purple-900/20',
+      'bg-green-50 dark:bg-green-900/20',
+      'bg-orange-50 dark:bg-orange-900/20',
+      'bg-indigo-50 dark:bg-indigo-900/20',
+      'bg-yellow-50 dark:bg-yellow-900/20',
     ];
     return {
       icon: '📦',
@@ -78,16 +78,16 @@ export default function CategoryShowcase({ categories = [] }) {
     <div className="mb-12">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">
+          <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
             Shop by Category
           </h2>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-300">
             Browse our wide range of product categories
           </p>
         </div>
         <Link
           href="/search"
-          className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-2 transition-colors"
+          className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium flex items-center gap-2 transition-colors"
         >
           View All
           <svg
@@ -117,7 +117,7 @@ export default function CategoryShowcase({ categories = [] }) {
               href={`/search?category=${encodeURIComponent(category.name)}`}
               className="group"
             >
-              <div className={`${style.bgColor} rounded-xl p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200 hover:border-transparent`}>
+              <div className={`${style.bgColor} rounded-xl p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200 dark:border-gray-700 hover:border-transparent`}>
                 <div className="flex flex-col items-center text-center">
                   {/* Icon/Image */}
                   <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${style.gradient} flex items-center justify-center mb-4 text-3xl shadow-lg group-hover:scale-110 transition-transform duration-300`}>
@@ -135,12 +135,12 @@ export default function CategoryShowcase({ categories = [] }) {
                   </div>
                   
                   {/* Category Name */}
-                  <h3 className="font-bold text-lg text-gray-800 group-hover:text-blue-600 transition-colors mb-1">
+                  <h3 className="font-bold text-lg text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-1">
                     {category.name}
                   </h3>
                   
                   {/* Product Count */}
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
                     {category.productCount} {category.productCount === 1 ? 'item' : 'items'}
                   </p>
                   
@@ -152,7 +152,7 @@ export default function CategoryShowcase({ categories = [] }) {
                       viewBox="0 0 24 24"
                       strokeWidth="2.5"
                       stroke="currentColor"
-                      className="w-5 h-5 text-blue-600"
+                      className="w-5 h-5 text-blue-600 dark:text-blue-400"
                     >
                       <path
                         strokeLinecap="round"
@@ -169,17 +169,17 @@ export default function CategoryShowcase({ categories = [] }) {
       </div>
 
       {/* Category Benefits */}
-      <div className="mt-8 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6">
+      <div className="mt-8 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
           <div className="flex flex-col items-center">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3">
+            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth="2"
                 stroke="currentColor"
-                className="w-6 h-6 text-blue-600"
+                className="w-6 h-6 text-blue-600 dark:text-blue-400"
               >
                 <path
                   strokeLinecap="round"
@@ -188,19 +188,19 @@ export default function CategoryShowcase({ categories = [] }) {
                 />
               </svg>
             </div>
-            <h4 className="font-semibold text-gray-800 mb-1">Wide Selection</h4>
-            <p className="text-sm text-gray-600">Thousands of products across all categories</p>
+            <h4 className="font-semibold text-gray-800 dark:text-white mb-1">Wide Selection</h4>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Thousands of products across all categories</p>
           </div>
           
           <div className="flex flex-col items-center">
-            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-3">
+            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mb-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth="2"
                 stroke="currentColor"
-                className="w-6 h-6 text-purple-600"
+                className="w-6 h-6 text-purple-600 dark:text-purple-400"
               >
                 <path
                   strokeLinecap="round"
@@ -209,19 +209,19 @@ export default function CategoryShowcase({ categories = [] }) {
                 />
               </svg>
             </div>
-            <h4 className="font-semibold text-gray-800 mb-1">Best Prices</h4>
-            <p className="text-sm text-gray-600">Competitive pricing on all items</p>
+            <h4 className="font-semibold text-gray-800 dark:text-white mb-1">Best Prices</h4>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Competitive pricing on all items</p>
           </div>
           
           <div className="flex flex-col items-center">
-            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3">
+            <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth="2"
                 stroke="currentColor"
-                className="w-6 h-6 text-green-600"
+                className="w-6 h-6 text-green-600 dark:text-green-400"
               >
                 <path
                   strokeLinecap="round"
@@ -230,8 +230,8 @@ export default function CategoryShowcase({ categories = [] }) {
                 />
               </svg>
             </div>
-            <h4 className="font-semibold text-gray-800 mb-1">Fast Delivery</h4>
-            <p className="text-sm text-gray-600">Quick shipping to your doorstep</p>
+            <h4 className="font-semibold text-gray-800 dark:text-white mb-1">Fast Delivery</h4>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Quick shipping to your doorstep</p>
           </div>
         </div>
       </div>
