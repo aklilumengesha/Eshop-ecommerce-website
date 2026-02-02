@@ -1,4 +1,4 @@
-import Layout from '@/components/Layout';
+import AdminLayout from '@/components/AdminLayout';
 import Link from 'next/link';
 import React, { useEffect, useReducer } from 'react';
 import axios from 'axios';
@@ -112,38 +112,8 @@ export default function AdminCoupons() {
   };
 
   return (
-    <Layout title="Coupons Management">
-      <div className="grid md:grid-cols-5 md:gap-5">
-        <div>
-          <ul>
-            <li>
-              <Link href="/admin/dashboard">Dashboard</Link>
-            </li>
-            <li>
-              <Link href="/admin/orders">Orders</Link>
-            </li>
-            <li>
-              <Link href="/admin/products">Products</Link>
-            </li>
-            <li>
-              <Link href="/admin/users">Users</Link>
-            </li>
-            <li>
-              <Link href="/admin/reviews">Reviews</Link>
-            </li>
-            <li>
-              <Link href="/admin/coupons" className="font-bold">
-                Coupons
-              </Link>
-            </li>
-            <li>
-              <Link href="/admin/stock-notifications">Stock Notifications</Link>
-            </li>
-          </ul>
-        </div>
-
-        <div className="md:col-span-4">
-          <h1 className="mb-4 text-3xl font-bold">Coupons Management</h1>
+    <AdminLayout title="Coupons Management">
+      <h1 className="mb-6 text-3xl font-bold text-gray-900 dark:text-white">Coupons Management</h1>
 
           {/* Statistics Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -265,9 +235,7 @@ export default function AdminCoupons() {
               )}
             </div>
           )}
-        </div>
-      </div>
-    </Layout>
+    </AdminLayout>
   );
 }
 

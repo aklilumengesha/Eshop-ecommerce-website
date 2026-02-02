@@ -1,4 +1,4 @@
-import Layout from "@/components/Layout";
+import AdminLayout from "@/components/AdminLayout";
 import Link from "next/link";
 import { useEffect, useReducer, useState } from "react";
 import axios from "axios";
@@ -121,37 +121,8 @@ export default function AdminReviewsScreen() {
   });
 
   return (
-    <Layout title="Admin Reviews">
-      <div className="grid md:grid-cols-4 md:gap-5">
-        <div>
-          <ul>
-            <li>
-              <Link href="/admin/dashboard">Dashboard</Link>
-            </li>
-            <li>
-              <Link href="/admin/orders">Orders</Link>
-            </li>
-            <li>
-              <Link href="/admin/products">Products</Link>
-            </li>
-            <li>
-              <Link href="/admin/users">Users</Link>
-            </li>
-            <li>
-              <Link href="/admin/reviews" className="font-bold">
-                Reviews
-              </Link>
-            </li>
-            <li>
-              <Link href="/admin/coupons">Coupons</Link>
-            </li>
-            <li>
-              <Link href="/admin/stock-notifications">Stock Notifications</Link>
-            </li>
-          </ul>
-        </div>
-        <div className="md:col-span-3">
-          <h1 className="mb-4 text-xl font-bold">Review Management</h1>
+    <AdminLayout title="Reviews Management">
+      <h1 className="mb-6 text-3xl font-bold text-gray-900 dark:text-white">Review Management</h1>
 
           {loading ? (
             <div className="text-center py-12">
@@ -327,8 +298,6 @@ export default function AdminReviewsScreen() {
               </div>
             </>
           )}
-        </div>
-      </div>
 
       {/* Response Modal */}
       {selectedReview && (
@@ -388,7 +357,7 @@ export default function AdminReviewsScreen() {
           </div>
         </div>
       )}
-    </Layout>
+    </AdminLayout>
   );
 }
 

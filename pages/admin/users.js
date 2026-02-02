@@ -1,4 +1,4 @@
-import Layout from "@/components/Layout";
+import AdminLayout from "@/components/AdminLayout";
 import { getError } from "@/utils/error";
 import axios from "axios";
 import Link from "next/link";
@@ -68,104 +68,63 @@ export default function AdminUsers() {
   };
 
   return (
-    <Layout title="Admin Users">
-      <div className="grid md:grid-cols-4 md:gap-5">
-        <div>
-          <ul className="space-y-2">
-            <li>
-              <Link href="/admin/dashboard">Dashboard</Link>
-            </li>
-            <li>
-              <Link href="/admin/orders">Orders</Link>
-            </li>
-            <li>
-              <Link href="/admin/products">Products</Link>
-            </li>
-            <li className="flex items-center font-bold text-blue-700">
-              <Link href="/admin/users">Users</Link>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                className="w-5 h-5 ml-1"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                />
-              </svg>
-            </li>
-            <li>
-              <Link href="/admin/reviews">Reviews</Link>
-            </li>
-            <li>
-              <Link href="/admin/coupons">Coupons</Link>
-            </li>
-            <li>
-              <Link href="/admin/stock-notifications">Stock Notifications</Link>
-            </li>
-          </ul>
-        </div>
-        <div className="overflow-x-auto md:col-span-3">
-          <h1 className="mb-4 text-3xl font-bold">Users Management</h1>
-          {loadingDelete && <div>Deleting...</div>}
-          {loading ? (
-            <div className="flex justify-center items-center min-h-screen">
-              <div className="spinner"></div>
-            </div>
-          ) : error ? (
-            <div className="alert-error">{error}</div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full">
-                <thead className="border-b">
-                  <tr>
-                    <th className="px-5 text-left">ID</th>
-                    <th className="px-5 text-left">NAME</th>
-                    <th className="px-5 text-left">EMAIL</th>
-                    <th className="px-5 text-left">ADMIN</th>
-                    <th className="px-5 text-left">ACTIONS</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {users.map((user) => (
-                    <tr key={user._id} className="border-b">
-                      <td className="p-5">{user._id.substring(20, 24)}</td>
-                      <td className="p-5">{user.name}</td>
-                      <td className="p-5">{user.email}</td>
-                      <td className="p-5">
-                        {user.isAdmin ? (
-                          <span className="text-green-600 font-semibold">YES</span>
-                        ) : (
-                          <span className="text-gray-600">NO</span>
-                        )}
-                      </td>
-                      <td className="p-5">
-                        <Link
-                          href={`/admin/user/${user._id}`}
-                          className="default-button mr-2"
-                        >
-                          Edit
-                        </Link>
-                        <button
-                          onClick={() => deleteHandler(user._id)}
-                          className="default-button"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+    <AdminLayout title="Users Management">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Users Management</h1>
+        {loadingDelete && <div className="text-gray-600 dark:text-gray-400">Deleting...</div>}
       </div>
-    </Layout>
+      {loading ? (
+        <div className="flex justify-center items-center py-12">
+          <div className="spinner"></div>
+        </div>
+      ) : error ? (
+        <div className="alert-error">{error}</div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full">
+            <thead className="border-b">
+              <tr>
+                <th className="px-5 text-left">ID</th>
+                <th className="px-5 text-left">NAME</th>
+                <th className="px-5 text-left">EMAIL</th>
+                <th className="px-5 text-left">ADMIN</th>
+                <th className="px-5 text-left">ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <tr key={user._id} className="border-b">
+                  <td className="p-5">{user._id.substring(20, 24)}</td>
+                  <td className="p-5">{user.name}</td>
+                  <td className="p-5">{user.email}</td>
+                  <td className="p-5">
+                    {user.isAdmin ? (
+                      <span className="text-green-600 font-semibold">YES</span>
+                    ) : (
+                      <span className="text-gray-600">NO</span>
+                    )}
+                  </td>
+                  <td className="p-5">
+                    <Link
+                      href={`/admin/user/${user._id}`}
+                      className="default-button mr-2"
+                    >
+                      Edit
+                    </Link>
+                    <button
+                      onClick={() => deleteHandler(user._id)}
+                      className="default-button"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </AdminLayout>
   );
 }
 

@@ -1,4 +1,4 @@
-import Layout from "@/components/Layout";
+import AdminLayout from "@/components/AdminLayout";
 import { getError } from "@/utils/error";
 import axios from "axios";
 import Link from "next/link";
@@ -39,65 +39,24 @@ export default function AdminOrders() {
   }, []);
 
   return (
-    <Layout title="Admin Orders">
-      <div className="grid md:grid-cols-4 md:gap-5">
-        <div>
-          <ul className="space-y-2">
-            <li>
-              <Link href="/admin/dashboard">Dashboard</Link>
-            </li>
-            <li className="flex items-center font-bold text-blue-700">
-              <Link href="/admin/orders">Orders</Link>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                className="w-5 h-5 ml-1"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                />
-              </svg>
-            </li>
-            <li>
-              <Link href="/admin/products">Products</Link>
-            </li>
-            <li>
-              <Link href="/admin/users">Users</Link>
-            </li>
-            <li>
-              <Link href="/admin/reviews">Reviews</Link>
-            </li>
-            <li>
-              <Link href="/admin/coupons">Coupons</Link>
-            </li>
-            <li>
-              <Link href="/admin/stock-notifications">Stock Notifications</Link>
-            </li>
-          </ul>
-        </div>
-        <div className="overflow-x-auto md:col-span-3">
-          <h1 className="mb-4 text-3xl font-bold">Orders Management</h1>
-          {loading ? (
-            <SkeletonTable rows={10} columns={7} />
-          ) : error ? (
-            <div className="alert-error">{error}</div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full">
-                <thead className="border-b">
-                  <tr>
-                    <th className="px-5 text-left">ID</th>
-                    <th className="px-5 text-left">USER</th>
-                    <th className="px-5 text-left">DATE</th>
-                    <th className="px-5 text-left">TOTAL</th>
-                    <th className="px-5 text-left">PAID</th>
-                    <th className="px-5 text-left">DELIVERED</th>
-                    <th className="px-5 text-left">ACTION</th>
+    <AdminLayout title="Orders Management">
+      <h1 className="mb-6 text-3xl font-bold text-gray-900 dark:text-white">Orders Management</h1>
+      {loading ? (
+        <SkeletonTable rows={10} columns={7} />
+      ) : error ? (
+        <div className="alert-error">{error}</div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full">
+            <thead className="border-b">
+              <tr>
+                <th className="px-5 text-left">ID</th>
+                <th className="px-5 text-left">USER</th>
+                <th className="px-5 text-left">DATE</th>
+                <th className="px-5 text-left">TOTAL</th>
+                <th className="px-5 text-left">PAID</th>
+                <th className="px-5 text-left">DELIVERED</th>
+                <th className="px-5 text-left">ACTION</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -140,9 +99,7 @@ export default function AdminOrders() {
               </table>
             </div>
           )}
-        </div>
-      </div>
-    </Layout>
+        </AdminLayout>
   );
 }
 

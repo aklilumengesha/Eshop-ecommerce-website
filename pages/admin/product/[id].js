@@ -1,4 +1,4 @@
-import Layout from "@/components/Layout";
+import AdminLayout from "@/components/AdminLayout";
 import { getError } from "@/utils/error";
 import axios from "axios";
 import Link from "next/link";
@@ -221,46 +221,14 @@ export default function AdminProductEdit() {
   };
 
   return (
-    <Layout title={isNewProduct ? "Create Product" : `Edit Product ${productId}`}>
-      <div className="grid md:grid-cols-4 md:gap-5">
-        <div>
-          <ul className="space-y-2">
-            <li>
-              <Link href="/admin/dashboard">Dashboard</Link>
-            </li>
-            <li>
-              <Link href="/admin/orders">Orders</Link>
-            </li>
-            <li className="flex items-center font-bold text-blue-700">
-              <Link href="/admin/products">Products</Link>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                className="w-5 h-5 ml-1"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                />
-              </svg>
-            </li>
-            <li>
-              <Link href="/admin/users">Users</Link>
-            </li>
-          </ul>
+    <AdminLayout title={isNewProduct ? "Create Product" : `Edit Product ${productId}`}>
+      {loading ? (
+        <div className="flex justify-center items-center py-12">
+          <div className="spinner"></div>
         </div>
-        <div className="md:col-span-3">
-          {loading ? (
-            <div className="flex justify-center items-center min-h-screen">
-              <div className="spinner"></div>
-            </div>
-          ) : error ? (
-            <div className="alert-error">{error}</div>
-          ) : (
+      ) : error ? (
+        <div className="alert-error">{error}</div>
+      ) : (
             <form
               className="mx-auto max-w-screen-md"
               onSubmit={handleSubmit(submitHandler)}
@@ -605,9 +573,7 @@ export default function AdminProductEdit() {
               </div>
             </form>
           )}
-        </div>
-      </div>
-    </Layout>
+    </AdminLayout>
   );
 }
 

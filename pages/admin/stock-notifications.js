@@ -1,4 +1,4 @@
-import Layout from '@/components/Layout';
+import AdminLayout from '@/components/AdminLayout';
 import Link from 'next/link';
 import React, { useEffect, useReducer } from 'react';
 import axios from 'axios';
@@ -66,36 +66,8 @@ export default function AdminStockNotifications() {
   };
 
   return (
-    <Layout title="Stock Notifications">
-      <div className="grid md:grid-cols-4 md:gap-5">
-        <div>
-          <ul className="space-y-2">
-            <li>
-              <Link href="/admin/dashboard">Dashboard</Link>
-            </li>
-            <li>
-              <Link href="/admin/orders">Orders</Link>
-            </li>
-            <li>
-              <Link href="/admin/products">Products</Link>
-            </li>
-            <li>
-              <Link href="/admin/users">Users</Link>
-            </li>
-            <li>
-              <Link href="/admin/reviews">Reviews</Link>
-            </li>
-            <li>
-              <Link href="/admin/coupons">Coupons</Link>
-            </li>
-            <li className="font-bold text-blue-700">
-              <Link href="/admin/stock-notifications">Stock Notifications</Link>
-            </li>
-          </ul>
-        </div>
-
-        <div className="md:col-span-3">
-          <h1 className="mb-4 text-xl font-bold">Stock Notifications</h1>
+    <AdminLayout title="Stock Notifications">
+      <h1 className="mb-6 text-3xl font-bold text-gray-900 dark:text-white">Stock Notifications</h1>
 
           {loading ? (
             <div className="flex justify-center items-center py-12">
@@ -260,9 +232,7 @@ export default function AdminStockNotifications() {
               </div>
             </>
           )}
-        </div>
-      </div>
-    </Layout>
+    </AdminLayout>
   );
 }
 

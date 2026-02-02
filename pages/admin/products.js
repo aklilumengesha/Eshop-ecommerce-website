@@ -1,4 +1,4 @@
-import Layout from "@/components/Layout";
+import AdminLayout from "@/components/AdminLayout";
 import { getError } from "@/utils/error";
 import axios from "axios";
 import Link from "next/link";
@@ -78,109 +78,68 @@ export default function AdminProducts() {
   };
 
   return (
-    <Layout title="Admin Products">
-      <div className="grid md:grid-cols-4 md:gap-5">
-        <div>
-          <ul className="space-y-2">
-            <li>
-              <Link href="/admin/dashboard">Dashboard</Link>
-            </li>
-            <li>
-              <Link href="/admin/orders">Orders</Link>
-            </li>
-            <li className="flex items-center font-bold text-blue-700">
-              <Link href="/admin/products">Products</Link>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                className="w-5 h-5 ml-1"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                />
-              </svg>
-            </li>
-            <li>
-              <Link href="/admin/users">Users</Link>
-            </li>
-            <li>
-              <Link href="/admin/reviews">Reviews</Link>
-            </li>
-            <li>
-              <Link href="/admin/coupons">Coupons</Link>
-            </li>
-            <li>
-              <Link href="/admin/stock-notifications">Stock Notifications</Link>
-            </li>
-          </ul>
-        </div>
-        <div className="overflow-x-auto md:col-span-3">
-          <div className="flex justify-between mb-4">
-            <h1 className="text-3xl font-bold">Products Management</h1>
-            {loadingDelete && <div>Deleting...</div>}
-            <button
-              onClick={createHandler}
-              className="primary-button"
-            >
-              Create Product
-            </button>
-          </div>
-
-          {loading ? (
-            <SkeletonTable rows={10} columns={7} />
-          ) : error ? (
-            <div className="alert-error">{error}</div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full">
-                <thead className="border-b">
-                  <tr>
-                    <th className="px-5 text-left">ID</th>
-                    <th className="px-5 text-left">NAME</th>
-                    <th className="px-5 text-left">PRICE</th>
-                    <th className="px-5 text-left">CATEGORY</th>
-                    <th className="px-5 text-left">STOCK</th>
-                    <th className="px-5 text-left">RATING</th>
-                    <th className="px-5 text-left">ACTIONS</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {products.map((product) => (
-                    <tr key={product._id} className="border-b">
-                      <td className="p-5">{product._id.substring(20, 24)}</td>
-                      <td className="p-5">{product.name}</td>
-                      <td className="p-5">${product.price}</td>
-                      <td className="p-5">{product.category}</td>
-                      <td className="p-5">{product.countInStock}</td>
-                      <td className="p-5">{product.rating}</td>
-                      <td className="p-5">
-                        <Link
-                          href={`/admin/product/${product._id}`}
-                          className="default-button mr-2"
-                        >
-                          Edit
-                        </Link>
-                        <button
-                          onClick={() => deleteHandler(product._id)}
-                          className="default-button"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+    <AdminLayout title="Products Management">
+      <div className="flex justify-between mb-6">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Products Management</h1>
+        <div className="flex items-center gap-3">
+          {loadingDelete && <div className="text-gray-600 dark:text-gray-400">Deleting...</div>}
+          <button
+            onClick={createHandler}
+            className="primary-button"
+          >
+            Create Product
+          </button>
         </div>
       </div>
-    </Layout>
+
+      {loading ? (
+        <SkeletonTable rows={10} columns={7} />
+      ) : error ? (
+        <div className="alert-error">{error}</div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full">
+            <thead className="border-b">
+              <tr>
+                <th className="px-5 text-left">ID</th>
+                <th className="px-5 text-left">NAME</th>
+                <th className="px-5 text-left">PRICE</th>
+                <th className="px-5 text-left">CATEGORY</th>
+                <th className="px-5 text-left">STOCK</th>
+                <th className="px-5 text-left">RATING</th>
+                <th className="px-5 text-left">ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map((product) => (
+                <tr key={product._id} className="border-b">
+                  <td className="p-5">{product._id.substring(20, 24)}</td>
+                  <td className="p-5">{product.name}</td>
+                  <td className="p-5">${product.price}</td>
+                  <td className="p-5">{product.category}</td>
+                  <td className="p-5">{product.countInStock}</td>
+                  <td className="p-5">{product.rating}</td>
+                  <td className="p-5">
+                    <Link
+                      href={`/admin/product/${product._id}`}
+                      className="default-button mr-2"
+                    >
+                      Edit
+                    </Link>
+                    <button
+                      onClick={() => deleteHandler(product._id)}
+                      className="default-button"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </AdminLayout>
   );
 }
 
