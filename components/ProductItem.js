@@ -97,7 +97,7 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
           {/* Wishlist Button */}
           <button
             onClick={toggleWishlistHandler}
-            className="bg-white rounded-full p-2 shadow-md hover:shadow-lg transition-shadow"
+            className="bg-white dark:bg-gray-800 rounded-full p-2 shadow-md hover:shadow-lg transition-shadow border border-gray-200 dark:border-gray-600"
             aria-label={isInWishlist ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
             aria-pressed={isInWishlist}
           >
@@ -107,7 +107,7 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
               viewBox="0 0 24 24"
               strokeWidth="1.5"
               stroke={isInWishlist ? "#ef4444" : "currentColor"}
-              className="w-6 h-6"
+              className={`w-6 h-6 ${!isInWishlist ? 'text-gray-700 dark:text-gray-300' : ''}`}
             >
               <path
                 strokeLinecap="round"
@@ -120,8 +120,10 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
           {/* Compare Button */}
           <button
             onClick={toggleCompareHandler}
-            className={`rounded-full p-2 shadow-md hover:shadow-lg transition-all ${
-              isInCompare ? "bg-purple-600" : "bg-white"
+            className={`rounded-full p-2 shadow-md hover:shadow-lg transition-all border ${
+              isInCompare 
+                ? "bg-purple-600 border-purple-600" 
+                : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600"
             }`}
             aria-label={isInCompare ? `Remove ${product.name} from comparison` : `Add ${product.name} to comparison`}
             aria-pressed={isInCompare}
@@ -132,7 +134,7 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
               viewBox="0 0 24 24"
               strokeWidth="1.5"
               stroke={isInCompare ? "white" : "currentColor"}
-              className="w-6 h-6"
+              className={`w-6 h-6 ${!isInCompare ? 'text-gray-700 dark:text-gray-300' : ''}`}
             >
               <path
                 strokeLinecap="round"
