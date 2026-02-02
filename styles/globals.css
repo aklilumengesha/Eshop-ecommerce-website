@@ -275,3 +275,63 @@ textarea:focus {
   outline: 3px solid #4F46E5;
   outline-offset: 2px;
 }
+
+/* ===================================
+   MEGA MENU STYLES
+   =================================== */
+
+/* Mega Menu Animation */
+.mega-menu-enter {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.mega-menu-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 200ms ease-out, transform 200ms ease-out;
+}
+
+.mega-menu-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.mega-menu-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 150ms ease-in, transform 150ms ease-in;
+}
+
+/* Mega Menu Hover Effects */
+.mega-menu-category:hover {
+  @apply bg-primary-50 dark:bg-primary-900/20;
+}
+
+.mega-menu-category.active {
+  @apply bg-primary-600 text-white;
+}
+
+/* Mega Menu Subcategory Links */
+.mega-menu-subcategory {
+  @apply text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-150;
+}
+
+.mega-menu-subcategory:hover {
+  @apply translate-x-1;
+}
+
+/* Mega Menu Featured Section */
+.mega-menu-featured {
+  @apply bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20;
+}
+
+/* Mega Menu Shadow */
+.mega-menu-shadow {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Mega Menu Backdrop */
+.mega-menu-backdrop {
+  @apply fixed inset-0 bg-black/20 backdrop-blur-sm z-40;
+}

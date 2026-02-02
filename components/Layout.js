@@ -11,6 +11,7 @@ import WelcomeBanner from "./WelcomeBanner";
 import ConnectionStatus from "./ConnectionStatus";
 import SearchAutocomplete from "./SearchAutocomplete";
 import Footer from "./Footer";
+import MegaMenu from "./MegaMenu";
 import { currencyMetadata, setDefaultCurrency, fetchExchangeRates } from "@/utils/currency";
 
 function Layout({ title, children }) {
@@ -111,6 +112,11 @@ function Layout({ title, children }) {
               <Link href="/">
                 <span className="text-2xl font-bold">eShop</span>
               </Link>
+            </div>
+
+            {/* Mega Menu - Desktop */}
+            <div className="hidden lg:flex">
+              <MegaMenu />
             </div>
 
             <div className="mx-auto hidden w-full max-w-md justify-center md:flex" role="search" aria-label="Product search">
@@ -455,6 +461,11 @@ function Layout({ title, children }) {
           >
             <div className="py-4 px-4 text-sm mx-auto w-full">
               <SearchAutocomplete />
+            </div>
+
+            {/* Mobile Mega Menu */}
+            <div className="px-4 py-2 border-b border-gray-200">
+              <MegaMenu />
             </div>
 
             <div className="flex flex-col space-y-3 mx-auto">
