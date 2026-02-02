@@ -25,19 +25,19 @@ export default function BrandShowcase({ brands = [] }) {
   };
 
   return (
-    <div className="mb-12 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-8">
+    <div className="mb-12 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-lg p-8">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">
+          <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
             Shop by Brand
           </h2>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-300">
             Discover products from your favorite brands
           </p>
         </div>
         <Link
           href="/search?sortBy=brand"
-          className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-2 transition-colors"
+          className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium flex items-center gap-2 transition-colors"
         >
           View All Brands
           <svg
@@ -63,7 +63,7 @@ export default function BrandShowcase({ brands = [] }) {
           <>
             <button
               onClick={prevSlide}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white rounded-full p-3 shadow-lg hover:bg-gray-100 transition-all duration-200 hover:scale-110"
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white dark:bg-gray-800 rounded-full p-3 shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-110"
               aria-label="Previous brands"
             >
               <svg
@@ -72,7 +72,7 @@ export default function BrandShowcase({ brands = [] }) {
                 viewBox="0 0 24 24"
                 strokeWidth="2.5"
                 stroke="currentColor"
-                className="w-6 h-6 text-gray-700"
+                className="w-6 h-6 text-gray-700 dark:text-gray-300"
               >
                 <path
                   strokeLinecap="round"
@@ -83,7 +83,7 @@ export default function BrandShowcase({ brands = [] }) {
             </button>
             <button
               onClick={nextSlide}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white rounded-full p-3 shadow-lg hover:bg-gray-100 transition-all duration-200 hover:scale-110"
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white dark:bg-gray-800 rounded-full p-3 shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-110"
               aria-label="Next brands"
             >
               <svg
@@ -92,7 +92,7 @@ export default function BrandShowcase({ brands = [] }) {
                 viewBox="0 0 24 24"
                 strokeWidth="2.5"
                 stroke="currentColor"
-                className="w-6 h-6 text-gray-700"
+                className="w-6 h-6 text-gray-700 dark:text-gray-300"
               >
                 <path
                   strokeLinecap="round"
@@ -112,7 +112,7 @@ export default function BrandShowcase({ brands = [] }) {
               href={`/search?brand=${encodeURIComponent(brand.name)}`}
               className="group"
             >
-              <div className="bg-white rounded-lg p-6 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center justify-center h-32 border border-gray-200 hover:border-blue-400">
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center justify-center h-32 border border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500">
                 {brand.logo ? (
                   <div className="mb-2">
                     <Image
@@ -125,12 +125,12 @@ export default function BrandShowcase({ brands = [] }) {
                   </div>
                 ) : (
                   <div className="text-center">
-                    <h3 className="font-bold text-lg text-gray-800 group-hover:text-blue-600 transition-colors mb-1">
+                    <h3 className="font-bold text-lg text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-1">
                       {brand.name}
                     </h3>
                   </div>
                 )}
-                <p className="text-sm text-gray-500 text-center mt-auto">
+                <p className="text-sm text-gray-500 dark:text-gray-400 text-center mt-auto">
                   {brand.productCount} {brand.productCount === 1 ? 'product' : 'products'}
                 </p>
               </div>
@@ -147,8 +147,8 @@ export default function BrandShowcase({ brands = [] }) {
                 onClick={() => setCurrentIndex(index)}
                 className={`h-2 rounded-full transition-all duration-300 ${
                   index === currentIndex
-                    ? 'w-8 bg-blue-600'
-                    : 'w-2 bg-gray-300 hover:bg-gray-400'
+                    ? 'w-8 bg-blue-600 dark:bg-blue-500'
+                    : 'w-2 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
                 }`}
                 aria-label={`Go to page ${index + 1}`}
               />
@@ -159,7 +159,7 @@ export default function BrandShowcase({ brands = [] }) {
 
       {/* Featured Brands Badge */}
       <div className="mt-8 flex flex-wrap gap-3 justify-center">
-        <div className="flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium">
+        <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-4 py-2 rounded-full text-sm font-medium">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -176,7 +176,7 @@ export default function BrandShowcase({ brands = [] }) {
           </svg>
           Trusted Brands
         </div>
-        <div className="flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2 rounded-full text-sm font-medium">
+        <div className="flex items-center gap-2 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-4 py-2 rounded-full text-sm font-medium">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -193,7 +193,7 @@ export default function BrandShowcase({ brands = [] }) {
           </svg>
           Authentic Products
         </div>
-        <div className="flex items-center gap-2 bg-purple-50 text-purple-700 px-4 py-2 rounded-full text-sm font-medium">
+        <div className="flex items-center gap-2 bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-4 py-2 rounded-full text-sm font-medium">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
