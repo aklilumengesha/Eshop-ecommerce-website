@@ -4,6 +4,7 @@ import axios from 'axios';
 export default function Testimonials() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [testimonials, setTestimonials] = useState([]);
+  const [socialProofStats, setSocialProofStats] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Fallback testimonials if API fails or returns empty
@@ -35,13 +36,23 @@ export default function Testimonials() {
   ];
 
   useEffect(() => {
-    const fetchTestimonials = async () => {
+    const fetchData = async () => {
       try {
-        const { data } = await axios.get('/api/testimonials');
-        if (data && data.length > 0) {
-          setTestimonials(data);
+        // Fetch testimonials
+        const { data: testimonialsData } = await axios.get('/api/testimonials');
+        if (testimonialsData && testimonialsData.length > 0) {
+          setTestimonials(testimonialsData);
         } else {
           setTestimonials(fallbackTestimonials);
+        }
+
+        // Fetch social proof stats
+        try {
+          const { data: statsData } = await axios.get('/api/social-proof-stats');
+          setSocialProofStats(statsData || []);
+        } catch (statsError) {
+          console.error('Failed to fetch social proof stats:', statsError);
+          setSocialProofStats([]);
         }
       } catch (error) {
         console.error('Failed to fetch testimonials:', error);
@@ -51,7 +62,7 @@ export default function Testimonials() {
       }
     };
 
-    fetchTestimonials();
+    fetchData();
   }, []);
 
   const nextTestimonial = () => {
@@ -184,24 +195,30 @@ export default function Testimonials() {
         </div>
 
         {/* Social Proof Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12 max-w-4xl mx-auto">
-          <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-primary-600 mb-1">10K+</div>
-            <div className="text-sm text-gray-600">Happy Customers</div>
+        {socialProofStats.length > 0 && (
+          <div className={`grid grid-cols-2 md:grid-cols-${Math.min(socialProofStats.length, 4)} gap-6 mt-12 max-w-4xl mx-auto`}>
+            {socialProofStats.map((stat) => {
+              const colorMap = {
+                primary: 'text-primary-600',
+                success: 'text-success-600',
+                secondary: 'text-secondary-600',
+                info: 'text-info-600',
+                warning: 'text-warning-600',
+                danger: 'text-danger-600',
+              };
+              const colorClass = colorMap[stat.color] || 'text-primary-600';
+              
+              return (
+                <div key={stat._id} className="text-center">
+                  <div className={`text-3xl md:text-4xl font-bold mb-1 ${colorClass}`}>
+                    {stat.value}
+                  </div>
+                  <div className="text-sm text-gray-600">{stat.label}</div>
+                </div>
+              );
+            })}
           </div>
-          <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-success-600 mb-1">98%</div>
-            <div className="text-sm text-gray-600">Satisfaction Rate</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-secondary-600 mb-1">5K+</div>
-            <div className="text-sm text-gray-600">5-Star Reviews</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-info-600 mb-1">24/7</div>
-            <div className="text-sm text-gray-600">Customer Support</div>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
