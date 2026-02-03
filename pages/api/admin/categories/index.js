@@ -13,45 +13,42 @@ const handler = async (req, res) => {
 
   if (req.method === 'GET') {
     try {
-      const categories = await Category.find({}).sort({ order: 1, name: 1 });
+      // Get all unique categories from products
+      const productCategories = await Product.distinct('category');
       
-      // Get product counts for each category
+      // Get styling info from Category collection
+      const categoryStyles = await Category.find({}).lean();
+      const styleMap = {};
+      categoryStyles.forEach(cat => {
+        styleMap[cat.name] = cat;
+      });
+      
+      // Combine product categories with their styling
       const categoriesWithCounts = await Promise.all(
-        categories.map(async (category) => {
-          const productCount = await Product.countDocuments({ category: category.name });
+        productCategories.map(async (categoryName) => {
+          const productCount = await Product.countDocuments({ category: categoryName });
+          const style = styleMap[categoryName] || {};
+          
           return {
-            ...category.toObject(),
+            name: categoryName,
+            icon: style.icon || '📦',
+            gradient: style.gradient || 'from-blue-500 to-cyan-500',
+            bgColor: style.bgColor || 'bg-blue-50 dark:bg-blue-900/20',
+            image: style.image || '',
+            description: style.description || '',
+            order: style.order || 0,
             productCount,
           };
         })
       );
 
-      res.status(200).json(categoriesWithCounts);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  } else if (req.method === 'POST') {
-    try {
-      const { name, slug, icon, gradient, bgColor, image, description, isActive, order } = req.body;
-
-      const categoryExists = await Category.findOne({ $or: [{ name }, { slug }] });
-      if (categoryExists) {
-        return res.status(400).json({ message: 'Category name or slug already exists' });
-      }
-
-      const category = await Category.create({
-        name,
-        slug: slug || name.toLowerCase().replace(/\s+/g, '-'),
-        icon,
-        gradient,
-        bgColor,
-        image,
-        description,
-        isActive,
-        order,
+      // Sort by order, then by name
+      categoriesWithCounts.sort((a, b) => {
+        if (a.order !== b.order) return a.order - b.order;
+        return a.name.localeCompare(b.name);
       });
 
-      res.status(201).json(category);
+      res.status(200).json(categoriesWithCounts);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

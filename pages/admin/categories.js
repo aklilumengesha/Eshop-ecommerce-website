@@ -14,14 +14,10 @@ function reducer(state, action) {
       return { ...state, loading: false, categories: action.payload, error: '' };
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
-    case 'DELETE_REQUEST':
-      return { ...state, loadingDelete: true };
-    case 'DELETE_SUCCESS':
-      return { ...state, loadingDelete: false, successDelete: true };
-    case 'DELETE_FAIL':
-      return { ...state, loadingDelete: false };
-    case 'DELETE_RESET':
-      return { ...state, loadingDelete: false, successDelete: false };
+    case 'UPDATE_SUCCESS':
+      return { ...state, successUpdate: true };
+    case 'UPDATE_RESET':
+      return { ...state, successUpdate: false };
     default:
       return state;
   }
@@ -29,7 +25,7 @@ function reducer(state, action) {
 
 export default function AdminCategoriesScreen() {
   const router = useRouter();
-  const [{ loading, error, categories, successDelete, loadingDelete }, dispatch] = useReducer(reducer, {
+  const [{ loading, error, categories, successUpdate }, dispatch] = useReducer(reducer, {
     loading: true,
     categories: [],
     error: '',
@@ -39,13 +35,11 @@ export default function AdminCategoriesScreen() {
   const [editingCategory, setEditingCategory] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
-    slug: '',
     icon: '📦',
     gradient: 'from-blue-500 to-cyan-500',
     bgColor: 'bg-blue-50 dark:bg-blue-900/20',
     image: '',
     description: '',
-    isActive: true,
     order: 0,
   });
 
@@ -88,71 +82,34 @@ export default function AdminCategoriesScreen() {
       }
     };
 
-    if (successDelete) {
-      dispatch({ type: 'DELETE_RESET' });
+    if (successUpdate) {
+      dispatch({ type: 'UPDATE_RESET' });
     } else {
       fetchData();
     }
-  }, [successDelete]);
+  }, [successUpdate]);
 
-  const deleteHandler = async (categoryId) => {
-    if (!window.confirm('Are you sure you want to delete this category?')) {
-      return;
-    }
-    try {
-      dispatch({ type: 'DELETE_REQUEST' });
-      await axios.delete(`/api/admin/categories/${categoryId}`);
-      dispatch({ type: 'DELETE_SUCCESS' });
-      toast.success('Category deleted successfully');
-    } catch (err) {
-      dispatch({ type: 'DELETE_FAIL' });
-      toast.error(getError(err));
-    }
-  };
-
-  const openModal = (category = null) => {
-    if (category) {
-      setEditingCategory(category);
-      setFormData({
-        name: category.name,
-        slug: category.slug,
-        icon: category.icon,
-        gradient: category.gradient,
-        bgColor: category.bgColor,
-        image: category.image || '',
-        description: category.description || '',
-        isActive: category.isActive,
-        order: category.order,
-      });
-    } else {
-      setEditingCategory(null);
-      setFormData({
-        name: '',
-        slug: '',
-        icon: '📦',
-        gradient: 'from-blue-500 to-cyan-500',
-        bgColor: 'bg-blue-50 dark:bg-blue-900/20',
-        image: '',
-        description: '',
-        isActive: true,
-        order: 0,
-      });
-    }
+  const openModal = (category) => {
+    setEditingCategory(category);
+    setFormData({
+      name: category.name,
+      icon: category.icon || '📦',
+      gradient: category.gradient || 'from-blue-500 to-cyan-500',
+      bgColor: category.bgColor || 'bg-blue-50 dark:bg-blue-900/20',
+      image: category.image || '',
+      description: category.description || '',
+      order: category.order || 0,
+    });
     setShowModal(true);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (editingCategory) {
-        await axios.put(`/api/admin/categories/${editingCategory._id}`, formData);
-        toast.success('Category updated successfully');
-      } else {
-        await axios.post('/api/admin/categories', formData);
-        toast.success('Category created successfully');
-      }
+      await axios.put(`/api/admin/categories/${editingCategory.name}`, formData);
+      toast.success('Category styling updated successfully');
       setShowModal(false);
-      dispatch({ type: 'DELETE_RESET' });
+      dispatch({ type: 'UPDATE_SUCCESS' });
     } catch (err) {
       toast.error(getError(err));
     }
@@ -164,27 +121,16 @@ export default function AdminCategoriesScreen() {
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }));
-    
-    // Auto-generate slug from name
-    if (name === 'name') {
-      setFormData(prev => ({
-        ...prev,
-        slug: value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
-      }));
-    }
   };
 
   return (
     <AdminLayout title="Categories">
       <div className="md:col-span-3">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold">Categories</h1>
-          <button
-            onClick={() => openModal()}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-          >
-            Create Category
-          </button>
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold mb-2">Manage Category Icons & Styling</h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            Categories are automatically discovered from your products. Customize their appearance here.
+          </p>
         </div>
 
         {loading ? (
@@ -197,44 +143,33 @@ export default function AdminCategoriesScreen() {
               <thead className="border-b">
                 <tr>
                   <th className="px-5 text-left">Order</th>
-                  <th className="px-5 text-left">Icon</th>
-                  <th className="px-5 text-left">Name</th>
-                  <th className="px-5 text-left">Slug</th>
+                  <th className="px-5 text-left">Preview</th>
+                  <th className="px-5 text-left">Category Name</th>
                   <th className="px-5 text-left">Products</th>
-                  <th className="px-5 text-left">Status</th>
+                  <th className="px-5 text-left">Description</th>
                   <th className="px-5 text-left">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {categories.map((category) => (
-                  <tr key={category._id} className="border-b">
-                    <td className="p-5">{category.order}</td>
+                  <tr key={category.name} className="border-b">
+                    <td className="p-5">{category.order || 0}</td>
                     <td className="p-5">
-                      <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${category.gradient} flex items-center justify-center text-2xl`}>
-                        {category.icon}
+                      <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${category.gradient || 'from-blue-500 to-cyan-500'} flex items-center justify-center text-2xl`}>
+                        {category.icon || '📦'}
                       </div>
                     </td>
-                    <td className="p-5">{category.name}</td>
-                    <td className="p-5">{category.slug}</td>
+                    <td className="p-5 font-medium">{category.name}</td>
                     <td className="p-5">{category.productCount || 0}</td>
-                    <td className="p-5">
-                      <span className={`px-2 py-1 rounded text-sm ${category.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                        {category.isActive ? 'Active' : 'Inactive'}
-                      </span>
+                    <td className="p-5 text-sm text-gray-600 dark:text-gray-400">
+                      {category.description || 'No description'}
                     </td>
                     <td className="p-5">
                       <button
                         onClick={() => openModal(category)}
-                        className="text-blue-600 hover:text-blue-800 mr-2"
+                        className="text-blue-600 hover:text-blue-800 font-medium"
                       >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => deleteHandler(category._id)}
-                        className="text-red-600 hover:text-red-800"
-                        disabled={loadingDelete}
-                      >
-                        Delete
+                        Customize
                       </button>
                     </td>
                   </tr>
@@ -248,31 +183,21 @@ export default function AdminCategoriesScreen() {
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <h2 className="text-2xl font-bold mb-4">
-              {editingCategory ? 'Edit Category' : 'Create Category'}
+            <h2 className="text-2xl font-bold mb-2">
+              Customize Category: {editingCategory?.name}
             </h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              Configure the icon, colors, and display settings for this category
+            </p>
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block mb-2">Name</label>
+                <div className="md:col-span-2">
+                  <label className="block mb-2 font-medium">Category Name (from products)</label>
                   <input
                     type="text"
-                    name="name"
                     value={formData.name}
-                    onChange={handleInputChange}
-                    className="w-full p-2 border rounded"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block mb-2">Slug</label>
-                  <input
-                    type="text"
-                    name="slug"
-                    value={formData.slug}
-                    onChange={handleInputChange}
-                    className="w-full p-2 border rounded"
-                    required
+                    className="w-full p-2 border rounded bg-gray-100 dark:bg-gray-700"
+                    disabled
                   />
                 </div>
                 <div>
@@ -342,19 +267,22 @@ export default function AdminCategoriesScreen() {
                     onChange={handleInputChange}
                     className="w-full p-2 border rounded"
                     rows="3"
+                    placeholder="Brief description for this category"
                   />
                 </div>
-                <div className="md:col-span-2">
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="isActive"
-                      checked={formData.isActive}
-                      onChange={handleInputChange}
-                      className="mr-2"
-                    />
-                    Active
-                  </label>
+                <div className="md:col-span-2 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <h3 className="font-medium mb-2">Preview</h3>
+                  <div className={`${formData.bgColor} rounded-xl p-6 inline-block`}>
+                    <div className="flex flex-col items-center text-center">
+                      <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${formData.gradient} flex items-center justify-center text-3xl shadow-lg mb-3`}>
+                        {formData.icon}
+                      </div>
+                      <h3 className="font-bold text-lg">{formData.name}</h3>
+                      {formData.description && (
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{formData.description}</p>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
               
@@ -370,7 +298,7 @@ export default function AdminCategoriesScreen() {
                   type="submit"
                   className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                 >
-                  {editingCategory ? 'Update' : 'Create'}
+                  Save Changes
                 </button>
               </div>
             </form>

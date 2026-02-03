@@ -1,5 +1,6 @@
 import { getSession } from 'next-auth/react';
 import Category from '@/models/Category';
+import Product from '@/models/Product';
 import db from '@/utils/db';
 
 const handler = async (req, res) => {
@@ -8,53 +9,47 @@ const handler = async (req, res) => {
     return res.status(401).json({ message: 'Admin access required' });
   }
 
-  const { id } = req.query;
+  const { id: categoryName } = req.query; // id is actually the category name
 
   await db.connect();
 
-  if (req.method === 'GET') {
+  if (req.method === 'PUT') {
     try {
-      const category = await Category.findById(id);
-      if (!category) {
-        return res.status(404).json({ message: 'Category not found' });
+      // Verify category exists in products
+      const productCount = await Product.countDocuments({ category: categoryName });
+      if (productCount === 0) {
+        return res.status(404).json({ message: 'Category not found in products' });
       }
+
+      const { icon, gradient, bgColor, image, description, order } = req.body;
+
+      // Update or create category styling
+      let category = await Category.findOne({ name: categoryName });
+      
+      if (category) {
+        // Update existing
+        category.icon = icon !== undefined ? icon : category.icon;
+        category.gradient = gradient || category.gradient;
+        category.bgColor = bgColor || category.bgColor;
+        category.image = image !== undefined ? image : category.image;
+        category.description = description !== undefined ? description : category.description;
+        category.order = order !== undefined ? order : category.order;
+        await category.save();
+      } else {
+        // Create new styling entry
+        category = await Category.create({
+          name: categoryName,
+          slug: categoryName.toLowerCase().replace(/\s+/g, '-'),
+          icon: icon || '📦',
+          gradient: gradient || 'from-blue-500 to-cyan-500',
+          bgColor: bgColor || 'bg-blue-50 dark:bg-blue-900/20',
+          image: image || '',
+          description: description || '',
+          order: order || 0,
+        });
+      }
+
       res.status(200).json(category);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  } else if (req.method === 'PUT') {
-    try {
-      const category = await Category.findById(id);
-      if (!category) {
-        return res.status(404).json({ message: 'Category not found' });
-      }
-
-      const { name, slug, icon, gradient, bgColor, image, description, isActive, order } = req.body;
-
-      category.name = name || category.name;
-      category.slug = slug || category.slug;
-      category.icon = icon !== undefined ? icon : category.icon;
-      category.gradient = gradient || category.gradient;
-      category.bgColor = bgColor || category.bgColor;
-      category.image = image !== undefined ? image : category.image;
-      category.description = description !== undefined ? description : category.description;
-      category.isActive = isActive !== undefined ? isActive : category.isActive;
-      category.order = order !== undefined ? order : category.order;
-
-      await category.save();
-      res.status(200).json(category);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  } else if (req.method === 'DELETE') {
-    try {
-      const category = await Category.findById(id);
-      if (!category) {
-        return res.status(404).json({ message: 'Category not found' });
-      }
-
-      await category.deleteOne();
-      res.status(200).json({ message: 'Category deleted successfully' });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

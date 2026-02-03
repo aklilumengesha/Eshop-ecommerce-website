@@ -167,17 +167,38 @@ export async function getServerSideProps() {
     productsByCategory[category].push(product);
   });
   
-  // Fetch categories from database
-  const dbCategories = await Category.find({ isActive: true }).lean().sort({ order: 1, name: 1 });
+  // Get all unique categories from products
+  const productCategories = await Product.distinct('category');
   
-  // Add product counts to categories
-  const categoriesWithCounts = dbCategories.map((category) => {
-    const productCount = products.filter(p => p.category === category.name).length;
+  // Get styling info from Category collection
+  const categoryStyles = await Category.find({}).lean();
+  const styleMap = {};
+  categoryStyles.forEach(cat => {
+    styleMap[cat.name] = cat;
+  });
+  
+  // Combine product categories with their styling
+  const categoriesWithCounts = productCategories.map((categoryName) => {
+    const productCount = products.filter(p => p.category === categoryName).length;
+    const style = styleMap[categoryName] || {};
+    
     return {
-      ...db.convertDocToObj(category),
+      name: categoryName,
+      icon: style.icon || '📦',
+      gradient: style.gradient || 'from-blue-500 to-cyan-500',
+      bgColor: style.bgColor || 'bg-blue-50 dark:bg-blue-900/20',
+      image: style.image || '',
+      description: style.description || '',
+      order: style.order || 0,
       productCount,
     };
   }).filter(cat => cat.productCount > 0); // Only show categories with products
+  
+  // Sort by order, then by name
+  categoriesWithCounts.sort((a, b) => {
+    if (a.order !== b.order) return a.order - b.order;
+    return a.name.localeCompare(b.name);
+  });
   
   // Extract and count brands
   const brandMap = {};

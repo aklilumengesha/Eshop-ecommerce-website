@@ -11,7 +11,6 @@ const categorySchema = new mongoose.Schema(
     slug: {
       type: String,
       required: true,
-      unique: true,
       lowercase: true,
     },
     icon: {
@@ -33,10 +32,6 @@ const categorySchema = new mongoose.Schema(
     description: {
       type: String,
       default: '',
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
     },
     order: {
       type: Number,

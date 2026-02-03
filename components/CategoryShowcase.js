@@ -42,7 +42,7 @@ export default function CategoryShowcase({ categories = [] }) {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
         {categories.map((category) => (
           <Link
-            key={category._id || category.name}
+            key={category.name}
             href={`/search?category=${encodeURIComponent(category.name)}`}
             className="group"
           >
