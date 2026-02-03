@@ -14,6 +14,10 @@ const nextConfig = {
       "logos-download.com",
       "www.freepnglogos.com",
       "seeklogo.com",
+      "i.imgur.com",
+      "imgur.com",
+      "www.pngmart.com",
+      "www.pngkey.com",
     ],
   },
 };
