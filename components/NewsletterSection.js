@@ -1,9 +1,29 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 
 export default function NewsletterSection() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [settings, setSettings] = useState(null);
+  const [fetchingSettings, setFetchingSettings] = useState(true);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch('/api/site-settings');
+        const data = await response.json();
+        if (data.success) {
+          setSettings(data.settings);
+        }
+      } catch (error) {
+        console.error('Error fetching newsletter settings:', error);
+      } finally {
+        setFetchingSettings(false);
+      }
+    };
+
+    fetchSettings();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,7 +41,8 @@ export default function NewsletterSection() {
       // Simulate API call (you can implement actual newsletter API later)
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      toast.success('🎉 Subscribed! Check your email for your 10% discount code!', {
+      const discount = settings?.newsletterDiscountPercentage || 10;
+      toast.success(`🎉 Subscribed! Check your email for your ${discount}% discount code!`, {
         autoClose: 5000,
       });
       setEmail('');
@@ -31,6 +52,19 @@ export default function NewsletterSection() {
       setLoading(false);
     }
   };
+
+  // Don't render if disabled or still loading
+  if (fetchingSettings) {
+    return null;
+  }
+
+  if (!settings || !settings.newsletterEnabled) {
+    return null;
+  }
+
+  const heading = settings.newsletterHeading || 'Get 10% Off Your First Order!';
+  const description = settings.newsletterDescription || 'Subscribe to our newsletter and receive exclusive deals, new arrivals, and special offers directly to your inbox.';
+  const buttonText = settings.newsletterButtonText || 'Subscribe Now';
 
   return (
     <div className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 py-16 mb-12">
@@ -45,10 +79,10 @@ export default function NewsletterSection() {
 
           {/* Heading */}
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Get 10% Off Your First Order!
+            {heading}
           </h2>
           <p className="text-lg text-primary-100 mb-8">
-            Subscribe to our newsletter and receive exclusive deals, new arrivals, and special offers directly to your inbox.
+            {description}
           </p>
 
           {/* Form */}
@@ -81,7 +115,7 @@ export default function NewsletterSection() {
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
-                    Subscribe Now
+                    {buttonText}
                   </>
                 )}
               </button>
