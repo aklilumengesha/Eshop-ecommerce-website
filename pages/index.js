@@ -6,8 +6,10 @@ import TrustBadges from "@/components/TrustBadges";
 import Testimonials from "@/components/Testimonials";
 import NewsletterSection from "@/components/NewsletterSection";
 import BrandShowcase from "@/components/BrandShowcase";
+import CategoryShowcase from "@/components/CategoryShowcase";
 import { SkeletonHeroCarousel, SkeletonProductGrid } from "@/components/skeletons";
 import Product from "@/models/Product";
+import Category from "@/models/Category";
 import db from "@/utils/db";
 import { Store } from "@/utils/Store";
 import axios from "axios";
@@ -16,7 +18,7 @@ import { useContext, useState, useEffect } from "react";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { toast } from "react-toastify";
 
-export default function Home({ featuredProducts = [], products = [], productsByCategory = {}, brands = [] }) {
+export default function Home({ featuredProducts = [], products = [], productsByCategory = {}, brands = [], categories = [] }) {
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
   const [isLoading, setIsLoading] = useState(true);
@@ -64,6 +66,9 @@ export default function Home({ featuredProducts = [], products = [], productsByC
       
       {/* Trust Badges */}
       <TrustBadges />
+      
+      {/* Category Showcase */}
+      <CategoryShowcase categories={categories} />
       
       {/* Brand Showcase */}
       <BrandShowcase brands={brands} />
@@ -162,6 +167,18 @@ export async function getServerSideProps() {
     productsByCategory[category].push(product);
   });
   
+  // Fetch categories from database
+  const dbCategories = await Category.find({ isActive: true }).lean().sort({ order: 1, name: 1 });
+  
+  // Add product counts to categories
+  const categoriesWithCounts = dbCategories.map((category) => {
+    const productCount = products.filter(p => p.category === category.name).length;
+    return {
+      ...db.convertDocToObj(category),
+      productCount,
+    };
+  }).filter(cat => cat.productCount > 0); // Only show categories with products
+  
   // Extract and count brands
   const brandMap = {};
   products.forEach((product) => {
@@ -198,6 +215,7 @@ export async function getServerSideProps() {
         return acc;
       }, {}),
       brands,
+      categories: categoriesWithCounts,
     },
   };
 }

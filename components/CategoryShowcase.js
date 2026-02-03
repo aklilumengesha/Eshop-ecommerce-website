@@ -6,74 +6,6 @@ export default function CategoryShowcase({ categories = [] }) {
     return null;
   }
 
-  // Default category icons/colors
-  const categoryStyles = {
-    Electronics: {
-      icon: '💻',
-      gradient: 'from-blue-500 to-cyan-500',
-      bgColor: 'bg-blue-50 dark:bg-blue-900/20',
-    },
-    Clothing: {
-      icon: '👕',
-      gradient: 'from-purple-500 to-pink-500',
-      bgColor: 'bg-purple-50 dark:bg-purple-900/20',
-    },
-    Books: {
-      icon: '📚',
-      gradient: 'from-green-500 to-emerald-500',
-      bgColor: 'bg-green-50 dark:bg-green-900/20',
-    },
-    Toys: {
-      icon: '🎮',
-      gradient: 'from-orange-500 to-red-500',
-      bgColor: 'bg-orange-50 dark:bg-orange-900/20',
-    },
-    Sports: {
-      icon: '⚽',
-      gradient: 'from-indigo-500 to-blue-500',
-      bgColor: 'bg-indigo-50 dark:bg-indigo-900/20',
-    },
-    Home: {
-      icon: '🏠',
-      gradient: 'from-yellow-500 to-orange-500',
-      bgColor: 'bg-yellow-50 dark:bg-yellow-900/20',
-    },
-    Beauty: {
-      icon: '💄',
-      gradient: 'from-pink-500 to-rose-500',
-      bgColor: 'bg-pink-50 dark:bg-pink-900/20',
-    },
-    Food: {
-      icon: '🍔',
-      gradient: 'from-red-500 to-orange-500',
-      bgColor: 'bg-red-50 dark:bg-red-900/20',
-    },
-  };
-
-  const getDefaultStyle = (index) => {
-    const gradients = [
-      'from-blue-500 to-cyan-500',
-      'from-purple-500 to-pink-500',
-      'from-green-500 to-emerald-500',
-      'from-orange-500 to-red-500',
-      'from-indigo-500 to-blue-500',
-      'from-yellow-500 to-orange-500',
-    ];
-    const bgColors = [
-      'bg-blue-50 dark:bg-blue-900/20',
-      'bg-purple-50 dark:bg-purple-900/20',
-      'bg-green-50 dark:bg-green-900/20',
-      'bg-orange-50 dark:bg-orange-900/20',
-      'bg-indigo-50 dark:bg-indigo-900/20',
-      'bg-yellow-50 dark:bg-yellow-900/20',
-    ];
-    return {
-      icon: '📦',
-      gradient: gradients[index % gradients.length],
-      bgColor: bgColors[index % bgColors.length],
-    };
-  };
-
   return (
     <div className="mb-12">
       <div className="flex justify-between items-center mb-8">
@@ -108,67 +40,64 @@ export default function CategoryShowcase({ categories = [] }) {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-        {categories.map((category, index) => {
-          const style = categoryStyles[category.name] || getDefaultStyle(index);
-          
-          return (
-            <Link
-              key={category.name}
-              href={`/search?category=${encodeURIComponent(category.name)}`}
-              className="group"
-            >
-              <div className={`${style.bgColor} rounded-xl p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200 dark:border-gray-700 hover:border-transparent`}>
-                <div className="flex flex-col items-center text-center">
-                  {/* Icon/Image */}
-                  <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${style.gradient} flex items-center justify-center mb-4 text-3xl shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                    {category.image ? (
-                      <Image
-                        src={category.image}
-                        alt={category.name}
-                        width={64}
-                        height={64}
-                        className="rounded-full"
-                      />
-                    ) : (
-                      <span>{style.icon}</span>
-                    )}
-                  </div>
-                  
-                  {/* Category Name */}
-                  <h3 className="font-bold text-lg text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-1">
-                    {category.name}
-                  </h3>
-                  
-                  {/* Product Count */}
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {category.productCount} {category.productCount === 1 ? 'item' : 'items'}
+        {categories.map((category) => (
+          <Link
+            key={category._id || category.name}
+            href={`/search?category=${encodeURIComponent(category.name)}`}
+            className="group"
+          >
+            <div className={`${category.bgColor || 'bg-blue-50 dark:bg-blue-900/20'} rounded-xl p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200 dark:border-gray-700 hover:border-transparent`}>
+              <div className="flex flex-col items-center text-center">
+                <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${category.gradient || 'from-blue-500 to-cyan-500'} flex items-center justify-center mb-4 text-3xl shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                  {category.image ? (
+                    <Image
+                      src={category.image}
+                      alt={category.name}
+                      width={64}
+                      height={64}
+                      className="rounded-full object-cover"
+                    />
+                  ) : (
+                    <span>{category.icon || '📦'}</span>
+                  )}
+                </div>
+                
+                <h3 className="font-bold text-lg text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-1">
+                  {category.name}
+                </h3>
+                
+                {category.description && (
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                    {category.description}
                   </p>
-                  
-                  {/* Hover Arrow */}
-                  <div className="mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth="2.5"
-                      stroke="currentColor"
-                      className="w-5 h-5 text-blue-600 dark:text-blue-400"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                      />
-                    </svg>
-                  </div>
+                )}
+                
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {category.productCount} {category.productCount === 1 ? 'item' : 'items'}
+                </p>
+                
+                <div className="mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="2.5"
+                    stroke="currentColor"
+                    className="w-5 h-5 text-blue-600 dark:text-blue-400"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                    />
+                  </svg>
                 </div>
               </div>
-            </Link>
-          );
-        })}
+            </div>
+          </Link>
+        ))}
       </div>
 
-      {/* Category Benefits */}
       <div className="mt-8 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
           <div className="flex flex-col items-center">
