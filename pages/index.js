@@ -23,6 +23,27 @@ export default function Home({ featuredProducts = [], products = [], productsByC
   const { cart } = state;
   const [isLoading, setIsLoading] = useState(true);
 
+  // Debug: Log settings
+  useEffect(() => {
+    console.log('Homepage Settings:', settings);
+  }, [settings]);
+
+  // Ensure settings have defaults
+  const siteSettings = {
+    latestProductsEnabled: settings.latestProductsEnabled !== false,
+    latestProductsHeading: settings.latestProductsHeading || 'Latest Products',
+    latestProductsCount: settings.latestProductsCount || 8,
+    categoryProductsEnabled: settings.categoryProductsEnabled !== false,
+    categoryProductsViewAllText: settings.categoryProductsViewAllText || 'View All',
+    categoryProductsCount: settings.categoryProductsCount || 4,
+    brandShowcaseEnabled: settings.brandShowcaseEnabled !== false,
+    testimonialsEnabled: settings.testimonialsEnabled !== false,
+    recentlyViewedEnabled: settings.recentlyViewedEnabled !== false,
+    recentlyViewedLimit: settings.recentlyViewedLimit || 8,
+    newsletterEnabled: settings.newsletterEnabled !== false,
+    ...settings,
+  };
+
   useEffect(() => {
     // Simulate initial loading state
     const timer = setTimeout(() => {
@@ -71,19 +92,19 @@ export default function Home({ featuredProducts = [], products = [], productsByC
       <CategoryShowcase categories={categories} />
       
       {/* Brand Showcase */}
-      {settings.brandShowcaseEnabled && brands.length > 0 && (
-        <BrandShowcase brands={brands} settings={settings} />
+      {siteSettings.brandShowcaseEnabled && brands.length > 0 && (
+        <BrandShowcase brands={brands} settings={siteSettings} />
       )}
       
       {/* Latest Products */}
-      {settings.latestProductsEnabled && (
+      {siteSettings.latestProductsEnabled && (
         <div className="mb-12">
-          <h1 className="text-3xl font-bold mb-6">{settings.latestProductsHeading || 'Latest Products'}</h1>
+          <h1 className="text-3xl font-bold mb-6">{siteSettings.latestProductsHeading}</h1>
           {isLoading ? (
-            <SkeletonProductGrid count={settings.latestProductsCount || 8} />
+            <SkeletonProductGrid count={siteSettings.latestProductsCount} />
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
-              {products.slice(0, settings.latestProductsCount || 8).map((product) => (
+              {products.slice(0, siteSettings.latestProductsCount).map((product) => (
                 <ProductItem
                   product={product}
                   key={product.slug}
@@ -97,19 +118,19 @@ export default function Home({ featuredProducts = [], products = [], productsByC
       )}
 
       {/* Recently Viewed Products */}
-      {settings.recentlyViewedEnabled && (
-        <RecentlyViewed limit={settings.recentlyViewedLimit || 8} />
+      {siteSettings.recentlyViewedEnabled && (
+        <RecentlyViewed limit={siteSettings.recentlyViewedLimit} />
       )}
 
       {/* Customer Testimonials */}
-      {settings.testimonialsEnabled && <Testimonials settings={settings} />}
+      {siteSettings.testimonialsEnabled && <Testimonials settings={siteSettings} />}
 
       {/* Products by Category */}
-      {settings.categoryProductsEnabled && (
+      {siteSettings.categoryProductsEnabled && (
         isLoading ? (
           <div className="mb-12">
             <div className="h-8 bg-gray-200 rounded w-48 mb-6 animate-pulse"></div>
-            <SkeletonProductGrid count={settings.categoryProductsCount || 4} />
+            <SkeletonProductGrid count={siteSettings.categoryProductsCount} />
           </div>
         ) : (
           productsByCategory && Object.keys(productsByCategory).map((category) => (
@@ -120,7 +141,7 @@ export default function Home({ featuredProducts = [], products = [], productsByC
                   href={`/search?category=${category}`}
                   className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-2"
                 >
-                  {settings.categoryProductsViewAllText || 'View All'}
+                  {siteSettings.categoryProductsViewAllText}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -138,7 +159,7 @@ export default function Home({ featuredProducts = [], products = [], productsByC
                 </Link>
               </div>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
-                {productsByCategory[category].slice(0, settings.categoryProductsCount || 4).map((product) => (
+                {productsByCategory[category].slice(0, siteSettings.categoryProductsCount).map((product) => (
                   <ProductItem
                     product={product}
                     key={product.slug}
@@ -153,7 +174,7 @@ export default function Home({ featuredProducts = [], products = [], productsByC
       )}
 
       {/* Newsletter Subscription */}
-      {settings.newsletterEnabled && <NewsletterSection />}
+      {siteSettings.newsletterEnabled && <NewsletterSection />}
     </Layout>
   );
 }
@@ -237,8 +258,11 @@ export async function getServerSideProps() {
   const SiteSettings = (await import('@/models/SiteSettings')).default;
   let settings = await SiteSettings.findOne().lean();
   
+  console.log('Fetched settings from DB:', settings);
+  
   // Use defaults if no settings exist
   if (!settings) {
+    console.log('No settings found, using defaults');
     settings = {
       latestProductsHeading: 'Latest Products',
       latestProductsCount: 8,
@@ -263,7 +287,40 @@ export async function getServerSideProps() {
     };
   }
   
+  console.log('Final settings to be sent:', settings);
+  
   await db.disconnect();
+  
+  // Clean settings object for serialization
+  const cleanSettings = settings ? {
+    latestProductsHeading: settings.latestProductsHeading || 'Latest Products',
+    latestProductsCount: settings.latestProductsCount || 8,
+    latestProductsEnabled: settings.latestProductsEnabled !== false,
+    categoryProductsViewAllText: settings.categoryProductsViewAllText || 'View All',
+    categoryProductsCount: settings.categoryProductsCount || 4,
+    categoryProductsEnabled: settings.categoryProductsEnabled !== false,
+    brandShowcaseHeading: settings.brandShowcaseHeading || 'Shop by Brand',
+    brandShowcaseDescription: settings.brandShowcaseDescription || 'Discover products from your favorite brands',
+    brandShowcaseViewAllText: settings.brandShowcaseViewAllText || 'View All Brands',
+    brandShowcaseBadge1: settings.brandShowcaseBadge1 || 'Trusted Brands',
+    brandShowcaseBadge2: settings.brandShowcaseBadge2 || 'Authentic Products',
+    brandShowcaseBadge3: settings.brandShowcaseBadge3 || 'Official Partners',
+    brandShowcasePerPage: settings.brandShowcasePerPage || 6,
+    brandShowcaseEnabled: settings.brandShowcaseEnabled !== false,
+    testimonialsHeading: settings.testimonialsHeading || 'What Our Customers Say',
+    testimonialsDescription: settings.testimonialsDescription || 'Join thousands of satisfied customers who trust us for quality products and excellent service',
+    testimonialsEnabled: settings.testimonialsEnabled !== false,
+    recentlyViewedLimit: settings.recentlyViewedLimit || 8,
+    recentlyViewedEnabled: settings.recentlyViewedEnabled !== false,
+    newsletterEnabled: settings.newsletterEnabled !== false,
+    newsletterHeading: settings.newsletterHeading || 'Get 10% Off Your First Order!',
+    newsletterDescription: settings.newsletterDescription || 'Subscribe to our newsletter and receive exclusive deals',
+    newsletterDiscountPercentage: settings.newsletterDiscountPercentage || 10,
+    newsletterButtonText: settings.newsletterButtonText || 'Subscribe Now',
+    heroShopNowText: settings.heroShopNowText || 'Shop Now',
+    heroAddToCartText: settings.heroAddToCartText || 'Add to Cart',
+    heroLearnMoreText: settings.heroLearnMoreText || 'Learn More',
+  } : {};
   
   return {
     props: {
@@ -275,7 +332,7 @@ export async function getServerSideProps() {
       }, {}),
       brands,
       categories: categoriesWithCounts,
-      settings: JSON.parse(JSON.stringify(settings)),
+      settings: cleanSettings,
     },
   };
 }
