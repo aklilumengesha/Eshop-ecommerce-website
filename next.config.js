@@ -11,6 +11,9 @@ const nextConfig = {
       "upload.wikimedia.org",
       "logos-world.net",
       "1000logos.net",
+      "logos-download.com",
+      "www.freepnglogos.com",
+      "seeklogo.com",
     ],
   },
 };
