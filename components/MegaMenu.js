@@ -13,15 +13,18 @@ export default function MegaMenu() {
     const fetchCategories = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/categories');
+        const response = await fetch('/api/categories/public');
         const data = await response.json();
         
         if (data.success && data.categories) {
           const formattedCategories = data.categories.map((cat) => ({
             name: cat.name,
-            slug: cat.name.toLowerCase().replace(/\s+/g, '-'),
-            count: cat.count,
-            icon: getCategoryIcon(cat.name),
+            slug: cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-'),
+            count: cat.productCount,
+            icon: cat.icon || '📦',
+            gradient: cat.gradient || 'from-blue-500 to-cyan-500',
+            bgColor: cat.bgColor || 'bg-blue-50 dark:bg-blue-900/20',
+            description: cat.description || '',
           }));
           
           setCategories(formattedCategories);
@@ -35,43 +38,6 @@ export default function MegaMenu() {
 
     fetchCategories();
   }, []);
-
-  // Get icon based on category name
-  const getCategoryIcon = (categoryName) => {
-    const name = categoryName.toLowerCase();
-    
-    if (name.includes('electronic') || name.includes('tech') || name.includes('computer') || name.includes('phone')) {
-      return '💻';
-    } else if (name.includes('fashion') || name.includes('cloth') || name.includes('apparel') || name.includes('wear')) {
-      return '👕';
-    } else if (name.includes('home') || name.includes('furniture') || name.includes('living')) {
-      return '🏠';
-    } else if (name.includes('sport') || name.includes('fitness') || name.includes('outdoor')) {
-      return '⚽';
-    } else if (name.includes('beauty') || name.includes('health') || name.includes('care')) {
-      return '💄';
-    } else if (name.includes('book') || name.includes('media') || name.includes('entertainment')) {
-      return '📚';
-    } else if (name.includes('toy') || name.includes('game') || name.includes('kid')) {
-      return '🎮';
-    } else if (name.includes('food') || name.includes('grocery') || name.includes('kitchen')) {
-      return '🍔';
-    } else if (name.includes('auto') || name.includes('car') || name.includes('vehicle')) {
-      return '🚗';
-    } else if (name.includes('pet') || name.includes('animal')) {
-      return '🐾';
-    } else if (name.includes('jewelry') || name.includes('watch') || name.includes('accessories')) {
-      return '💎';
-    } else if (name.includes('music') || name.includes('instrument')) {
-      return '🎵';
-    } else if (name.includes('garden') || name.includes('plant')) {
-      return '🌱';
-    } else if (name.includes('office') || name.includes('stationery')) {
-      return '📝';
-    } else {
-      return '🏷️';
-    }
-  };
 
   const handleMouseEnter = () => {
     if (timeoutRef.current) {
@@ -158,12 +124,26 @@ export default function MegaMenu() {
                       key={category.slug}
                       href={`/search?category=${encodeURIComponent(category.name)}`}
                       onClick={() => setIsOpen(false)}
-                      className="group flex flex-col items-center justify-center p-4 bg-gray-50 dark:bg-gray-700 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-600 transition-all duration-200 hover:shadow-md"
+                      className="group flex flex-col items-center justify-center p-4 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-600 transition-all duration-200 hover:shadow-md hover:-translate-y-1"
+                      style={{
+                        background: category.bgColor?.includes('dark:') 
+                          ? undefined 
+                          : category.bgColor?.replace('bg-', '').replace('-50', '-50')
+                      }}
                     >
-                      <span className="text-3xl mb-2">{category.icon}</span>
+                      <div 
+                        className={`w-12 h-12 rounded-full bg-gradient-to-br ${category.gradient} flex items-center justify-center mb-2 text-2xl shadow-md group-hover:scale-110 transition-transform duration-200`}
+                      >
+                        {category.icon}
+                      </div>
                       <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 text-center group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                         {category.name}
                       </span>
+                      {category.description && (
+                        <span className="text-xs text-gray-500 dark:text-gray-400 text-center mt-1">
+                          {category.description}
+                        </span>
+                      )}
                       <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         {category.count} {category.count === 1 ? 'item' : 'items'}
                       </span>
