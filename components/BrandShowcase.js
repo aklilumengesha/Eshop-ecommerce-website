@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { useState } from 'react';
 
-export default function BrandShowcase({ brands = [] }) {
+export default function BrandShowcase({ brands = [], settings = {} }) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const brandsPerPage = 6;
+  const brandsPerPage = settings.brandShowcasePerPage || 6;
 
   if (!brands || brands.length === 0) {
     return null;
@@ -28,17 +28,17 @@ export default function BrandShowcase({ brands = [] }) {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
-            Shop by Brand
+            {settings.brandShowcaseHeading || 'Shop by Brand'}
           </h2>
           <p className="text-gray-600 dark:text-gray-300">
-            Discover products from your favorite brands
+            {settings.brandShowcaseDescription || 'Discover products from your favorite brands'}
           </p>
         </div>
         <Link
           href="/search?sortBy=brand"
           className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium flex items-center gap-2 transition-colors"
         >
-          View All Brands
+          {settings.brandShowcaseViewAllText || 'View All Brands'}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -180,7 +180,7 @@ export default function BrandShowcase({ brands = [] }) {
               d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"
             />
           </svg>
-          Trusted Brands
+          {settings.brandShowcaseBadge1 || 'Trusted Brands'}
         </div>
         <div className="flex items-center gap-2 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-4 py-2 rounded-full text-sm font-medium">
           <svg
@@ -197,7 +197,7 @@ export default function BrandShowcase({ brands = [] }) {
               d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
             />
           </svg>
-          Authentic Products
+          {settings.brandShowcaseBadge2 || 'Authentic Products'}
         </div>
         <div className="flex items-center gap-2 bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-4 py-2 rounded-full text-sm font-medium">
           <svg
@@ -214,7 +214,7 @@ export default function BrandShowcase({ brands = [] }) {
               d="M21 11.25v8.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 109.375 7.5H12m0-2.625V7.5m0-2.625A2.625 2.625 0 1114.625 7.5H12m0 0V21m-8.625-9.75h18c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125h-18c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"
             />
           </svg>
-          Official Partners
+          {settings.brandShowcaseBadge3 || 'Official Partners'}
         </div>
       </div>
     </div>

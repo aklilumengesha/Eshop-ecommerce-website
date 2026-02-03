@@ -18,7 +18,7 @@ import { useContext, useState, useEffect } from "react";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { toast } from "react-toastify";
 
-export default function Home({ featuredProducts = [], products = [], productsByCategory = {}, brands = [], categories = [] }) {
+export default function Home({ featuredProducts = [], products = [], productsByCategory = {}, brands = [], categories = [], settings = {} }) {
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
   const [isLoading, setIsLoading] = useState(true);
@@ -71,67 +71,19 @@ export default function Home({ featuredProducts = [], products = [], productsByC
       <CategoryShowcase categories={categories} />
       
       {/* Brand Showcase */}
-      <BrandShowcase brands={brands} />
+      {settings.brandShowcaseEnabled && brands.length > 0 && (
+        <BrandShowcase brands={brands} settings={settings} />
+      )}
       
       {/* Latest Products */}
-      <div className="mb-12">
-        <h1 className="text-3xl font-bold mb-6">Latest Products</h1>
-        {isLoading ? (
-          <SkeletonProductGrid count={8} />
-        ) : (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
-            {products.slice(0, 8).map((product) => (
-              <ProductItem
-                product={product}
-                key={product.slug}
-                addToCartHandler={addToCartHandler}
-                allProducts={products}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Recently Viewed Products */}
-      <RecentlyViewed limit={8} />
-
-      {/* Customer Testimonials */}
-      <Testimonials />
-
-      {/* Products by Category */}
-      {isLoading ? (
+      {settings.latestProductsEnabled && (
         <div className="mb-12">
-          <div className="h-8 bg-gray-200 rounded w-48 mb-6 animate-pulse"></div>
-          <SkeletonProductGrid count={4} />
-        </div>
-      ) : (
-        productsByCategory && Object.keys(productsByCategory).map((category) => (
-          <div key={category} className="mb-12">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl md:text-3xl font-bold">{category}</h2>
-              <Link 
-                href={`/search?category=${category}`}
-                className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-2"
-              >
-                View All
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="2"
-                  stroke="currentColor"
-                  className="w-5 h-5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                  />
-                </svg>
-              </Link>
-            </div>
+          <h1 className="text-3xl font-bold mb-6">{settings.latestProductsHeading || 'Latest Products'}</h1>
+          {isLoading ? (
+            <SkeletonProductGrid count={settings.latestProductsCount || 8} />
+          ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
-              {productsByCategory[category].slice(0, 4).map((product) => (
+              {products.slice(0, settings.latestProductsCount || 8).map((product) => (
                 <ProductItem
                   product={product}
                   key={product.slug}
@@ -140,12 +92,68 @@ export default function Home({ featuredProducts = [], products = [], productsByC
                 />
               ))}
             </div>
+          )}
+        </div>
+      )}
+
+      {/* Recently Viewed Products */}
+      {settings.recentlyViewedEnabled && (
+        <RecentlyViewed limit={settings.recentlyViewedLimit || 8} />
+      )}
+
+      {/* Customer Testimonials */}
+      {settings.testimonialsEnabled && <Testimonials settings={settings} />}
+
+      {/* Products by Category */}
+      {settings.categoryProductsEnabled && (
+        isLoading ? (
+          <div className="mb-12">
+            <div className="h-8 bg-gray-200 rounded w-48 mb-6 animate-pulse"></div>
+            <SkeletonProductGrid count={settings.categoryProductsCount || 4} />
           </div>
-        ))
+        ) : (
+          productsByCategory && Object.keys(productsByCategory).map((category) => (
+            <div key={category} className="mb-12">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl md:text-3xl font-bold">{category}</h2>
+                <Link 
+                  href={`/search?category=${category}`}
+                  className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-2"
+                >
+                  {settings.categoryProductsViewAllText || 'View All'}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="2"
+                    stroke="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                    />
+                  </svg>
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
+                {productsByCategory[category].slice(0, settings.categoryProductsCount || 4).map((product) => (
+                  <ProductItem
+                    product={product}
+                    key={product.slug}
+                    addToCartHandler={addToCartHandler}
+                    allProducts={products}
+                  />
+                ))}
+              </div>
+            </div>
+          ))
+        )
       )}
 
       {/* Newsletter Subscription */}
-      <NewsletterSection />
+      {settings.newsletterEnabled && <NewsletterSection />}
     </Layout>
   );
 }
@@ -225,6 +233,36 @@ export async function getServerSideProps() {
     (a, b) => b.productCount - a.productCount
   );
   
+  // Fetch site settings
+  const SiteSettings = (await import('@/models/SiteSettings')).default;
+  let settings = await SiteSettings.findOne().lean();
+  
+  // Use defaults if no settings exist
+  if (!settings) {
+    settings = {
+      latestProductsHeading: 'Latest Products',
+      latestProductsCount: 8,
+      latestProductsEnabled: true,
+      categoryProductsViewAllText: 'View All',
+      categoryProductsCount: 4,
+      categoryProductsEnabled: true,
+      brandShowcaseHeading: 'Shop by Brand',
+      brandShowcaseDescription: 'Discover products from your favorite brands',
+      brandShowcaseViewAllText: 'View All Brands',
+      brandShowcaseBadge1: 'Trusted Brands',
+      brandShowcaseBadge2: 'Authentic Products',
+      brandShowcaseBadge3: 'Official Partners',
+      brandShowcasePerPage: 6,
+      brandShowcaseEnabled: true,
+      testimonialsHeading: 'What Our Customers Say',
+      testimonialsDescription: 'Join thousands of satisfied customers who trust us for quality products and excellent service',
+      testimonialsEnabled: true,
+      recentlyViewedLimit: 8,
+      recentlyViewedEnabled: true,
+      newsletterEnabled: true,
+    };
+  }
+  
   await db.disconnect();
   
   return {
@@ -237,6 +275,7 @@ export async function getServerSideProps() {
       }, {}),
       brands,
       categories: categoriesWithCounts,
+      settings: JSON.parse(JSON.stringify(settings)),
     },
   };
 }
