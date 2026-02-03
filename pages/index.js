@@ -18,15 +18,27 @@ import { useContext, useState, useEffect } from "react";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { toast } from "react-toastify";
 
-export default function Home({ featuredProducts = [], products = [], productsByCategory = {}, brands = [], categories = [], settings = {} }) {
+export default function Home({ featuredProducts = [], products = [], productsByCategory = {}, brands = [], categories = [], settings: initialSettings = {} }) {
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
   const [isLoading, setIsLoading] = useState(true);
+  const [settings, setSettings] = useState(initialSettings);
 
-  // Debug: Log settings
+  // Fetch fresh settings on mount
   useEffect(() => {
-    console.log('Homepage Settings:', settings);
-  }, [settings]);
+    const fetchSettings = async () => {
+      try {
+        const response = await axios.get('/api/site-settings');
+        if (response.data.success) {
+          setSettings(response.data.settings);
+        }
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+      }
+    };
+    
+    fetchSettings();
+  }, []);
 
   // Ensure settings have defaults
   const siteSettings = {
@@ -179,7 +191,13 @@ export default function Home({ featuredProducts = [], products = [], productsByC
   );
 }
 
-export async function getServerSideProps() {
+export async function getServerSideProps(context) {
+  // Set cache headers to prevent stale data
+  context.res.setHeader(
+    'Cache-Control',
+    'public, s-maxage=10, stale-while-revalidate=59'
+  );
+  
   await db.connect();
   const products = await Product.find().lean().sort({ createdAt: -1 });
   const featuredProducts = products.filter(
@@ -258,11 +276,8 @@ export async function getServerSideProps() {
   const SiteSettings = (await import('@/models/SiteSettings')).default;
   let settings = await SiteSettings.findOne().lean();
   
-  console.log('Fetched settings from DB:', settings);
-  
   // Use defaults if no settings exist
   if (!settings) {
-    console.log('No settings found, using defaults');
     settings = {
       latestProductsHeading: 'Latest Products',
       latestProductsCount: 8,
@@ -286,8 +301,6 @@ export async function getServerSideProps() {
       newsletterEnabled: true,
     };
   }
-  
-  console.log('Final settings to be sent:', settings);
   
   await db.disconnect();
   
