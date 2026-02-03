@@ -26,6 +26,20 @@ const siteSettingsSchema = new mongoose.Schema(
       default: true,
     },
     
+    // Hero Carousel Settings
+    heroShopNowText: {
+      type: String,
+      default: 'Shop Now',
+    },
+    heroAddToCartText: {
+      type: String,
+      default: 'Add to Cart',
+    },
+    heroLearnMoreText: {
+      type: String,
+      default: 'Learn More',
+    },
+    
     // Future: Can add more site-wide settings here
     // siteName, siteDescription, contactEmail, etc.
   },

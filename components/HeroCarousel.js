@@ -4,11 +4,28 @@ import { Carousel } from 'react-responsive-carousel';
 import CountdownTimer from './CountdownTimer';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { Store } from '@/utils/Store';
 
 export default function HeroCarousel({ featuredProducts, addToCartHandler }) {
   const { state } = useContext(Store);
+  const [settings, setSettings] = useState(null);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch('/api/site-settings');
+        const data = await response.json();
+        if (data.success) {
+          setSettings(data.settings);
+        }
+      } catch (error) {
+        console.error('Error fetching hero settings:', error);
+      }
+    };
+
+    fetchSettings();
+  }, []);
 
   const getDisplayPrice = (product) => {
     if (product.isFlashSale && product.flashSalePrice) {
@@ -54,6 +71,10 @@ export default function HeroCarousel({ featuredProducts, addToCartHandler }) {
   if (!featuredProducts || featuredProducts.length === 0) {
     return null;
   }
+
+  const shopNowText = settings?.heroShopNowText || 'Shop Now';
+  const addToCartText = settings?.heroAddToCartText || 'Add to Cart';
+  const learnMoreText = settings?.heroLearnMoreText || 'Learn More';
 
   return (
     <div className="-mx-8 md:-mx-12 xl:-mx-14 mb-8">
@@ -142,7 +163,7 @@ export default function HeroCarousel({ featuredProducts, addToCartHandler }) {
                           }}
                           className="px-6 py-3 md:px-8 md:py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-semibold text-base md:text-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5"
                         >
-                          Shop Now
+                          {shopNowText}
                         </button>
                         
                         <button 
@@ -152,7 +173,7 @@ export default function HeroCarousel({ featuredProducts, addToCartHandler }) {
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                           </svg>
-                          Add to Cart
+                          {addToCartText}
                         </button>
 
                         <button 
@@ -162,7 +183,7 @@ export default function HeroCarousel({ featuredProducts, addToCartHandler }) {
                           }}
                           className="px-6 py-3 md:px-8 md:py-4 bg-transparent border-2 border-white hover:bg-white/10 text-white rounded-lg font-semibold text-base md:text-lg shadow-lg transition-all duration-200"
                         >
-                          Learn More
+                          {learnMoreText}
                         </button>
                       </div>
                     </div>

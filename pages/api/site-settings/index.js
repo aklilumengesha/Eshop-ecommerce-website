@@ -19,6 +19,9 @@ const handler = async (req, res) => {
         newsletterDiscountPercentage: 10,
         newsletterButtonText: 'Subscribe Now',
         newsletterEnabled: true,
+        heroShopNowText: 'Shop Now',
+        heroAddToCartText: 'Add to Cart',
+        heroLearnMoreText: 'Learn More',
       };
     }
     

@@ -13,6 +13,9 @@ export default function AdminSiteSettingsScreen() {
     newsletterDiscountPercentage: 10,
     newsletterButtonText: '',
     newsletterEnabled: true,
+    heroShopNowText: '',
+    heroAddToCartText: '',
+    heroLearnMoreText: '',
   });
 
   useEffect(() => {
@@ -68,6 +71,97 @@ export default function AdminSiteSettingsScreen() {
         <h1 className="text-2xl font-bold mb-6">Site Settings</h1>
 
         <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Hero Carousel Settings Section */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-1">Hero Carousel Settings</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Customize button text for featured product carousel
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Primary Button Text
+                </label>
+                <input
+                  type="text"
+                  name="heroShopNowText"
+                  value={settings.heroShopNowText}
+                  onChange={handleInputChange}
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700"
+                  placeholder="Shop Now"
+                  required
+                />
+                <p className="text-xs text-gray-500 mt-1">Main call-to-action button</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Add to Cart Button Text
+                </label>
+                <input
+                  type="text"
+                  name="heroAddToCartText"
+                  value={settings.heroAddToCartText}
+                  onChange={handleInputChange}
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700"
+                  placeholder="Add to Cart"
+                  required
+                />
+                <p className="text-xs text-gray-500 mt-1">Quick add button</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Learn More Button Text
+                </label>
+                <input
+                  type="text"
+                  name="heroLearnMoreText"
+                  value={settings.heroLearnMoreText}
+                  onChange={handleInputChange}
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700"
+                  placeholder="Learn More"
+                  required
+                />
+                <p className="text-xs text-gray-500 mt-1">Secondary button</p>
+              </div>
+            </div>
+
+            {/* Preview */}
+            <div className="mt-6 p-4 bg-gray-900 rounded-lg">
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  className="px-6 py-3 bg-primary-600 text-white rounded-lg font-semibold text-sm"
+                  disabled
+                >
+                  {settings.heroShopNowText || 'Shop Now'}
+                </button>
+                <button
+                  type="button"
+                  className="px-6 py-3 bg-white text-gray-900 rounded-lg font-semibold text-sm flex items-center gap-2"
+                  disabled
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  {settings.heroAddToCartText || 'Add to Cart'}
+                </button>
+                <button
+                  type="button"
+                  className="px-6 py-3 bg-transparent border-2 border-white text-white rounded-lg font-semibold text-sm"
+                  disabled
+                >
+                  {settings.heroLearnMoreText || 'Learn More'}
+                </button>
+              </div>
+              <p className="text-xs text-gray-400 mt-3">Preview</p>
+            </div>
+          </div>
+
           {/* Newsletter Settings Section */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
             <div className="flex items-center justify-between mb-6">
