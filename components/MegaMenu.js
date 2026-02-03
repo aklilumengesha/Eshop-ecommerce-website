@@ -139,11 +139,6 @@ export default function MegaMenu() {
                       <span className="text-sm font-semibold text-gray-900 dark:text-gray-100 text-center group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                         {category.name}
                       </span>
-                      {category.description && (
-                        <span className="text-xs text-gray-500 dark:text-gray-400 text-center mt-1">
-                          {category.description}
-                        </span>
-                      )}
                       <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         {category.count} {category.count === 1 ? 'item' : 'items'}
                       </span>
