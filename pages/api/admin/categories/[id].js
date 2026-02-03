@@ -1,15 +1,18 @@
-import { getSession } from 'next-auth/react';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '../../auth/[...nextauth]';
 import Category from '@/models/Category';
 import Product from '@/models/Product';
 import db from '@/utils/db';
 
 const handler = async (req, res) => {
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
+  
   if (!session || !session.user.isAdmin) {
-    return res.status(401).json({ message: 'Admin access required' });
+    return res.status(401).send('Admin sign in required');
   }
 
-  const { id: categoryName } = req.query; // id is actually the category name
+  const { id } = req.query;
+  const categoryName = decodeURIComponent(id); // Decode the category name from URL
 
   await db.connect();
 

@@ -106,7 +106,7 @@ export default function AdminCategoriesScreen() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`/api/admin/categories/${editingCategory.name}`, formData);
+      await axios.put(`/api/admin/categories/${encodeURIComponent(editingCategory.name)}`, formData);
       toast.success('Category styling updated successfully');
       setShowModal(false);
       dispatch({ type: 'UPDATE_SUCCESS' });
