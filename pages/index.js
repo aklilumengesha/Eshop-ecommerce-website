@@ -115,7 +115,7 @@ export default function Home({ featuredProducts = [], products = [], productsByC
           {isLoading ? (
             <SkeletonProductGrid count={siteSettings.latestProductsCount} />
           ) : (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-4">
               {products.slice(0, siteSettings.latestProductsCount).map((product) => (
                 <ProductItem
                   product={product}
@@ -170,7 +170,7 @@ export default function Home({ featuredProducts = [], products = [], productsByC
                   </svg>
                 </Link>
               </div>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-4">
                 {productsByCategory[category].slice(0, siteSettings.categoryProductsCount).map((product) => (
                   <ProductItem
                     product={product}

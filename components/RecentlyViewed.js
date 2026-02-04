@@ -144,7 +144,7 @@ export default function RecentlyViewed({ currentProductSlug = null, limit = 12 }
       
       {/* Horizontal scroll container */}
       <div className="relative">
-        <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
+        <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
           {recentProducts.map((product) => (
             <div 
               key={product.slug} 

@@ -1,12 +1,12 @@
 export default function SkeletonProductCard() {
   return (
-    <div className="card animate-pulse">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 animate-pulse">
       {/* Image skeleton */}
-      <div className="relative bg-gray-200 h-64 rounded-t overflow-hidden">
+      <div className="relative bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700 h-72 overflow-hidden">
         <div className="absolute inset-0 shimmer"></div>
         <div className="absolute inset-0 flex items-center justify-center">
           <svg
-            className="w-16 h-16 text-gray-300"
+            className="w-20 h-20 text-gray-300 dark:text-gray-600"
             fill="currentColor"
             viewBox="0 0 20 20"
           >
@@ -21,38 +21,45 @@ export default function SkeletonProductCard() {
 
       {/* Content skeleton */}
       <div className="p-5 space-y-3">
-        {/* Brand/Category */}
-        <div className="h-3 bg-gray-200 rounded w-1/3 relative overflow-hidden">
-          <div className="absolute inset-0 shimmer"></div>
+        {/* Brand Badge & Stock Badge */}
+        <div className="flex items-center justify-between">
+          <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-full w-20 relative overflow-hidden">
+            <div className="absolute inset-0 shimmer"></div>
+          </div>
+          <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-full w-16 relative overflow-hidden">
+            <div className="absolute inset-0 shimmer"></div>
+          </div>
         </div>
 
         {/* Title */}
-        <div className="space-y-2">
-          <div className="h-4 bg-gray-200 rounded w-full relative overflow-hidden">
+        <div className="space-y-2 min-h-[3.5rem]">
+          <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-full relative overflow-hidden">
             <div className="absolute inset-0 shimmer"></div>
           </div>
-          <div className="h-4 bg-gray-200 rounded w-2/3 relative overflow-hidden">
+          <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-3/4 relative overflow-hidden">
             <div className="absolute inset-0 shimmer"></div>
           </div>
         </div>
 
         {/* Rating */}
-        <div className="flex items-center space-x-2">
-          <div className="h-4 bg-gray-200 rounded w-24 relative overflow-hidden">
+        <div className="flex items-center gap-2">
+          <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-28 relative overflow-hidden">
             <div className="absolute inset-0 shimmer"></div>
           </div>
-          <div className="h-3 bg-gray-200 rounded w-12 relative overflow-hidden">
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-12 relative overflow-hidden">
             <div className="absolute inset-0 shimmer"></div>
           </div>
         </div>
 
         {/* Price */}
-        <div className="h-6 bg-gray-200 rounded w-1/2 relative overflow-hidden">
-          <div className="absolute inset-0 shimmer"></div>
+        <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-24 relative overflow-hidden">
+            <div className="absolute inset-0 shimmer"></div>
+          </div>
         </div>
 
         {/* Button */}
-        <div className="h-10 bg-gray-200 rounded relative overflow-hidden">
+        <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded-xl relative overflow-hidden">
           <div className="absolute inset-0 shimmer"></div>
         </div>
       </div>

@@ -16,8 +16,8 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
   const [isHovered, setIsHovered] = useState(false);
   const [showQuickView, setShowQuickView] = useState(false);
   const [showSimilar, setShowSimilar] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
-  // Ensure product has images array (for backward compatibility)
   const productWithImages = {
     ...product,
     images: Array.isArray(product.images) && product.images.length > 0 
@@ -25,17 +25,6 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
       : []
   };
 
-  // Debug logging
-  console.log('ProductItem - product:', {
-    name: product.name,
-    hasImages: !!product.images,
-    imagesIsArray: Array.isArray(product.images),
-    imagesLength: product.images?.length,
-    images: product.images,
-    productWithImages: productWithImages.images
-  });
-
-  // Real-time inventory
   const { stock, isConnected, isLowStock, isSoldOut } = useInventory(
     product._id,
     product.countInStock
@@ -75,7 +64,6 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
     }
   };
 
-  // Truncate product name to first 4 words
   const truncateName = (name, wordLimit = 4) => {
     const words = name.split(' ');
     if (words.length > wordLimit) {
@@ -87,99 +75,136 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
   return (
     <>
       <article 
-        className="card relative"
+        className="group relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 dark:border-gray-700"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         aria-label={`${product.name} product card`}
       >
-        {/* Action Buttons - Top Right */}
-        <div className="absolute top-3 right-3 z-10 flex flex-col gap-2">
-          {/* Wishlist Button */}
-          <button
-            onClick={toggleWishlistHandler}
-            className="bg-white dark:bg-gray-800 rounded-full p-2 shadow-md hover:shadow-lg transition-shadow border border-gray-200 dark:border-gray-600"
-            aria-label={isInWishlist ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
-            aria-pressed={isInWishlist}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill={isInWishlist ? "#ef4444" : "none"}
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke={isInWishlist ? "#ef4444" : "currentColor"}
-              className={`w-6 h-6 ${!isInWishlist ? 'text-gray-700 dark:text-gray-300' : ''}`}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
-              />
-            </svg>
-          </button>
-
-          {/* Compare Button */}
-          <button
-            onClick={toggleCompareHandler}
-            className={`rounded-full p-2 shadow-md hover:shadow-lg transition-all border ${
-              isInCompare 
-                ? "bg-purple-600 border-purple-600" 
-                : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600"
-            }`}
-            aria-label={isInCompare ? `Remove ${product.name} from comparison` : `Add ${product.name} to comparison`}
-            aria-pressed={isInCompare}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke={isInCompare ? "white" : "currentColor"}
-              className={`w-6 h-6 ${!isInCompare ? 'text-gray-700 dark:text-gray-300' : ''}`}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
-              />
-            </svg>
-          </button>
-        </div>
-        
-        <Link href={`/product/${product.slug}`}>
-          <Image
-            src={product.image}
-            alt={`${product.name} - ${product.brand}`}
-            className="rounded shadow object-cover w-full h-64 object-top"
-            height={400}
-            width={400}
-          />
-        </Link>
-
-        <div className="flex flex-col items-center justify-center p-5">
+        {/* Image Container with Overlay */}
+        <div className="relative overflow-hidden bg-gray-100 dark:bg-gray-900">
           <Link href={`/product/${product.slug}`}>
-            <h2 
-              className="text-lg font-semibold hover:text-blue-600 dark:hover:text-blue-400 transition-colors dark:text-white" 
-              title={product.name}
-            >
-              {truncateName(product.name)}
-            </h2>
+            <div className="relative h-72 w-full">
+              {/* Skeleton loader */}
+              {!imageLoaded && (
+                <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700 animate-pulse" />
+              )}
+              
+              <Image
+                src={product.image}
+                alt={`${product.name} - ${product.brand}`}
+                className={`object-cover object-top w-full h-full transition-all duration-700 group-hover:scale-110 ${
+                  imageLoaded ? 'opacity-100' : 'opacity-0'
+                }`}
+                height={400}
+                width={400}
+                onLoad={() => setImageLoaded(true)}
+              />
+              
+              {/* Gradient Overlay on Hover */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            </div>
           </Link>
-          <p className="mb-2 text-gray-600 dark:text-gray-300">{product.brand}</p>
-          <div className="flex items-center mb-2" role="img" aria-label={`Rated ${product.rating} out of 5 stars with ${product.numReviews} reviews`}>
-            <ReactStars
-              count={5}
-              size={24}
-              activeColor="#ffd700"
-              value={product.rating}
-              edit={false}
-            />
-            <span className="ml-2 text-sm text-gray-600 dark:text-gray-300" aria-hidden="true">
-              ({product.numReviews})
-            </span>
+
+          {/* Action Buttons - Top Right */}
+          <div className="absolute top-3 right-3 z-10 flex flex-col gap-2">
+            {/* Wishlist Button */}
+            <button
+              onClick={toggleWishlistHandler}
+              className={`backdrop-blur-md bg-white/90 dark:bg-gray-800/90 rounded-full p-2.5 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200/50 dark:border-gray-600/50 transform hover:scale-110 ${
+                isInWishlist ? 'scale-110' : ''
+              }`}
+              aria-label={isInWishlist ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
+              aria-pressed={isInWishlist}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill={isInWishlist ? "#ef4444" : "none"}
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                stroke={isInWishlist ? "#ef4444" : "currentColor"}
+                className={`w-5 h-5 transition-all duration-300 ${
+                  isInWishlist ? 'animate-pulse' : 'text-gray-700 dark:text-gray-300'
+                }`}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+                />
+              </svg>
+            </button>
+
+            {/* Compare Button */}
+            <button
+              onClick={toggleCompareHandler}
+              className={`backdrop-blur-md rounded-full p-2.5 shadow-lg hover:shadow-xl transition-all duration-300 border transform hover:scale-110 ${
+                isInCompare 
+                  ? "bg-purple-600 border-purple-600 scale-110" 
+                  : "bg-white/90 dark:bg-gray-800/90 border-gray-200/50 dark:border-gray-600/50"
+              }`}
+              aria-label={isInCompare ? `Remove ${product.name} from comparison` : `Add ${product.name} to comparison`}
+              aria-pressed={isInCompare}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                stroke={isInCompare ? "white" : "currentColor"}
+                className={`w-5 h-5 transition-all duration-300 ${
+                  !isInCompare ? 'text-gray-700 dark:text-gray-300' : ''
+                }`}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
+                />
+              </svg>
+            </button>
           </div>
-          
-          {/* Live Stock Badge */}
-          <div className="mb-2">
+
+          {/* Quick Action Buttons - Bottom (Visible on Hover) */}
+          <div className={`absolute bottom-0 left-0 right-0 p-3 flex gap-2 transition-all duration-500 transform ${
+            isHovered ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
+          }`}>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                setShowQuickView(true);
+              }}
+              className="flex-1 backdrop-blur-md bg-white/95 dark:bg-gray-800/95 hover:bg-blue-600 hover:text-white text-gray-800 dark:text-white py-2.5 px-4 rounded-xl font-semibold transition-all duration-300 text-sm shadow-lg border border-gray-200/50 dark:border-gray-600/50 flex items-center justify-center gap-2"
+              aria-label={`Quick view for ${product.name}`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              Quick View
+            </button>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                setShowSimilar(true);
+              }}
+              className="flex-1 backdrop-blur-md bg-white/95 dark:bg-gray-800/95 hover:bg-green-600 hover:text-white text-gray-800 dark:text-white py-2.5 px-4 rounded-xl font-semibold transition-all duration-300 text-sm shadow-lg border border-gray-200/50 dark:border-gray-600/50 flex items-center justify-center gap-2"
+              aria-label={`View products similar to ${product.name}`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+              Similar
+            </button>
+          </div>
+        </div>
+
+        {/* Content Section */}
+        <div className="p-5 space-y-3">
+          {/* Brand Badge */}
+          <div className="flex items-center justify-between">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+              {product.brand}
+            </span>
             <LiveStockBadge 
               stock={stock}
               isConnected={isConnected}
@@ -188,69 +213,72 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
               size="sm"
             />
           </div>
-          
-          <p className="text-xl font-bold text-blue-600 dark:text-blue-400">{formatPrice(product.price, currency)}</p>
-          
-          {/* Add to Cart button - always visible */}
+
+          {/* Product Name */}
+          <Link href={`/product/${product.slug}`}>
+            <h2 
+              className="text-lg font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300 line-clamp-2 min-h-[3.5rem]" 
+              title={product.name}
+            >
+              {product.name}
+            </h2>
+          </Link>
+
+          {/* Rating */}
+          <div className="flex items-center gap-2" role="img" aria-label={`Rated ${product.rating} out of 5 stars with ${product.numReviews} reviews`}>
+            <div className="flex items-center">
+              <ReactStars
+                count={5}
+                size={20}
+                activeColor="#fbbf24"
+                color="#d1d5db"
+                value={product.rating}
+                edit={false}
+              />
+            </div>
+            <span className="text-sm font-medium text-gray-600 dark:text-gray-400" aria-hidden="true">
+              ({product.numReviews})
+            </span>
+          </div>
+
+          {/* Price */}
+          <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
+            <p className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+              {formatPrice(product.price, currency)}
+            </p>
+          </div>
+
+          {/* Add to Cart Button */}
           <button
-            className="primary-button mt-3 w-full"
+            className={`w-full py-3 px-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg flex items-center justify-center gap-2 ${
+              isSoldOut
+                ? 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white'
+            }`}
             type="button"
             onClick={() => addToCartHandler(product)}
             disabled={isSoldOut}
             aria-label={isSoldOut ? `${product.name} is out of stock` : `Add ${product.name} to cart`}
           >
-            {isSoldOut ? 'Out of Stock' : 'Add to cart'}
+            {!isSoldOut && (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            )}
+            {isSoldOut ? 'Out of Stock' : 'Add to Cart'}
           </button>
-          
-          {/* Notify Me link for out of stock products */}
+
+          {/* Notify Me Link */}
           {isSoldOut && (
             <Link href={`/product/${product.slug}`}>
-              <div className="text-center mt-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 cursor-pointer flex items-center justify-center gap-1">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                  />
+              <div className="text-center text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 cursor-pointer flex items-center justify-center gap-2 transition-colors duration-300 py-2">
+                <svg className="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
                 Get notified when available
               </div>
             </Link>
           )}
-          
-          {/* Hover action buttons - shown on hover below Add to Cart */}
-          <div
-            className={`flex gap-2 mt-2 w-full transition-all duration-300 ${
-              isHovered ? "opacity-100 visible max-h-20" : "opacity-0 invisible max-h-0"
-            }`}
-          >
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                setShowQuickView(true);
-              }}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded-lg font-semibold transition-colors text-sm"
-              aria-label={`Quick view for ${product.name}`}
-            >
-              Quick View
-            </button>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                setShowSimilar(true);
-              }}
-              className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded-lg font-semibold transition-colors text-sm"
-              aria-label={`View products similar to ${product.name}`}
-            >
-              Similar
-            </button>
-          </div>
         </div>
       </article>
 
