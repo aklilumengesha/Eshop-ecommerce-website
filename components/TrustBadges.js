@@ -79,11 +79,11 @@ export default function TrustBadges() {
   return (
     <div className="bg-gray-50 dark:bg-gray-900 py-12 mb-12">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center">
           {badges.map((badge) => (
             <div
               key={badge._id}
-              className="group flex flex-col items-center text-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1"
+              className="group flex flex-col items-center text-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 w-full max-w-sm"
             >
               <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-colors duration-300 ${getColorClasses(badge.color)}`}>
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
