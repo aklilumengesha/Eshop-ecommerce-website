@@ -18,7 +18,7 @@ import { useContext, useState, useEffect } from "react";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { toast } from "react-toastify";
 
-export default function Home({ featuredProducts = [], products = [], productsByCategory = {}, brands = [], categories = [], settings: initialSettings = {} }) {
+export default function Home({ featuredProducts = [], products = [], brands = [], categories = [], settings: initialSettings = {} }) {
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
   const [isLoading, setIsLoading] = useState(true);
@@ -137,54 +137,6 @@ export default function Home({ featuredProducts = [], products = [], productsByC
       {/* Customer Testimonials */}
       {siteSettings.testimonialsEnabled && <Testimonials settings={siteSettings} />}
 
-      {/* Products by Category */}
-      {siteSettings.categoryProductsEnabled && (
-        isLoading ? (
-          <div className="mb-12">
-            <div className="h-8 bg-gray-200 rounded w-48 mb-6 animate-pulse"></div>
-            <SkeletonProductGrid count={siteSettings.categoryProductsCount} />
-          </div>
-        ) : (
-          productsByCategory && Object.keys(productsByCategory).map((category) => (
-            <div key={category} className="mb-12">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl md:text-3xl font-bold">{category}</h2>
-                <Link 
-                  href={`/search?category=${category}`}
-                  className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-2"
-                >
-                  {siteSettings.categoryProductsViewAllText}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="2"
-                    stroke="currentColor"
-                    className="w-5 h-5"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                    />
-                  </svg>
-                </Link>
-              </div>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-4">
-                {productsByCategory[category].slice(0, siteSettings.categoryProductsCount).map((product) => (
-                  <ProductItem
-                    product={product}
-                    key={product.slug}
-                    addToCartHandler={addToCartHandler}
-                    allProducts={products}
-                  />
-                ))}
-              </div>
-            </div>
-          ))
-        )
-      )}
-
       {/* Newsletter Subscription */}
       {siteSettings.newsletterEnabled && <NewsletterSection />}
     </Layout>
@@ -211,16 +163,6 @@ export async function getServerSideProps(context) {
   const featuredProducts = products.filter(
     (product) => product.isFeatured === true
   );
-  
-  // Group products by category
-  const productsByCategory = {};
-  products.forEach((product) => {
-    const category = product.category;
-    if (!productsByCategory[category]) {
-      productsByCategory[category] = [];
-    }
-    productsByCategory[category].push(product);
-  });
   
   // Get all unique categories from products
   const productCategories = await Product.distinct('category');
@@ -347,10 +289,6 @@ export async function getServerSideProps(context) {
     props: {
       featuredProducts: featuredProducts.map(db.convertDocToObj),
       products: products.map(db.convertDocToObj),
-      productsByCategory: Object.keys(productsByCategory).reduce((acc, key) => {
-        acc[key] = productsByCategory[key].map(db.convertDocToObj);
-        return acc;
-      }, {}),
       brands,
       categories: categoriesWithCounts,
       settings: cleanSettings,
