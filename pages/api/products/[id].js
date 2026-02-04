@@ -5,14 +5,23 @@ const handler = async (req, res) => {
   await db.connect();
 
   if (req.method === "GET") {
-    const product = await Product.findById(req.query.id);
-    await db.disconnect();
+    const product = await Product.findById(req.query.id).lean();
     
     if (!product) {
+      await db.disconnect();
       return res.status(404).json({ message: "Product not found" });
     }
     
-    res.status(200).json(product);
+    // Calculate sold count dynamically
+    const { calculateSoldCount } = await import('@/utils/soldCount');
+    const soldCount = await calculateSoldCount(req.query.id);
+    
+    await db.disconnect();
+    
+    res.status(200).json({
+      ...product,
+      soldCount
+    });
   } else if (req.method === "PUT") {
     // Update product rating
     const product = await Product.findById(req.query.id);
