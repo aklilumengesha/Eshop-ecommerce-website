@@ -4,6 +4,7 @@ import db from "@/utils/db";
 import Review from "@/models/Review";
 import Product from "@/models/Product";
 import Order from "@/models/Order";
+import mongoose from "mongoose";
 
 const handler = async (req, res) => {
   const session = await getServerSession(req, res, authOptions);
@@ -30,6 +31,9 @@ const getReviews = async (req, res) => {
     const { id } = req.query;
     const { sort = "recent", filter = "all" } = req.query;
 
+    // Convert id to ObjectId for proper querying
+    const productObjectId = new mongoose.Types.ObjectId(id);
+
     let sortOption = { createdAt: -1 }; // Default: most recent
     
     if (sort === "helpful") {
@@ -40,7 +44,7 @@ const getReviews = async (req, res) => {
       sortOption = { rating: 1, createdAt: -1 };
     }
 
-    let filterOption = { product: id, status: "approved" };
+    let filterOption = { product: productObjectId, status: "approved" };
     
     if (filter !== "all" && filter >= 1 && filter <= 5) {
       filterOption.rating = parseInt(filter);
@@ -54,7 +58,7 @@ const getReviews = async (req, res) => {
 
     // Get rating statistics
     const stats = await Review.aggregate([
-      { $match: { product: new db.mongoose.Types.ObjectId(id), status: "approved" } },
+      { $match: { product: productObjectId, status: "approved" } },
       {
         $group: {
           _id: "$rating",
@@ -109,8 +113,11 @@ const createReview = async (req, res, session) => {
       return res.status(400).json({ message: "Rating must be between 1 and 5" });
     }
 
+    // Convert id to ObjectId
+    const productObjectId = new mongoose.Types.ObjectId(id);
+
     // Check if product exists
-    const product = await Product.findById(id);
+    const product = await Product.findById(productObjectId);
     if (!product) {
       await db.disconnect();
       return res.status(404).json({ message: "Product not found" });
@@ -118,7 +125,7 @@ const createReview = async (req, res, session) => {
 
     // Check if user already reviewed this product
     const existingReview = await Review.findOne({
-      product: id,
+      product: productObjectId,
       user: session.user._id,
     });
 
@@ -130,13 +137,17 @@ const createReview = async (req, res, session) => {
     // Check if user purchased this product (verified purchase)
     const hasPurchased = await Order.findOne({
       user: session.user._id,
-      "orderItems.slug": product.slug,
+      $or: [
+        { "orderItems.slug": product.slug },
+        { "orderItems.name": product.name }
+      ],
       isPaid: true,
+      isDelivered: true,
     });
 
     // Create review
     const review = await Review.create({
-      product: id,
+      product: productObjectId,
       user: session.user._id,
       userName: session.user.name,
       userEmail: session.user.email,
@@ -145,16 +156,24 @@ const createReview = async (req, res, session) => {
       comment,
       images,
       verifiedPurchase: !!hasPurchased,
+      status: "approved", // Auto-approve
     });
 
-    // Update product rating
-    const allReviews = await Review.find({ product: id, status: "approved" });
+    // Update product rating (including the new review)
+    const allReviews = await Review.find({ product: productObjectId, status: "approved" });
     const totalRating = allReviews.reduce((sum, r) => sum + r.rating, 0);
-    const avgRating = totalRating / allReviews.length;
+    const avgRating = allReviews.length > 0 ? totalRating / allReviews.length : 0;
 
     product.rating = avgRating;
     product.numReviews = allReviews.length;
     product.totalRatings = allReviews.length;
+    
+    // Also update the ratings array if it exists
+    if (!product.ratings) {
+      product.ratings = [];
+    }
+    product.ratings.push(rating);
+    
     await product.save();
 
     await db.disconnect();

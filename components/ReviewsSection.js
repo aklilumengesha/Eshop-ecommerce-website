@@ -46,6 +46,10 @@ export default function ReviewsSection({ productId }) {
   const handleReviewSubmitted = () => {
     setShowForm(false);
     fetchReviews();
+    // Reload the page to update product stats
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
   };
 
   return (

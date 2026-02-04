@@ -13,30 +13,6 @@ export default function ReviewForm({ productId, onReviewSubmitted }) {
   const [images, setImages] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [hasPurchased, setHasPurchased] = useState(false);
-  const [checkingPurchase, setCheckingPurchase] = useState(true);
-
-  // Check if user has purchased this product
-  useEffect(() => {
-    const checkPurchase = async () => {
-      if (!session) {
-        setCheckingPurchase(false);
-        return;
-      }
-
-      try {
-        const { data } = await axios.get(`/api/products/${productId}/check-purchase`);
-        setHasPurchased(data.hasPurchased);
-      } catch (error) {
-        console.error("Failed to check purchase:", error);
-        setHasPurchased(false);
-      } finally {
-        setCheckingPurchase(false);
-      }
-    };
-
-    checkPurchase();
-  }, [session, productId]);
 
   const handleImageUpload = async (e) => {
     const files = Array.from(e.target.files);
@@ -143,43 +119,6 @@ export default function ReviewForm({ productId, onReviewSubmitted }) {
         <a href="/login" className="text-blue-600 hover:text-blue-700 font-semibold">
           Sign In
         </a>
-      </div>
-    );
-  }
-
-  if (checkingPurchase) {
-    return (
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
-        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-3"></div>
-        <p className="text-gray-600">Checking purchase history...</p>
-      </div>
-    );
-  }
-
-  if (!hasPurchased) {
-    return (
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth="1.5"
-          stroke="currentColor"
-          className="w-12 h-12 mx-auto text-yellow-600 mb-3"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
-          />
-        </svg>
-        <h3 className="text-lg font-bold text-gray-900 mb-2">Purchase Required</h3>
-        <p className="text-gray-600 mb-4">
-          You need to purchase this product before you can write a review
-        </p>
-        <p className="text-sm text-gray-500">
-          Only verified buyers can leave reviews to ensure authenticity
-        </p>
       </div>
     );
   }

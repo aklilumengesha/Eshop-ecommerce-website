@@ -17,6 +17,7 @@ import { useInventory } from "@/hooks/useInventory";
 import NotifyMeButton from "@/components/NotifyMeButton";
 import { useSession } from "next-auth/react";
 import { SkeletonProductDetail } from "@/components/skeletons";
+import mongoose from "mongoose";
 
 export default function ProductDetail(props) {
   const { product } = props;
@@ -354,6 +355,34 @@ export async function getServerSideProps(context) {
   
   await db.connect();
   const product = await Product.findOne({ slug: slug }).lean();
+  
+  if (product) {
+    // Get the actual review count from Review collection
+    const Review = (await import("@/models/Review")).default;
+    
+    // Convert product._id to ObjectId for proper querying
+    const productObjectId = new mongoose.Types.ObjectId(product._id);
+    
+    const reviewCount = await Review.countDocuments({ 
+      product: productObjectId, 
+      status: "approved" 
+    });
+    
+    // Get actual average rating from reviews
+    const reviews = await Review.find({ 
+      product: productObjectId, 
+      status: "approved" 
+    }).select('rating').lean();
+    
+    const totalRating = reviews.reduce((sum, r) => sum + r.rating, 0);
+    const avgRating = reviews.length > 0 ? totalRating / reviews.length : 0;
+    
+    // Update product with actual values
+    product.numReviews = reviewCount;
+    product.totalRatings = reviewCount;
+    product.rating = avgRating;
+  }
+  
   await db.disconnect();
   
   return {
