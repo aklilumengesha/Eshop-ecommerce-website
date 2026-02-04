@@ -1,16 +1,27 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-export default function Testimonials({ settings = {} }) {
+export default function Testimonials({ settings: initialSettings = {} }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [testimonials, setTestimonials] = useState([]);
   const [socialProofStats, setSocialProofStats] = useState([]);
   const [stats, setStats] = useState({ averageRating: 0, totalReviews: 0 });
   const [loading, setLoading] = useState(true);
+  const [settings, setSettings] = useState(initialSettings);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Fetch fresh settings
+        try {
+          const { data: settingsData } = await axios.get('/api/site-settings');
+          if (settingsData.success) {
+            setSettings(settingsData.settings);
+          }
+        } catch (settingsError) {
+          console.error('Failed to fetch settings:', settingsError);
+        }
+
         // Fetch testimonials with stats
         const { data: testimonialsData } = await axios.get('/api/testimonials?stats=true');
         setTestimonials(testimonialsData.testimonials || []);
