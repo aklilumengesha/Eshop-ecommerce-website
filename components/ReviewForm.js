@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import ReactStars from "react-rating-stars-component";
 import { toast } from "react-toastify";
 import axios from "axios";
 import Image from "next/image";
@@ -195,19 +194,30 @@ export default function ReviewForm({ productId, onReviewSubmitted }) {
           <label className="block text-sm font-semibold mb-2">
             Your Rating <span className="text-red-500">*</span>
           </label>
-          <ReactStars
-            count={5}
-            onChange={(newRating) => setRating(newRating)}
-            size={36}
-            activeColor="#ffd700"
-            value={rating}
-            isHalf={false}
-            edit={true}
-            emptyIcon={<i className="far fa-star"></i>}
-            filledIcon={<i className="fa fa-star"></i>}
-          />
+          <div className="flex items-center gap-2">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                type="button"
+                onClick={() => setRating(star)}
+                className="focus:outline-none transition-transform hover:scale-110"
+              >
+                <svg
+                  className={`w-10 h-10 ${
+                    star <= rating
+                      ? 'text-yellow-400 fill-current'
+                      : 'text-gray-300 fill-current'
+                  }`}
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+              </button>
+            ))}
+          </div>
           {rating > 0 && (
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
               You selected {rating} star{rating !== 1 ? 's' : ''}
             </p>
           )}
