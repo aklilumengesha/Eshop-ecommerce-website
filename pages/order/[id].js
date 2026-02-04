@@ -156,13 +156,29 @@ function OrderDetail() {
                     <th className="px-5 text-right">Quantity</th>
                     <th className="px-5 text-right">Price</th>
                     <th className="px-5 text-right">Subtotal</th>
+                    {order.isPaid && order.isDelivered && (
+                      <th className="px-5 text-center">Review</th>
+                    )}
                   </tr>
                 </thead>
                 <tbody>
-                  {order.orderItems.map((item) => (
-                    <tr key={item._id} className="border-b">
+                  {order.orderItems.map((item, index) => (
+                    <tr key={item._id || index} className="border-b">
                       <td>
-                        <Link href={`/product/${item.slug}`}>
+                        {item.slug ? (
+                          <Link href={`/product/${item.slug}`}>
+                            <span className="flex items-center cursor-pointer hover:text-blue-600 transition-colors">
+                              <Image
+                                src={item.image}
+                                alt={item.name}
+                                width={50}
+                                height={50}
+                                className="rounded-sm"
+                              />
+                              <span className="ml-3">{item.name}</span>
+                            </span>
+                          </Link>
+                        ) : (
                           <span className="flex items-center">
                             <Image
                               src={item.image}
@@ -173,17 +189,44 @@ function OrderDetail() {
                             />
                             <span className="ml-3">{item.name}</span>
                           </span>
-                        </Link>
+                        )}
                       </td>
                       <td className="p-5 text-right">{item.quantity}</td>
                       <td className="p-5 text-right">{formatPrice(item.price, currency)}</td>
                       <td className="p-5 text-right">
                         {formatPrice(item.quantity * item.price, currency)}
                       </td>
+                      {order.isPaid && order.isDelivered && (
+                        <td className="p-5 text-center">
+                          {item.slug ? (
+                            <Link href={`/product/${item.slug}#reviews`}>
+                              <button className="text-xs bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded transition-colors">
+                                Write Review
+                              </button>
+                            </Link>
+                          ) : (
+                            <span className="text-xs text-gray-500">
+                              Product unavailable
+                            </span>
+                          )}
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
               </table>
+              {order.isPaid && order.isDelivered && (
+                <div className="mt-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                  <p className="text-sm text-green-700 dark:text-green-300 flex items-center gap-2">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>
+                      <strong>Order delivered!</strong> You can now write reviews for the products you purchased.
+                    </span>
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 

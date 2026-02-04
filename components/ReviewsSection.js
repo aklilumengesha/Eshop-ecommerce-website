@@ -49,7 +49,7 @@ export default function ReviewsSection({ productId }) {
   };
 
   return (
-    <div className="mt-12">
+    <div id="reviews" className="mt-12 scroll-mt-20">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-3xl font-bold">Reviews & Ratings</h2>
         <button

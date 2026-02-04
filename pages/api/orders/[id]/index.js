@@ -1,4 +1,5 @@
 import Order from "@/models/Order";
+import Product from "@/models/Product";
 import db from "@/utils/db";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../auth/[...nextauth]";
@@ -14,13 +15,34 @@ const handler = async (req, res) => {
   
   const order = await Order.findById(req.query.id);
   
-  await db.disconnect();
-  
   if (!order) {
+    await db.disconnect();
     return res.status(404).send({ message: "Order not found" });
   }
   
-  res.send(order);
+  // Enrich order items with product slugs if missing
+  const enrichedOrderItems = await Promise.all(
+    order.orderItems.map(async (item) => {
+      if (!item.slug) {
+        // Try to find the product by name to get the slug
+        const product = await Product.findOne({ name: item.name }).select('slug');
+        if (product) {
+          return { ...item.toObject(), slug: product.slug };
+        }
+      }
+      return item.toObject();
+    })
+  );
+  
+  await db.disconnect();
+  
+  // Return order with enriched items
+  const enrichedOrder = {
+    ...order.toObject(),
+    orderItems: enrichedOrderItems,
+  };
+  
+  res.send(enrichedOrder);
 };
 
 export default handler;

@@ -27,11 +27,16 @@ const handler = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    // Check if user has purchased this product
+    // Check if user has purchased and received this product
+    // Check by slug (new orders) OR by name (old orders)
     const hasPurchased = await Order.findOne({
       user: session.user._id,
-      "orderItems.slug": product.slug,
+      $or: [
+        { "orderItems.slug": product.slug },
+        { "orderItems.name": product.name }
+      ],
       isPaid: true,
+      isDelivered: true, // Only allow reviews for delivered orders
     });
 
     await db.disconnect();
