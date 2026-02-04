@@ -320,10 +320,13 @@ export async function getServerSideProps({ query }) {
 
   await db.connect();
   
+  // Import soldCount utility
+  const { addSoldCountsToProducts } = await import('@/utils/soldCount');
+  
   const categories = await Product.find().distinct("category");
   const brands = await Product.find().distinct("brand");
   
-  const productDocs = await Product.find({
+  let productDocs = await Product.find({
     ...queryFilter,
     ...categoryFilter,
     ...priceFilter,
@@ -334,6 +337,9 @@ export async function getServerSideProps({ query }) {
     .skip(pageSize * (page - 1))
     .limit(pageSize)
     .lean();
+
+  // Add sold counts to products
+  productDocs = await addSoldCountsToProducts(productDocs);
 
   const countProducts = await Product.countDocuments({
     ...queryFilter,

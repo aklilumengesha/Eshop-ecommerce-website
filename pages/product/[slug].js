@@ -354,6 +354,10 @@ export async function getServerSideProps(context) {
   const { slug } = params;
   
   await db.connect();
+  
+  // Import soldCount utility
+  const { calculateSoldCount } = await import('@/utils/soldCount');
+  
   const product = await Product.findOne({ slug: slug }).lean();
   
   if (product) {
@@ -377,10 +381,14 @@ export async function getServerSideProps(context) {
     const totalRating = reviews.reduce((sum, r) => sum + r.rating, 0);
     const avgRating = reviews.length > 0 ? totalRating / reviews.length : 0;
     
+    // Calculate sold count from orders
+    const soldCount = await calculateSoldCount(productObjectId);
+    
     // Update product with actual values
     product.numReviews = reviewCount;
     product.totalRatings = reviewCount;
     product.rating = avgRating;
+    product.soldCount = soldCount;
   }
   
   await db.disconnect();

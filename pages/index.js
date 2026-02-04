@@ -199,7 +199,15 @@ export async function getServerSideProps(context) {
   );
   
   await db.connect();
-  const products = await Product.find().lean().sort({ createdAt: -1 });
+  
+  // Import soldCount utility
+  const { addSoldCountsToProducts } = await import('@/utils/soldCount');
+  
+  let products = await Product.find().lean().sort({ createdAt: -1 });
+  
+  // Add sold counts to all products
+  products = await addSoldCountsToProducts(products);
+  
   const featuredProducts = products.filter(
     (product) => product.isFeatured === true
   );

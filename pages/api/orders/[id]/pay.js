@@ -1,5 +1,4 @@
 import Order from "@/models/Order";
-import Product from "@/models/Product";
 import db from "@/utils/db";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../auth/[...nextauth]";
@@ -29,16 +28,6 @@ const handler = async (req, res) => {
     };
     
     const paidOrder = await order.save();
-    
-    // Update soldCount for each product in the order
-    for (const item of order.orderItems) {
-      await Product.findByIdAndUpdate(
-        item._id,
-        { $inc: { soldCount: item.quantity } },
-        { new: true }
-      );
-    }
-    
     await db.disconnect();
     
     res.send({ message: "Order paid successfully", order: paidOrder });
