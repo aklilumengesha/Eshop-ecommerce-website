@@ -69,6 +69,7 @@ export default function AdminProductEdit() {
         setValue("brand", data.brand);
         setValue("brandLogo", data.brandLogo || "");
         setValue("countInStock", data.countInStock);
+        setValue("soldCount", data.soldCount || 0);
         setValue("description", data.description);
         setValue("isFeatured", data.isFeatured);
         setValue("banner", data.banner);
@@ -420,6 +421,26 @@ export default function AdminProductEdit() {
                 {errors.countInStock && (
                   <div className="text-red-500">
                     {errors.countInStock.message}
+                  </div>
+                )}
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="soldCount">Sold Count</label>
+                <input
+                  type="number"
+                  className="w-full"
+                  id="soldCount"
+                  {...register("soldCount", {
+                    min: { value: 0, message: "Sold count cannot be negative" },
+                  })}
+                />
+                <p className="text-sm text-gray-600 mt-1">
+                  Number of units sold (auto-increments on paid orders)
+                </p>
+                {errors.soldCount && (
+                  <div className="text-red-500">
+                    {errors.soldCount.message}
                   </div>
                 )}
               </div>

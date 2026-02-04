@@ -76,6 +76,11 @@ const productSchema = new mongoose.Schema(
         required: true,
       },
     ],
+    soldCount: {
+      type: Number,
+      default: 0,
+      min: [0, "Sold count cannot be negative"],
+    },
     countInStock: {
       type: Number,
       required: [true, "Please provide stock count"],
