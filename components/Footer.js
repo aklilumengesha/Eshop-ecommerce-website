@@ -152,6 +152,11 @@ export default function Footer() {
                   Track Order
                 </Link>
               </li>
+              <li>
+                <Link href="/newsletter-manage" className="hover:text-blue-400 transition-colors">
+                  Manage Newsletter
+                </Link>
+              </li>
             </ul>
           </div>
 

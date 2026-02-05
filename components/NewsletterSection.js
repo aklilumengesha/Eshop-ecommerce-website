@@ -38,15 +38,45 @@ export default function NewsletterSection() {
     setLoading(true);
 
     try {
-      // Simulate API call (you can implement actual newsletter API later)
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const discount = settings?.newsletterDiscountPercentage || 10;
-      toast.success(`🎉 Subscribed! Check your email for your ${discount}% discount code!`, {
-        autoClose: 5000,
+      const response = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
       });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (data.alreadySubscribed) {
+          toast.info('You are already subscribed to our newsletter!');
+        } else {
+          toast.error(data.message || 'Failed to subscribe');
+        }
+        setLoading(false);
+        return;
+      }
+
+      const discount = data.discountPercentage || settings?.newsletterDiscountPercentage || 10;
+      
+      // Show success with discount code
+      toast.success(
+        <div>
+          <div className="font-bold mb-1">🎉 Successfully Subscribed!</div>
+          <div className="text-sm">Your discount code: <span className="font-mono font-bold">{data.discountCode}</span></div>
+          <div className="text-xs mt-1 opacity-80">
+            {data.emailSent ? 'Check your email for details!' : 'Save this code for checkout!'}
+          </div>
+        </div>,
+        {
+          autoClose: 10000,
+        }
+      );
+      
       setEmail('');
     } catch (error) {
+      console.error('Newsletter subscription error:', error);
       toast.error('Failed to subscribe. Please try again.');
     } finally {
       setLoading(false);
