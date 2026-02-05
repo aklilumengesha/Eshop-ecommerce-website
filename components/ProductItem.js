@@ -9,8 +9,12 @@ import ProductQuickView from "./ProductQuickView";
 import SimilarProducts from "./SimilarProducts";
 import LiveStockBadge from "./LiveStockBadge";
 import { useInventory } from "@/hooks/useInventory";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 export default function ProductItem({ product, addToCartHandler, allProducts }) {
+  const { data: session } = useSession();
+  const router = useRouter();
   const { state, dispatch } = useContext(Store);
   const { currency, wishlist, compare } = state;
   const [isHovered, setIsHovered] = useState(false);
@@ -40,6 +44,14 @@ export default function ProductItem({ product, addToCartHandler, allProducts }) 
 
   const toggleWishlistHandler = (e) => {
     e.preventDefault();
+    
+    // Check if user is logged in
+    if (!session) {
+      toast.info("Please sign in to add items to your wishlist");
+      router.push(`/login?redirect=/product/${product.slug}`);
+      return;
+    }
+    
     if (isInWishlist) {
       dispatch({ type: "WISHLIST_REMOVE_ITEM", payload: product });
       toast.success("Removed from wishlist");
