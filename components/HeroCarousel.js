@@ -10,6 +10,14 @@ import { Store } from '@/utils/Store';
 export default function HeroCarousel({ featuredProducts, addToCartHandler }) {
   const { state } = useContext(Store);
   const [settings, setSettings] = useState(null);
+  const [currentPromoIndex, setCurrentPromoIndex] = useState(0);
+
+  const promoMessages = [
+    { text: 'Fast Delivery', icon: '⚡' },
+    { text: 'Free Coupon', icon: '🎁' },
+    { text: 'Welcome Offer', icon: '✨' },
+    { text: 'Best Prices', icon: '💰' },
+  ];
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -26,6 +34,15 @@ export default function HeroCarousel({ featuredProducts, addToCartHandler }) {
 
     fetchSettings();
   }, []);
+
+  // Rotate promo messages
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentPromoIndex((prev) => (prev + 1) % promoMessages.length);
+    }, 2500);
+
+    return () => clearInterval(interval);
+  }, [promoMessages.length]);
 
   const getDisplayPrice = (product) => {
     if (product.isFlashSale && product.flashSalePrice) {
@@ -118,7 +135,7 @@ export default function HeroCarousel({ featuredProducts, addToCartHandler }) {
                     )}
                     
                     {discount > 0 && (
-                      <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-secondary-500 text-white rounded-full text-sm font-bold shadow-lg animate-pulse">
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-secondary-500 text-white rounded-full text-sm font-bold shadow-lg animate-blink">
                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clipRule="evenodd" />
                         </svg>
@@ -137,40 +154,64 @@ export default function HeroCarousel({ featuredProducts, addToCartHandler }) {
                         </div>
                       )}
 
+                      {/* Rotating Promotional Message - Clean Text Only */}
+                      <div className="mb-6">
+                        <p className="text-white/80 text-xs md:text-sm font-semibold uppercase tracking-wider mb-2 animate-fade-in-up">
+                          Special Offer
+                        </p>
+                        <div className="h-8 md:h-10 flex items-center relative">
+                          {promoMessages.map((promo, index) => (
+                            <div
+                              key={index}
+                              className={`absolute transition-all duration-500 ${
+                                index === currentPromoIndex
+                                  ? 'opacity-100 translate-y-0'
+                                  : 'opacity-0 -translate-y-4'
+                              }`}
+                            >
+                              <p className="text-white text-lg md:text-2xl font-bold drop-shadow-lg flex items-center gap-2">
+                                <span className="text-2xl md:text-3xl">{promo.icon}</span>
+                                {promo.text}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
                       {/* Product Name */}
-                      <h2 className="text-white text-3xl md:text-5xl lg:text-6xl font-bold mb-3 md:mb-4 drop-shadow-lg">
+                      <h2 className="text-white text-2xl md:text-4xl lg:text-5xl font-extrabold mb-3 md:mb-4 drop-shadow-2xl tracking-tight leading-tight animate-fade-in-up animation-delay-800">
                         {product.name}
                       </h2>
 
                       {/* Price */}
-                      <div className="flex items-center gap-3 mb-6">
-                        <p className="text-white text-2xl md:text-4xl lg:text-5xl font-bold drop-shadow-lg">
+                      <div className="flex items-baseline gap-3 mb-6 animate-fade-in-up animation-delay-1000">
+                        <p className="text-white text-2xl md:text-4xl lg:text-5xl font-black drop-shadow-2xl tracking-tight">
                           ${displayPrice}
                         </p>
                         {originalPrice && (
-                          <p className="text-gray-300 text-xl md:text-2xl lg:text-3xl line-through opacity-75">
+                          <p className="text-gray-300 text-lg md:text-2xl lg:text-3xl line-through opacity-70 font-medium">
                             ${originalPrice}
                           </p>
                         )}
                       </div>
 
                       {/* CTA Buttons */}
-                      <div className="flex flex-wrap gap-3 md:gap-4">
+                      <div className="flex flex-wrap gap-3 md:gap-4 animate-fade-in-up animation-delay-1200">
                         <button 
                           onClick={(e) => {
                             e.preventDefault();
                             window.location.href = `/product/${product.slug}`;
                           }}
-                          className="px-6 py-3 md:px-8 md:py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-semibold text-base md:text-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5"
+                          className="px-6 py-3 md:px-8 md:py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-bold text-sm md:text-base tracking-wide shadow-2xl hover:shadow-primary-500/50 transition-all duration-300 hover:-translate-y-1 hover:scale-105"
                         >
                           {shopNowText}
                         </button>
                         
                         <button 
                           onClick={(e) => handleQuickAdd(e, product)}
-                          className="px-6 py-3 md:px-8 md:py-4 bg-white hover:bg-gray-100 text-gray-900 rounded-lg font-semibold text-base md:text-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-2"
+                          className="px-6 py-3 md:px-8 md:py-4 bg-white hover:bg-gray-50 text-gray-900 rounded-lg font-bold text-sm md:text-base tracking-wide shadow-2xl hover:shadow-white/50 transition-all duration-300 hover:-translate-y-1 hover:scale-105 flex items-center gap-2"
                         >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                           </svg>
                           {addToCartText}
@@ -181,7 +222,7 @@ export default function HeroCarousel({ featuredProducts, addToCartHandler }) {
                             e.preventDefault();
                             window.location.href = `/product/${product.slug}`;
                           }}
-                          className="px-6 py-3 md:px-8 md:py-4 bg-transparent border-2 border-white hover:bg-white/10 text-white rounded-lg font-semibold text-base md:text-lg shadow-lg transition-all duration-200"
+                          className="px-6 py-3 md:px-8 md:py-4 bg-transparent border-2 border-white hover:bg-white/20 text-white rounded-lg font-bold text-sm md:text-base tracking-wide backdrop-blur-sm shadow-2xl transition-all duration-300 hover:-translate-y-1"
                         >
                           {learnMoreText}
                         </button>
