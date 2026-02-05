@@ -12,7 +12,7 @@ const handler = async (req, res) => {
 
   await db.connect();
   
-  const orders = await Order.find({}).populate("user", "name");
+  const orders = await Order.find({}).populate("user", "name").sort({ createdAt: -1 });
   
   await db.disconnect();
   

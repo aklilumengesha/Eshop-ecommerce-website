@@ -173,7 +173,7 @@ export default function AdminOrders() {
                     )}
                   </td>
                   <td className="p-5">
-                    <Link href={`/order/${order._id}`} passHref>
+                    <Link href={`/admin/order-detail?id=${order._id}`} passHref>
                       <button className="primary-button">Details</button>
                     </Link>
                   </td>
