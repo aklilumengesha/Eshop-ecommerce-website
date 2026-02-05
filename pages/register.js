@@ -28,20 +28,30 @@ export default function Register() {
 
   const submitHandler = async ({ name, email, password }) => {
     try {
-      await axios.post("/api/auth/signup", {
+      const { data } = await axios.post("/api/auth/signup", {
         name,
         email,
         password,
       });
 
-      const result = await signIn("credentials", {
-        redirect: false,
-        email,
-        password,
-      });
+      if (data.requiresVerification) {
+        toast.success(data.message);
+        // Redirect to verification page with email and password
+        router.push({
+          pathname: "/verify-email",
+          query: { email, password },
+        });
+      } else {
+        // Fallback: auto-login if verification not required
+        const result = await signIn("credentials", {
+          redirect: false,
+          email,
+          password,
+        });
 
-      if (result.error) {
-        toast.error(result.error);
+        if (result.error) {
+          toast.error(result.error);
+        }
       }
     } catch (err) {
       toast.error(getError(err));

@@ -22,6 +22,127 @@ function createTransporter() {
 }
 
 /**
+ * Generate verification email HTML template
+ */
+function getVerificationEmailTemplate({ name, verificationCode }) {
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Verification</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f4; padding: 20px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; text-align: center;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 32px;">Welcome to eShop!</h1>
+              <p style="color: #ffffff; margin: 15px 0 0 0; font-size: 16px;">Verify your email to get started</p>
+            </td>
+          </tr>
+
+          <!-- Content -->
+          <tr>
+            <td style="padding: 40px 30px;">
+              <p style="color: #333333; font-size: 16px; margin: 0 0 20px 0;">Hi ${name},</p>
+              <p style="color: #666666; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
+                Thank you for registering with eShop! To complete your registration and access all features, please verify your email address using the code below:
+              </p>
+              
+              <!-- Verification Code Box -->
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding: 30px 0;">
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 25px; display: inline-block;">
+                      <p style="color: #ffffff; font-size: 14px; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 1px;">Your Verification Code</p>
+                      <p style="color: #ffffff; font-size: 42px; font-weight: bold; margin: 0; letter-spacing: 8px; font-family: 'Courier New', monospace;">${verificationCode}</p>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="color: #666666; font-size: 14px; line-height: 1.6; margin: 20px 0 0 0; text-align: center;">
+                This code will expire in <strong>10 minutes</strong>
+              </p>
+              
+              <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 30px 0;">
+                <p style="color: #856404; font-size: 14px; margin: 0;">
+                  <strong>Security Note:</strong> If you didn't create an account with eShop, please ignore this email.
+                </p>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #f9f9f9; padding: 20px; text-align: center; border-top: 1px solid #e0e0e0;">
+              <p style="color: #666666; font-size: 12px; margin: 0 0 10px 0;">
+                This is an automated email. Please do not reply.
+              </p>
+              <p style="color: #666666; font-size: 12px; margin: 0;">
+                © ${new Date().getFullYear()} eShop. All rights reserved.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `;
+}
+
+/**
+ * Send verification email
+ */
+export async function sendVerificationEmail({ email, name, verificationCode }) {
+  const transporter = createTransporter();
+
+  if (!transporter) {
+    console.log('📧 Email not configured - skipping verification email to:', email);
+    return Promise.resolve();
+  }
+
+  const htmlContent = getVerificationEmailTemplate({ name, verificationCode });
+  const textContent = `
+Welcome to eShop, ${name}!
+
+Your verification code is: ${verificationCode}
+
+This code will expire in 10 minutes.
+
+If you didn't create an account with eShop, please ignore this email.
+  `.trim();
+
+  const mailOptions = {
+    from: process.env.EMAIL_FROM || `"eShop" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: '🔐 Verify Your Email - eShop',
+    text: textContent,
+    html: htmlContent,
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log('✅ Verification email sent to:', email);
+    console.log('📧 Message ID:', info.messageId);
+    return info;
+  } catch (error) {
+    console.error('❌ Failed to send verification email to:', email);
+    console.error('Error:', error.message);
+    throw error;
+  }
+}
+
+/**
  * Generate back in stock email HTML template
  */
 function getBackInStockEmailTemplate({ product, unsubscribeUrl, productUrl }) {

@@ -2,6 +2,12 @@ import User from "@/models/User";
 import Coupon from "@/models/Coupon";
 import db from "@/utils/db";
 import bcryptjs from "bcryptjs";
+import { sendVerificationEmail } from "@/utils/email";
+
+// Generate 6-digit verification code
+function generateVerificationCode() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
 
 // Generate unique welcome coupon code
 function generateWelcomeCouponCode() {
@@ -43,6 +49,10 @@ async function handler(req, res) {
     // Hash password
     const hashedPassword = bcryptjs.hashSync(password, 12);
 
+    // Generate verification code (expires in 10 minutes)
+    const verificationCode = generateVerificationCode();
+    const verificationCodeExpiry = new Date(Date.now() + 10 * 60 * 1000);
+
     // Generate unique welcome coupon code
     let couponCode;
     let isUnique = false;
@@ -55,45 +65,40 @@ async function handler(req, res) {
       }
     }
 
-    // Create new user
+    // Create new user (not verified yet)
     const newUser = new User({
       name,
       email,
       password: hashedPassword,
       isAdmin: false,
+      isEmailVerified: false,
+      verificationCode,
+      verificationCodeExpiry,
       welcomeCouponCode: couponCode,
       welcomeCouponUsed: false,
     });
 
     const user = await newUser.save();
 
-    // Create welcome coupon (expires in 2 days)
-    const expiryDate = new Date();
-    expiryDate.setDate(expiryDate.getDate() + 2);
-
-    const welcomeCoupon = new Coupon({
-      code: couponCode,
-      userId: user._id,
-      discountType: 'percentage',
-      discountValue: 20,
-      expiryDate: expiryDate,
-      isActive: true,
-      isUsed: false,
-      couponType: 'welcome',
-      maxUsagePerProduct: 1,
-    });
-
-    await welcomeCoupon.save();
+    // Send verification email
+    try {
+      await sendVerificationEmail({
+        email: user.email,
+        name: user.name,
+        verificationCode,
+      });
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError);
+      // Continue even if email fails
+    }
 
     await db.disconnect();
 
     res.status(201).json({
-      message: "User created successfully!",
-      _id: user._id,
-      name: user.name,
+      message: "User created successfully! Please check your email for verification code.",
+      userId: user._id.toString(),
       email: user.email,
-      isAdmin: user.isAdmin,
-      welcomeCouponCode: couponCode,
+      requiresVerification: true,
     });
   } catch (error) {
     await db.disconnect();

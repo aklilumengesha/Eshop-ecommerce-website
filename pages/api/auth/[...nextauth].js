@@ -123,6 +123,12 @@ export const authOptions = {
         }
         
         if (user && bcryptjs.compareSync(credentials.password, user.password)) {
+          // Check if email is verified
+          if (!user.isEmailVerified) {
+            console.log('✗ Login failed: Email not verified');
+            throw new Error("Please verify your email before logging in");
+          }
+
           const userData = {
             _id: user._id.toString(),
             name: user.name,
