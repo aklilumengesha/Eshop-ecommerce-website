@@ -348,21 +348,18 @@ function Layout({ title, children, breadcrumbProps }) {
               ) : session?.user ? (
                 <Menu as="div" className="relative inline-block z-10">
                   <Menu.Button className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth="1.5"
-                      stroke="currentColor"
-                      className="w-5 h-5"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+                    {session.user.profileImage ? (
+                      <img
+                        src={session.user.profileImage}
+                        alt={session.user.name}
+                        className="w-8 h-8 rounded-full object-cover border-2 border-blue-500"
                       />
-                    </svg>
-                    {session.user.name}
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold border-2 border-blue-500">
+                        {session.user.name?.charAt(0).toUpperCase() || "U"}
+                      </div>
+                    )}
+                    <span className="font-medium">{session.user.name}</span>
                   </Menu.Button>
                   <Menu.Items className="absolute right-0 w-56 origin-top-right p-2 bg-white dark:bg-gray-800 shadow-lg rounded-t-lg rounded-b-lg">
                     <Menu.Item>
@@ -556,10 +553,21 @@ function Layout({ title, children, breadcrumbProps }) {
                 "Loading"
               ) : session?.user ? (
                 <Menu as="div" className="relative inline-block z-10">
-                  <Menu.Button className="flex space-x-4 items-center">
-                    {session.user.name}
+                  <Menu.Button className="flex items-center gap-2">
+                    {session.user.profileImage ? (
+                      <img
+                        src={session.user.profileImage}
+                        alt={session.user.name}
+                        className="w-8 h-8 rounded-full object-cover border-2 border-blue-500"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold border-2 border-blue-500">
+                        {session.user.name?.charAt(0).toUpperCase() || "U"}
+                      </div>
+                    )}
+                    <span className="font-medium">{session.user.name}</span>
                     <svg
-                      className="h-4 w-6"
+                      className="h-4 w-4"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -569,7 +577,7 @@ function Layout({ title, children, breadcrumbProps }) {
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+                        d="M19.5 8.25l-7.5 7.5-7.5-7.5"
                       />
                     </svg>
                   </Menu.Button>
