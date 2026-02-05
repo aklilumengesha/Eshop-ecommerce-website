@@ -15,7 +15,7 @@ async function handler(req, res) {
   }
 
   const { user } = session;
-  const { name, email, password } = req.body;
+  const { name, email, password, profileImage } = req.body;
 
   // Validation
   if (
@@ -42,6 +42,10 @@ async function handler(req, res) {
 
   if (password) {
     toUpdateUser.password = bcryptjs.hashSync(password, 12);
+  }
+
+  if (profileImage !== undefined) {
+    toUpdateUser.profileImage = profileImage;
   }
 
   await toUpdateUser.save();

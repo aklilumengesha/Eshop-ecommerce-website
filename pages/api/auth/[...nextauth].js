@@ -11,17 +11,26 @@ export const authOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       // On initial sign in, add user data to token
       if (user) {
         token._id = user._id;
         token.isAdmin = user.isAdmin;
+        token.profileImage = user.profileImage;
         console.log('=== JWT CALLBACK (Initial Login) ===');
         console.log('Setting token with user data:', {
           _id: user._id,
           isAdmin: user.isAdmin,
-          email: user.email
+          email: user.email,
+          profileImage: user.profileImage
         });
+      }
+      
+      // Handle session updates (e.g., profile updates)
+      if (trigger === "update" && session) {
+        token.name = session.user.name;
+        token.email = session.user.email;
+        token.profileImage = session.user.profileImage;
       }
       
       console.log('=== JWT CALLBACK (Current Token) ===');
@@ -33,12 +42,14 @@ export const authOptions = {
     async session({ session, token }) {
       session.user._id = token._id;
       session.user.isAdmin = token.isAdmin;
+      session.user.profileImage = token.profileImage;
       
       console.log('=== SESSION CALLBACK ===');
       console.log('Session user:', {
         email: session.user.email,
         _id: session.user._id,
-        isAdmin: session.user.isAdmin
+        isAdmin: session.user.isAdmin,
+        profileImage: session.user.profileImage
       });
       
       return session;
@@ -58,6 +69,7 @@ export const authOptions = {
             email: user.email,
             password: bcryptjs.hashSync(Math.random().toString(36), 12), // Random password for OAuth users
             isAdmin: false,
+            profileImage: user.image || null,
           });
           console.log('Created new OAuth user:', dbUser.email);
         }
@@ -65,6 +77,7 @@ export const authOptions = {
         // Set user._id and isAdmin for JWT callback
         user._id = dbUser._id.toString();
         user.isAdmin = dbUser.isAdmin;
+        user.profileImage = dbUser.profileImage || user.image;
         
         await db.disconnect();
       }
@@ -116,6 +129,7 @@ export const authOptions = {
             email: user.email,
             image: "default",
             isAdmin: user.isAdmin,
+            profileImage: user.profileImage,
           };
           console.log('✓ Login successful!');
           console.log('Returning user data:', JSON.stringify(userData, null, 2));

@@ -29,6 +29,10 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: false,
     },
+    profileImage: {
+      type: String,
+      default: null,
+    },
     welcomeCouponCode: {
       type: String,
       default: null,
