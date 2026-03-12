@@ -19,8 +19,6 @@ export default function RecentlyViewed({ currentProductSlug = null, limit = 12 }
         // Get product IDs from localStorage
         let storedProducts = getRecentlyViewed();
         
-        console.log('Recently Viewed - Stored products from localStorage:', storedProducts);
-        
         // Filter out current product if on product detail page
         if (currentProductSlug) {
           storedProducts = storedProducts.filter(p => p.slug !== currentProductSlug);
@@ -42,10 +40,6 @@ export default function RecentlyViewed({ currentProductSlug = null, limit = 12 }
         const productPromises = storedProducts.map(async (storedProduct) => {
           try {
             const { data } = await axios.get(`/api/products/${storedProduct._id}`);
-            console.log(`Fetched fresh data for ${data.name}:`, {
-              hasImages: !!data.images,
-              imagesCount: data.images?.length
-            });
             return data;
           } catch (error) {
             console.error(`Error fetching product ${storedProduct._id}:`, error);
@@ -55,12 +49,6 @@ export default function RecentlyViewed({ currentProductSlug = null, limit = 12 }
         });
         
         const freshProducts = await Promise.all(productPromises);
-        
-        console.log('Recently Viewed - Fresh products from API:', freshProducts.map(p => ({
-          name: p.name,
-          hasImages: !!p.images,
-          imagesCount: p.images?.length
-        })));
         
         setRecentProducts(freshProducts);
       } catch (error) {

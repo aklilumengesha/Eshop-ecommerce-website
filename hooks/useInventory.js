@@ -17,12 +17,10 @@ export function useInventory(productId, initialStock = 0) {
 
     // Subscribe to product updates
     socket.emit('subscribe-product', productId);
-    console.log(`📦 Subscribed to product: ${productId}`);
 
     // Listen for stock updates
     const handleStockUpdate = (data) => {
       if (data.productId === productId) {
-        console.log('📊 Stock updated:', data);
         setStock(data.newStock);
         setLastUpdate(data.timestamp);
         
@@ -38,7 +36,6 @@ export function useInventory(productId, initialStock = 0) {
     // Listen for sold out
     const handleSoldOut = (data) => {
       if (data.productId === productId) {
-        console.log('🚫 Product sold out:', data);
         setStock(0);
         setLastUpdate(data.timestamp);
       }
@@ -47,7 +44,6 @@ export function useInventory(productId, initialStock = 0) {
     // Listen for restocked
     const handleRestocked = (data) => {
       if (data.productId === productId) {
-        console.log('✅ Product restocked:', data);
         setStock(data.newStock);
         setLastUpdate(data.timestamp);
         setIsLowStock(false);
@@ -57,7 +53,6 @@ export function useInventory(productId, initialStock = 0) {
     // Listen for low stock alert
     const handleLowStock = (data) => {
       if (data.productId === productId) {
-        console.log('⚠️ Low stock alert:', data);
         setIsLowStock(true);
       }
     };
@@ -74,7 +69,6 @@ export function useInventory(productId, initialStock = 0) {
       socket.off('product-sold-out', handleSoldOut);
       socket.off('product-restocked', handleRestocked);
       socket.off('low-stock-alert', handleLowStock);
-      console.log(`📤 Unsubscribed from product: ${productId}`);
     };
   }, [socket, productId]);
 
@@ -99,7 +93,6 @@ export function useCategoryInventory(category) {
     if (!socket || !category) return;
 
     socket.emit('subscribe-category', category);
-    console.log(`📂 Subscribed to category: ${category}`);
 
     const handleStockUpdate = (data) => {
       setUpdates((prev) => [data, ...prev].slice(0, 10)); // Keep last 10 updates
@@ -109,7 +102,6 @@ export function useCategoryInventory(category) {
 
     return () => {
       socket.off('stock-updated', handleStockUpdate);
-      console.log(`📤 Unsubscribed from category: ${category}`);
     };
   }, [socket, category]);
 

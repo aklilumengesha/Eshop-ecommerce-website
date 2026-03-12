@@ -33,7 +33,7 @@ export default function Home({ featuredProducts = [], products = [], brands = []
           setSettings(response.data.settings);
         }
       } catch (error) {
-        console.error('Error fetching settings:', error);
+        // Silently fail and use initial settings
       }
     };
     
