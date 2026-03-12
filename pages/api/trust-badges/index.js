@@ -9,8 +9,7 @@ const handler = async (req, res) => {
   try {
     await db.connect();
     const badges = await TrustBadge.find({ isActive: true }).sort({ order: 1 }).lean();
-    await db.disconnect();
-
+    
     res.status(200).json({
       success: true,
       badges,

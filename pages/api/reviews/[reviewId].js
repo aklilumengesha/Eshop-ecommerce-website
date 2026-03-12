@@ -35,13 +35,11 @@ const updateReview = async (req, res, session) => {
     const review = await Review.findById(reviewId);
 
     if (!review) {
-      await db.disconnect();
       return res.status(404).json({ message: "Review not found" });
     }
 
     // Check if user owns this review
     if (review.user.toString() !== session.user._id) {
-      await db.disconnect();
       return res.status(403).json({ message: "Not authorized" });
     }
 
@@ -67,14 +65,11 @@ const updateReview = async (req, res, session) => {
       totalRatings: allReviews.length,
     });
 
-    await db.disconnect();
-
     res.status(200).json({
       message: "Review updated successfully",
       review: db.convertDocToObj(review),
     });
   } catch (error) {
-    await db.disconnect();
     res.status(500).json({ message: error.message });
   }
 };
@@ -89,13 +84,11 @@ const deleteReview = async (req, res, session) => {
     const review = await Review.findById(reviewId);
 
     if (!review) {
-      await db.disconnect();
       return res.status(404).json({ message: "Review not found" });
     }
 
     // Check if user owns this review or is admin
     if (review.user.toString() !== session.user._id && !session.user.isAdmin) {
-      await db.disconnect();
       return res.status(403).json({ message: "Not authorized" });
     }
 
@@ -126,11 +119,8 @@ const deleteReview = async (req, res, session) => {
       });
     }
 
-    await db.disconnect();
-
     res.status(200).json({ message: "Review deleted successfully" });
   } catch (error) {
-    await db.disconnect();
     res.status(500).json({ message: error.message });
   }
 };

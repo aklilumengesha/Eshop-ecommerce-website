@@ -31,8 +31,7 @@ const handler = async (req, res) => {
       }
     ]);
 
-    await db.disconnect();
-
+    
     res.status(200).json({
       success: true,
       categories,

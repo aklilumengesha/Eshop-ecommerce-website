@@ -62,11 +62,9 @@ const handler = async (req, res) => {
       }
     }
     
-    await db.disconnect();
-    res.status(201).send(order);
+        res.status(201).send(order);
   } catch (error) {
-    await db.disconnect();
-    console.error('Order creation error:', error);
+        console.error('Order creation error:', error);
     res.status(500).send({ message: error.message });
   }
 };

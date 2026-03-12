@@ -23,7 +23,6 @@ const handler = async (req, res) => {
     // Get product to find its slug
     const product = await Product.findById(id);
     if (!product) {
-      await db.disconnect();
       return res.status(404).json({ message: "Product not found" });
     }
 
@@ -39,13 +38,10 @@ const handler = async (req, res) => {
       isDelivered: true, // Only allow reviews for delivered orders
     });
 
-    await db.disconnect();
-
     res.status(200).json({
       hasPurchased: !!hasPurchased,
     });
   } catch (error) {
-    await db.disconnect();
     res.status(500).json({ message: error.message });
   }
 };

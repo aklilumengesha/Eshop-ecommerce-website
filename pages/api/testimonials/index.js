@@ -55,8 +55,7 @@ const getHandler = async (req, res) => {
       const allTestimonials = [...testimonials, ...reviewsWithProducts];
       
       if (allTestimonials.length === 0) {
-        await db.disconnect();
-        return res.status(200).json({
+                return res.status(200).json({
           averageRating: 0,
           totalReviews: 0,
           testimonials: []
@@ -73,8 +72,7 @@ const getHandler = async (req, res) => {
         return new Date(b.createdAt) - new Date(a.createdAt);
       });
       
-      await db.disconnect();
-      return res.status(200).json({
+            return res.status(200).json({
         averageRating: parseFloat(averageRating),
         totalReviews: allTestimonials.length,
         testimonials: sortedTestimonials
@@ -85,11 +83,9 @@ const getHandler = async (req, res) => {
     const testimonials = await Testimonial.find({ isActive: true })
       .sort({ order: 1, createdAt: -1 })
       .lean();
-    await db.disconnect();
-    res.status(200).json(testimonials);
+        res.status(200).json(testimonials);
   } catch (error) {
-    await db.disconnect();
-    res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message });
   }
 };
 

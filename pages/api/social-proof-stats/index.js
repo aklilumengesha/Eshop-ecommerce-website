@@ -15,11 +15,9 @@ const getHandler = async (req, res) => {
     const stats = await SocialProofStat.find({ isActive: true })
       .sort({ order: 1, createdAt: 1 })
       .lean();
-    await db.disconnect();
-    res.status(200).json(stats);
+        res.status(200).json(stats);
   } catch (error) {
-    await db.disconnect();
-    res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message });
   }
 };
 

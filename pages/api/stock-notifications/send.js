@@ -37,8 +37,7 @@ const handler = async (req, res) => {
     });
 
     if (notifications.length === 0) {
-      await db.disconnect();
-      return res.status(200).json({ 
+            return res.status(200).json({ 
         message: 'No pending notifications for this product',
         sent: 0 
       });
@@ -73,8 +72,7 @@ const handler = async (req, res) => {
       }
     }
 
-    await db.disconnect();
-
+    
     res.status(200).json({
       message: `Sent ${successCount} notifications successfully`,
       sent: successCount,
@@ -82,8 +80,7 @@ const handler = async (req, res) => {
       total: notifications.length,
     });
   } catch (error) {
-    await db.disconnect();
-    console.error('Send notifications error:', error);
+        console.error('Send notifications error:', error);
     res.status(500).json({ message: 'Failed to send notifications' });
   }
 };

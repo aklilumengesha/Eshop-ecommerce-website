@@ -17,11 +17,9 @@ const handler = async (req, res) => {
         .sort({ createdAt: -1 })
         .lean();
 
-      await db.disconnect();
-      res.status(200).json(coupons);
+            res.status(200).json(coupons);
     } catch (error) {
-      await db.disconnect();
-      res.status(500).json({ message: 'Error fetching coupons' });
+            res.status(500).json({ message: 'Error fetching coupons' });
     }
   } else {
     res.status(405).json({ message: 'Method not allowed' });

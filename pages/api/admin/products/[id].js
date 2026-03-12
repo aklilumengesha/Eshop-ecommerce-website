@@ -26,7 +26,6 @@ const handler = async (req, res) => {
 const getHandler = async (req, res) => {
   await db.connect();
   const product = await Product.findById(req.query.id);
-  await db.disconnect();
   res.send(product);
 };
 
@@ -116,13 +115,11 @@ const putHandler = async (req, res) => {
       }
     }
     
-    await db.disconnect();
     res.send({ 
       message: "Product updated successfully",
       restocked: oldStock === 0 && newStock > 0,
     });
   } else {
-    await db.disconnect();
     res.status(404).send({ message: "Product not found" });
   }
 };
@@ -133,10 +130,8 @@ const deleteHandler = async (req, res) => {
   
   if (product) {
     await product.deleteOne();
-    await db.disconnect();
     res.send({ message: "Product deleted successfully" });
   } else {
-    await db.disconnect();
     res.status(404).send({ message: "Product not found" });
   }
 };

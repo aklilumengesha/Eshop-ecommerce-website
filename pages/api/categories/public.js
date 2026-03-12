@@ -48,8 +48,7 @@ const handler = async (req, res) => {
     // Filter out categories with no products
     const activeCategories = categoriesWithCounts.filter(cat => cat.productCount > 0);
 
-    await db.disconnect();
-
+    
     res.status(200).json({
       success: true,
       categories: activeCategories,

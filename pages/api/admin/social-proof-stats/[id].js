@@ -26,13 +26,11 @@ const getHandler = async (req, res, id) => {
   try {
     await db.connect();
     const stat = await SocialProofStat.findById(id);
-    await db.disconnect();
     if (!stat) {
       return res.status(404).json({ message: 'Stat not found' });
     }
     res.status(200).json(stat);
   } catch (error) {
-    await db.disconnect();
     res.status(500).json({ message: error.message });
   }
 };
@@ -42,7 +40,6 @@ const putHandler = async (req, res, id) => {
     await db.connect();
     const stat = await SocialProofStat.findById(id);
     if (!stat) {
-      await db.disconnect();
       return res.status(404).json({ message: 'Stat not found' });
     }
 
@@ -54,10 +51,8 @@ const putHandler = async (req, res, id) => {
     stat.order = req.body.order !== undefined ? req.body.order : stat.order;
 
     const updatedStat = await stat.save();
-    await db.disconnect();
     res.status(200).json(updatedStat);
   } catch (error) {
-    await db.disconnect();
     res.status(500).json({ message: error.message });
   }
 };
@@ -67,14 +62,11 @@ const deleteHandler = async (req, res, id) => {
     await db.connect();
     const stat = await SocialProofStat.findById(id);
     if (!stat) {
-      await db.disconnect();
       return res.status(404).json({ message: 'Stat not found' });
     }
     await stat.deleteOne();
-    await db.disconnect();
     res.status(200).json({ message: 'Stat deleted successfully' });
   } catch (error) {
-    await db.disconnect();
     res.status(500).json({ message: error.message });
   }
 };

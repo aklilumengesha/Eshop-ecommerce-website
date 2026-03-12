@@ -21,15 +21,13 @@ const handler = async (req, res) => {
       notified: false, // Only check for pending notifications
     });
 
-    await db.disconnect();
-
+    
     res.status(200).json({
       subscribed: !!notification,
       notification: notification || null,
     });
   } catch (error) {
-    await db.disconnect();
-    console.error('Check subscription error:', error);
+        console.error('Check subscription error:', error);
     res.status(500).json({ message: 'Failed to check subscription status' });
   }
 };

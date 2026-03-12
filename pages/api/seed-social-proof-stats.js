@@ -19,8 +19,7 @@ const handler = async (req, res) => {
     // Check if stats already exist
     const existingCount = await SocialProofStat.countDocuments();
     if (existingCount > 0) {
-      await db.disconnect();
-      return res.status(400).json({ 
+            return res.status(400).json({ 
         message: 'Stats already exist. Delete them first if you want to reseed.' 
       });
     }
@@ -61,15 +60,13 @@ const handler = async (req, res) => {
     ];
 
     await SocialProofStat.insertMany(defaultStats);
-    await db.disconnect();
-
+    
     res.status(201).json({ 
       message: 'Social proof stats seeded successfully',
       count: defaultStats.length 
     });
   } catch (error) {
-    await db.disconnect();
-    res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message });
   }
 };
 

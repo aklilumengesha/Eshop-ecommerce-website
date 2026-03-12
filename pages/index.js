@@ -252,8 +252,7 @@ export async function getServerSideProps(context) {
     };
   }
   
-  await db.disconnect();
-  
+    
   // Clean settings object for serialization
   const cleanSettings = settings ? {
     latestProductsHeading: settings.latestProductsHeading || 'Latest Products',

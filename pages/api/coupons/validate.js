@@ -29,37 +29,31 @@ async function handler(req, res) {
     });
 
     if (!coupon) {
-      await db.disconnect();
-      return res.status(404).json({ message: 'Invalid coupon code' });
+            return res.status(404).json({ message: 'Invalid coupon code' });
     }
 
     // Check if coupon belongs to this user
     if (coupon.userId.toString() !== session.user._id) {
-      await db.disconnect();
-      return res.status(403).json({ message: 'This coupon is not valid for your account' });
+            return res.status(403).json({ message: 'This coupon is not valid for your account' });
     }
 
     // Check if already used
     if (coupon.isUsed) {
-      await db.disconnect();
-      return res.status(400).json({ message: 'This coupon has already been used' });
+            return res.status(400).json({ message: 'This coupon has already been used' });
     }
 
     // Check if expired
     const now = new Date();
     if (coupon.expiryDate < now) {
-      await db.disconnect();
-      return res.status(400).json({ message: 'This coupon has expired' });
+            return res.status(400).json({ message: 'This coupon has expired' });
     }
 
     // Check if active
     if (!coupon.isActive) {
-      await db.disconnect();
-      return res.status(400).json({ message: 'This coupon is no longer active' });
+            return res.status(400).json({ message: 'This coupon is no longer active' });
     }
 
-    await db.disconnect();
-
+    
     // Return valid coupon details
     res.status(200).json({
       valid: true,
@@ -73,8 +67,7 @@ async function handler(req, res) {
       },
     });
   } catch (error) {
-    await db.disconnect();
-    console.error('Coupon validation error:', error);
+        console.error('Coupon validation error:', error);
     res.status(500).json({ message: 'Error validating coupon' });
   }
 }

@@ -78,8 +78,6 @@ export const authOptions = {
         user._id = dbUser._id.toString();
         user.isAdmin = dbUser.isAdmin;
         user.profileImage = dbUser.profileImage || user.image;
-        
-        await db.disconnect();
       }
       
       return true;
@@ -106,8 +104,6 @@ export const authOptions = {
         const user = await User.findOne({
           email: credentials.email,
         });
-        
-        await db.disconnect();
         
         console.log('=== LOGIN ATTEMPT ===');
         console.log('Email:', credentials.email);

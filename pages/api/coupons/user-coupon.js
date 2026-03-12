@@ -31,15 +31,13 @@ async function handler(req, res) {
     }
     
     if (!user || !user.welcomeCouponCode) {
-      await db.disconnect();
-      console.log('No user or no welcome coupon code');
+            console.log('No user or no welcome coupon code');
       return res.status(200).json({ hasCoupon: false });
     }
 
     // Check if already used
     if (user.welcomeCouponUsed) {
-      await db.disconnect();
-      console.log('Welcome coupon already used');
+            console.log('Welcome coupon already used');
       return res.status(200).json({ hasCoupon: false });
     }
 
@@ -59,20 +57,17 @@ async function handler(req, res) {
     }
 
     if (!coupon) {
-      await db.disconnect();
-      console.log('Coupon not found in database');
+            console.log('Coupon not found in database');
       return res.status(200).json({ hasCoupon: false });
     }
 
     // Check if valid
     if (!coupon.isValid()) {
-      await db.disconnect();
-      console.log('Coupon is not valid');
+            console.log('Coupon is not valid');
       return res.status(200).json({ hasCoupon: false });
     }
 
-    await db.disconnect();
-
+    
     console.log('Returning valid coupon');
     res.status(200).json({
       hasCoupon: true,
@@ -85,8 +80,7 @@ async function handler(req, res) {
       },
     });
   } catch (error) {
-    await db.disconnect();
-    console.error('Get user coupon error:', error);
+        console.error('Get user coupon error:', error);
     res.status(500).json({ message: 'Error fetching coupon' });
   }
 }

@@ -81,15 +81,12 @@ const getReviews = async (req, res) => {
 
     const totalReviews = Object.values(ratingStats).reduce((a, b) => a + b, 0);
 
-    await db.disconnect();
-
     res.status(200).json({
       reviews: reviews.map(db.convertDocToObj),
       stats: ratingStats,
       totalReviews,
     });
   } catch (error) {
-    await db.disconnect();
     res.status(500).json({ message: error.message });
   }
 };
@@ -104,12 +101,10 @@ const createReview = async (req, res, session) => {
 
     // Validate input
     if (!rating || !title || !comment) {
-      await db.disconnect();
       return res.status(400).json({ message: "Please provide rating, title, and comment" });
     }
 
     if (rating < 1 || rating > 5) {
-      await db.disconnect();
       return res.status(400).json({ message: "Rating must be between 1 and 5" });
     }
 
@@ -119,7 +114,6 @@ const createReview = async (req, res, session) => {
     // Check if product exists
     const product = await Product.findById(productObjectId);
     if (!product) {
-      await db.disconnect();
       return res.status(404).json({ message: "Product not found" });
     }
 
@@ -130,7 +124,6 @@ const createReview = async (req, res, session) => {
     });
 
     if (existingReview) {
-      await db.disconnect();
       return res.status(400).json({ message: "You have already reviewed this product" });
     }
 
@@ -176,14 +169,11 @@ const createReview = async (req, res, session) => {
     
     await product.save();
 
-    await db.disconnect();
-
     res.status(201).json({
       message: "Review submitted successfully",
       review: db.convertDocToObj(review),
     });
   } catch (error) {
-    await db.disconnect();
     res.status(500).json({ message: error.message });
   }
 };

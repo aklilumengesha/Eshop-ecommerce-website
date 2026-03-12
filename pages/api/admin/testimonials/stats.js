@@ -21,8 +21,7 @@ const handler = async (req, res) => {
     // Store stats in a simple way - you could create a separate Stats model
     // For now, we'll just return success as the stats are calculated from testimonials
     
-    await db.disconnect();
-    res.status(200).json({ 
+        res.status(200).json({ 
       message: 'Stats updated successfully',
       stats: {
         overallRating,
@@ -32,8 +31,7 @@ const handler = async (req, res) => {
       }
     });
   } catch (error) {
-    await db.disconnect();
-    res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message });
   }
 };
 

@@ -26,14 +26,12 @@ const updateStatus = async (req, res) => {
     const { status } = req.body;
 
     if (!["pending", "approved", "rejected"].includes(status)) {
-      await db.disconnect();
       return res.status(400).json({ message: "Invalid status" });
     }
 
     const review = await Review.findById(reviewId);
 
     if (!review) {
-      await db.disconnect();
       return res.status(404).json({ message: "Review not found" });
     }
 
@@ -72,14 +70,11 @@ const updateStatus = async (req, res) => {
       }
     }
 
-    await db.disconnect();
-
     res.status(200).json({
       message: `Review ${status} successfully`,
       review: db.convertDocToObj(review),
     });
   } catch (error) {
-    await db.disconnect();
     res.status(500).json({ message: error.message });
   }
 };

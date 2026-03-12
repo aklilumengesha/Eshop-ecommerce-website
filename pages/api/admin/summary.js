@@ -40,8 +40,7 @@ const handler = async (req, res) => {
     { $sort: { _id: 1 } },
   ]);
 
-  await db.disconnect();
-
+  
   res.send({
     ordersCount,
     productsCount,

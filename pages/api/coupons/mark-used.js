@@ -30,13 +30,11 @@ async function handler(req, res) {
     });
 
     if (!coupon) {
-      await db.disconnect();
-      return res.status(404).json({ message: 'Coupon not found' });
+            return res.status(404).json({ message: 'Coupon not found' });
     }
 
     if (coupon.isUsed) {
-      await db.disconnect();
-      return res.status(400).json({ message: 'Coupon already used' });
+            return res.status(400).json({ message: 'Coupon already used' });
     }
 
     // Mark coupon as used
@@ -51,15 +49,13 @@ async function handler(req, res) {
       });
     }
 
-    await db.disconnect();
-
+    
     res.status(200).json({
       success: true,
       message: 'Coupon marked as used',
     });
   } catch (error) {
-    await db.disconnect();
-    console.error('Mark coupon used error:', error);
+        console.error('Mark coupon used error:', error);
     res.status(500).json({ message: 'Error updating coupon' });
   }
 }

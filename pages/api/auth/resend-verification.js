@@ -24,13 +24,11 @@ async function handler(req, res) {
     const user = await User.findOne({ email });
 
     if (!user) {
-      await db.disconnect();
-      return res.status(404).json({ message: "User not found" });
+            return res.status(404).json({ message: "User not found" });
     }
 
     if (user.isEmailVerified) {
-      await db.disconnect();
-      return res.status(400).json({ message: "Email already verified" });
+            return res.status(400).json({ message: "Email already verified" });
     }
 
     // Generate new verification code
@@ -50,20 +48,17 @@ async function handler(req, res) {
       });
     } catch (emailError) {
       console.error('Failed to send verification email:', emailError);
-      await db.disconnect();
-      return res.status(500).json({ 
+            return res.status(500).json({ 
         message: "Failed to send verification email. Please try again." 
       });
     }
 
-    await db.disconnect();
-
+    
     res.status(200).json({
       message: "Verification code sent successfully!",
     });
   } catch (error) {
-    await db.disconnect();
-    console.error('Resend verification error:', error);
+        console.error('Resend verification error:', error);
     res.status(500).json({ message: "Error sending verification code. Please try again." });
   }
 }

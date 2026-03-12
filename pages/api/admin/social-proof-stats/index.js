@@ -24,11 +24,9 @@ const getHandler = async (req, res) => {
     const stats = await SocialProofStat.find({})
       .sort({ order: 1, createdAt: 1 })
       .lean();
-    await db.disconnect();
-    res.status(200).json(stats);
+        res.status(200).json(stats);
   } catch (error) {
-    await db.disconnect();
-    res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message });
   }
 };
 
@@ -44,11 +42,9 @@ const postHandler = async (req, res) => {
       order: req.body.order || 0,
     });
     const stat = await newStat.save();
-    await db.disconnect();
-    res.status(201).json(stat);
+        res.status(201).json(stat);
   } catch (error) {
-    await db.disconnect();
-    res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message });
   }
 };
 

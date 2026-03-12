@@ -391,8 +391,6 @@ export async function getServerSideProps(context) {
     product.soldCount = soldCount;
   }
   
-  await db.disconnect();
-  
   return {
     props: {
       product: product ? db.convertDocToObj(product) : null,

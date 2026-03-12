@@ -8,15 +8,12 @@ const handler = async (req, res) => {
     const product = await Product.findById(req.query.id).lean();
     
     if (!product) {
-      await db.disconnect();
       return res.status(404).json({ message: "Product not found" });
     }
     
     // Calculate sold count dynamically
     const { calculateSoldCount } = await import('@/utils/soldCount');
     const soldCount = await calculateSoldCount(req.query.id);
-    
-    await db.disconnect();
     
     res.status(200).json({
       ...product,
@@ -27,7 +24,6 @@ const handler = async (req, res) => {
     const product = await Product.findById(req.query.id);
     
     if (!product) {
-      await db.disconnect();
       return res.status(404).json({ message: "Product not found" });
     }
 
@@ -45,10 +41,8 @@ const handler = async (req, res) => {
       await product.save();
     }
 
-    await db.disconnect();
     res.status(200).json({ message: "Product updated successfully" });
   } else {
-    await db.disconnect();
     return res.status(405).json({ message: "Method not allowed" });
   }
 };

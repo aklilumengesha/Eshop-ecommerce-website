@@ -24,11 +24,9 @@ const getHandler = async (req, res) => {
     const testimonials = await Testimonial.find({})
       .sort({ order: 1, createdAt: -1 })
       .lean();
-    await db.disconnect();
-    res.status(200).json(testimonials);
+        res.status(200).json(testimonials);
   } catch (error) {
-    await db.disconnect();
-    res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message });
   }
 };
 
@@ -46,11 +44,9 @@ const postHandler = async (req, res) => {
       order: req.body.order || 0,
     });
     const testimonial = await newTestimonial.save();
-    await db.disconnect();
-    res.status(201).json(testimonial);
+        res.status(201).json(testimonial);
   } catch (error) {
-    await db.disconnect();
-    res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message });
   }
 };
 

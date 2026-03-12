@@ -30,19 +30,16 @@ async function handler(req, res) {
     const user = await User.findOne({ email });
 
     if (!user) {
-      await db.disconnect();
-      return res.status(404).json({ message: "User not found" });
+            return res.status(404).json({ message: "User not found" });
     }
 
     if (user.isEmailVerified) {
-      await db.disconnect();
-      return res.status(400).json({ message: "Email already verified" });
+            return res.status(400).json({ message: "Email already verified" });
     }
 
     // Check if code has expired
     if (new Date() > user.verificationCodeExpiry) {
-      await db.disconnect();
-      return res.status(400).json({ 
+            return res.status(400).json({ 
         message: "Verification code has expired. Please request a new one.",
         expired: true,
       });
@@ -50,8 +47,7 @@ async function handler(req, res) {
 
     // Check if code matches (compare cleaned codes)
     if (user.verificationCode !== cleanCode) {
-      await db.disconnect();
-      return res.status(400).json({ message: "Invalid verification code" });
+            return res.status(400).json({ message: "Invalid verification code" });
     }
 
     // Mark email as verified
@@ -78,15 +74,13 @@ async function handler(req, res) {
 
     await welcomeCoupon.save();
 
-    await db.disconnect();
-
+    
     res.status(200).json({
       message: "Email verified successfully!",
       welcomeCouponCode: user.welcomeCouponCode,
     });
   } catch (error) {
-    await db.disconnect();
-    console.error('Verification error:', error);
+        console.error('Verification error:', error);
     res.status(500).json({ message: "Error verifying email. Please try again." });
   }
 }

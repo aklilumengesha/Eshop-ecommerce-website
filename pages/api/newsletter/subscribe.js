@@ -32,8 +32,7 @@ async function handler(req, res) {
     // Check if email already subscribed
     const existingSubscriber = await Newsletter.findOne({ email: email.toLowerCase() });
     if (existingSubscriber) {
-      await db.disconnect();
-      
+            
       if (existingSubscriber.isActive) {
         return res.status(400).json({ 
           message: "This email is already subscribed to our newsletter",
@@ -113,8 +112,7 @@ async function handler(req, res) {
       // Continue even if email fails - user still gets the code
     }
 
-    await db.disconnect();
-
+    
     res.status(201).json({
       message: "Successfully subscribed to newsletter!",
       discountCode,
@@ -122,8 +120,7 @@ async function handler(req, res) {
       emailSent,
     });
   } catch (error) {
-    await db.disconnect();
-    console.error('Newsletter subscription error:', error);
+        console.error('Newsletter subscription error:', error);
     res.status(500).json({ message: "Error subscribing to newsletter. Please try again." });
   }
 }

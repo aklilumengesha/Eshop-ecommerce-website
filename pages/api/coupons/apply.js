@@ -32,14 +32,12 @@ async function handler(req, res) {
     });
 
     if (!coupon) {
-      await db.disconnect();
-      return res.status(404).json({ message: 'Invalid coupon code' });
+            return res.status(404).json({ message: 'Invalid coupon code' });
     }
 
     // Validate coupon
     if (!coupon.isValid()) {
-      await db.disconnect();
-      return res.status(400).json({ 
+            return res.status(400).json({ 
         message: coupon.isUsed 
           ? 'This coupon has already been used' 
           : 'This coupon has expired or is inactive' 
@@ -48,8 +46,7 @@ async function handler(req, res) {
 
     // Check if coupon belongs to this user
     if (coupon.userId.toString() !== session.user._id) {
-      await db.disconnect();
-      return res.status(403).json({ message: 'This coupon is not valid for your account' });
+            return res.status(403).json({ message: 'This coupon is not valid for your account' });
     }
 
     // Calculate discount
@@ -66,8 +63,7 @@ async function handler(req, res) {
       discountAmount = cartTotal;
     }
 
-    await db.disconnect();
-
+    
     res.status(200).json({
       success: true,
       discount: discountAmount,
@@ -79,8 +75,7 @@ async function handler(req, res) {
       },
     });
   } catch (error) {
-    await db.disconnect();
-    console.error('Coupon apply error:', error);
+        console.error('Coupon apply error:', error);
     res.status(500).json({ message: 'Error applying coupon' });
   }
 }

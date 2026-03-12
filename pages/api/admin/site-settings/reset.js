@@ -23,16 +23,14 @@ const handler = async (req, res) => {
     // Create new settings with defaults
     const settings = await SiteSettings.create({});
     
-    await db.disconnect();
-    
+        
     res.status(200).json({ 
       success: true, 
       message: 'Settings reset to defaults successfully',
       settings 
     });
   } catch (error) {
-    await db.disconnect();
-    res.status(500).json({ 
+        res.status(500).json({ 
       success: false, 
       message: error.message 
     });

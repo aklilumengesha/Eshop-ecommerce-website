@@ -43,8 +43,7 @@ const handler = async (req, res) => {
       })
     );
 
-    await db.disconnect();
-
+    
     res.status(200).json({
       pending: pendingCount,
       sent: sentCount,
@@ -52,8 +51,7 @@ const handler = async (req, res) => {
       mostRequested: mostRequestedWithDetails,
     });
   } catch (error) {
-    await db.disconnect();
-    console.error('Stats error:', error);
+        console.error('Stats error:', error);
     res.status(500).json({ message: 'Failed to fetch statistics' });
   }
 };

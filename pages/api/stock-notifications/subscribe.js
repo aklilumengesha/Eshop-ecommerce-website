@@ -70,15 +70,13 @@ const handler = async (req, res) => {
       unsubscribeToken,
     });
 
-    await db.disconnect();
-
+    
     res.status(201).json({
       message: 'Successfully subscribed! We will notify you when this product is back in stock.',
       notification,
     });
   } catch (error) {
-    await db.disconnect();
-    console.error('Subscribe error:', error);
+        console.error('Subscribe error:', error);
     
     if (error.code === 11000) {
       return res.status(400).json({ 

@@ -14,8 +14,7 @@ const handler = async (req, res) => {
   
   const orders = await Order.find({}).populate("user", "name").sort({ createdAt: -1 });
   
-  await db.disconnect();
-  
+    
   res.send(orders);
 };
 

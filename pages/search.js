@@ -351,8 +351,7 @@ export async function getServerSideProps({ query }) {
 
   const products = productDocs.map(db.convertDocToObj);
 
-  await db.disconnect();
-
+  
   return {
     props: {
       products,

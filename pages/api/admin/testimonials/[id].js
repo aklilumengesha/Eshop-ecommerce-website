@@ -26,13 +26,11 @@ const getHandler = async (req, res, id) => {
   try {
     await db.connect();
     const testimonial = await Testimonial.findById(id);
-    await db.disconnect();
     if (!testimonial) {
       return res.status(404).json({ message: 'Testimonial not found' });
     }
     res.status(200).json(testimonial);
   } catch (error) {
-    await db.disconnect();
     res.status(500).json({ message: error.message });
   }
 };
@@ -42,7 +40,6 @@ const putHandler = async (req, res, id) => {
     await db.connect();
     const testimonial = await Testimonial.findById(id);
     if (!testimonial) {
-      await db.disconnect();
       return res.status(404).json({ message: 'Testimonial not found' });
     }
 
@@ -56,10 +53,8 @@ const putHandler = async (req, res, id) => {
     testimonial.order = req.body.order !== undefined ? req.body.order : testimonial.order;
 
     const updatedTestimonial = await testimonial.save();
-    await db.disconnect();
     res.status(200).json(updatedTestimonial);
   } catch (error) {
-    await db.disconnect();
     res.status(500).json({ message: error.message });
   }
 };
@@ -69,14 +64,11 @@ const deleteHandler = async (req, res, id) => {
     await db.connect();
     const testimonial = await Testimonial.findById(id);
     if (!testimonial) {
-      await db.disconnect();
       return res.status(404).json({ message: 'Testimonial not found' });
     }
     await testimonial.deleteOne();
-    await db.disconnect();
     res.status(200).json({ message: 'Testimonial deleted successfully' });
   } catch (error) {
-    await db.disconnect();
     res.status(500).json({ message: error.message });
   }
 };

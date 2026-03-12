@@ -19,8 +19,7 @@ const handler = async (req, res) => {
     // Check if testimonials already exist
     const existingCount = await Testimonial.countDocuments();
     if (existingCount > 0) {
-      await db.disconnect();
-      return res.status(400).json({ 
+            return res.status(400).json({ 
         message: 'Testimonials already exist. Delete them first if you want to reseed.' 
       });
     }
@@ -59,15 +58,13 @@ const handler = async (req, res) => {
     ];
 
     await Testimonial.insertMany(sampleTestimonials);
-    await db.disconnect();
-
+    
     res.status(201).json({ 
       message: 'Testimonials seeded successfully',
       count: sampleTestimonials.length 
     });
   } catch (error) {
-    await db.disconnect();
-    res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message });
   }
 };
 

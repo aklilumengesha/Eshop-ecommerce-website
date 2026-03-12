@@ -26,10 +26,8 @@ const deleteHandler = async (req, res) => {
       return res.status(400).send({ message: "Cannot delete admin user" });
     }
     await user.deleteOne();
-    await db.disconnect();
     res.send({ message: "User deleted successfully" });
   } else {
-    await db.disconnect();
     res.status(404).send({ message: "User not found" });
   }
 };

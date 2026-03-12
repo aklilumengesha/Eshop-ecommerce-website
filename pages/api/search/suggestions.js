@@ -55,8 +55,7 @@ const handler = async (req, res) => {
       Promise.all(brandPromises),
     ]);
 
-    await db.disconnect();
-
+    
     // Combine results
     const suggestions = [
       ...products.map((p) => ({
@@ -70,8 +69,7 @@ const handler = async (req, res) => {
     res.json(suggestions);
   } catch (error) {
     console.error("Search suggestions error:", error);
-    await db.disconnect();
-    res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: "Internal server error" });
   }
 };
 

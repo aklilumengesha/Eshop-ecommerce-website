@@ -14,8 +14,7 @@ const handler = async (req, res) => {
   
   const orders = await Order.find({ user: session.user._id });
   
-  await db.disconnect();
-  
+    
   res.send(orders);
 };
 

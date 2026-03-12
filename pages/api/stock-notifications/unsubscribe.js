@@ -31,8 +31,7 @@ const handler = async (req, res) => {
       });
     }
 
-    await db.disconnect();
-
+    
     if (!notification) {
       return res.status(404).json({ 
         message: 'Notification subscription not found' 
@@ -43,8 +42,7 @@ const handler = async (req, res) => {
       message: 'Successfully unsubscribed from stock notifications',
     });
   } catch (error) {
-    await db.disconnect();
-    console.error('Unsubscribe error:', error);
+        console.error('Unsubscribe error:', error);
     res.status(500).json({ message: 'Failed to unsubscribe. Please try again.' });
   }
 };

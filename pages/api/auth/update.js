@@ -33,8 +33,7 @@ async function handler(req, res) {
 
   const toUpdateUser = await User.findById(user._id);
   if (!toUpdateUser) {
-    await db.disconnect();
-    return res.status(404).json({ message: "User not found" });
+        return res.status(404).json({ message: "User not found" });
   }
 
   toUpdateUser.name = name;
@@ -49,8 +48,7 @@ async function handler(req, res) {
   }
 
   await toUpdateUser.save();
-  await db.disconnect();
-
+  
   res.status(200).json({
     message: "User updated successfully",
   });

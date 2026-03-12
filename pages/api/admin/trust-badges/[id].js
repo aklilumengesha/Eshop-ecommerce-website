@@ -60,8 +60,6 @@ const handler = async (req, res) => {
   } else {
     res.status(405).json({ message: 'Method not allowed' });
   }
-
-  await db.disconnect();
 };
 
 export default handler;

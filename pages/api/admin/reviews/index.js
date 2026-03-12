@@ -26,12 +26,10 @@ const getReviews = async (req, res) => {
       .sort({ createdAt: -1 })
       .lean();
 
-    await db.disconnect();
-
+    
     res.status(200).json(reviews.map(db.convertDocToObj));
   } catch (error) {
-    await db.disconnect();
-    res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message });
   }
 };
 

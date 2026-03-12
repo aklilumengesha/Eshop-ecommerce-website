@@ -16,7 +16,6 @@ const handler = async (req, res) => {
   const order = await Order.findById(req.query.id).populate('user', 'name email');
   
   if (!order) {
-    await db.disconnect();
     return res.status(404).send({ message: "Order not found" });
   }
   
@@ -33,8 +32,6 @@ const handler = async (req, res) => {
       return item.toObject();
     })
   );
-  
-  await db.disconnect();
   
   // Return order with enriched items
   const enrichedOrder = {

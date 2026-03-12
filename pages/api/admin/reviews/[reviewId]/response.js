@@ -25,14 +25,12 @@ const addResponse = async (req, res) => {
     const { response } = req.body;
 
     if (!response || !response.trim()) {
-      await db.disconnect();
       return res.status(400).json({ message: "Response text is required" });
     }
 
     const review = await Review.findById(reviewId);
 
     if (!review) {
-      await db.disconnect();
       return res.status(404).json({ message: "Review not found" });
     }
 
@@ -42,14 +40,12 @@ const addResponse = async (req, res) => {
     };
 
     await review.save();
-    await db.disconnect();
 
     res.status(200).json({
       message: "Response added successfully",
       review: db.convertDocToObj(review),
     });
   } catch (error) {
-    await db.disconnect();
     res.status(500).json({ message: error.message });
   }
 };

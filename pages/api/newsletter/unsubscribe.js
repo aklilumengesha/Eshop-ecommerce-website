@@ -18,20 +18,17 @@ async function handler(req, res) {
     const subscriber = await Newsletter.findOne({ unsubscribeToken: token });
 
     if (!subscriber) {
-      await db.disconnect();
-      return res.status(404).json({ message: "Subscription not found" });
+            return res.status(404).json({ message: "Subscription not found" });
     }
 
     if (!subscriber.isActive) {
-      await db.disconnect();
-      return res.status(400).json({ message: "Already unsubscribed" });
+            return res.status(400).json({ message: "Already unsubscribed" });
     }
 
     subscriber.isActive = false;
     await subscriber.save();
 
-    await db.disconnect();
-
+    
     // Redirect to a confirmation page or return success
     if (req.method === "GET") {
       res.redirect("/unsubscribe?success=true");
@@ -39,8 +36,7 @@ async function handler(req, res) {
       res.status(200).json({ message: "Successfully unsubscribed from newsletter" });
     }
   } catch (error) {
-    await db.disconnect();
-    console.error('Unsubscribe error:', error);
+        console.error('Unsubscribe error:', error);
     res.status(500).json({ message: "Error unsubscribing. Please try again." });
   }
 }

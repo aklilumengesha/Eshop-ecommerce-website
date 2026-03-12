@@ -23,7 +23,6 @@ const handler = async (req, res) => {
     const review = await Review.findById(reviewId);
 
     if (!review) {
-      await db.disconnect();
       return res.status(404).json({ message: "Review not found" });
     }
 
@@ -45,7 +44,6 @@ const handler = async (req, res) => {
     }
 
     await review.save();
-    await db.disconnect();
 
     res.status(200).json({
       message: hasVoted ? "Vote removed" : "Marked as helpful",
@@ -53,7 +51,6 @@ const handler = async (req, res) => {
       hasVoted: !hasVoted,
     });
   } catch (error) {
-    await db.disconnect();
     res.status(500).json({ message: error.message });
   }
 };
