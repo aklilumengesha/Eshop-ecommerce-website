@@ -135,7 +135,7 @@ MIT License - see [LICENSE](LICENSE) file
 
 **Aklilu Mengesha**
 
-## 📧 Contact
+## 📧 Contact Developer
 
 For questions, support, or collaboration:
 - Email: [aklilumengesha57@gmail.com](mailto:aklilumengesha57@gmail.com)
